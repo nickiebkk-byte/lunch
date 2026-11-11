@@ -1,10 +1,10 @@
 {
-  "name": "เที่ยงนี้กินอะไรดี",
+  "name": "เที่ยงนี้กินไรดี",
   "short_name": "เที่ยงนี้กินไรดี",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#EEF6FF",
-  "theme_color": "#1E7BEA",
+  "background_color": "#2F8CF0",
+  "theme_color": "#2F8CF0",
   "icons": [
     {
       "src": "assets/app-icon-192.png",
