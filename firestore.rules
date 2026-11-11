@@ -10,5 +10,11 @@ service cloud.firestore {
     match /lunch_settings/main  { allow read, write: if true; }
     // ===== จบส่วนของแอปนี้ =====
 
+    // ===== วันนี้กินอะไรดี (BOSS / แม่ครัว ที่บ้าน) — โฟลเดอร์ home/ =====
+    match /home_menus/{id}        { allow read, write: if true; }
+    match /home_days/{date}       { allow read, write: if date.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$'); }
+    match /home_settings/{doc}    { allow read, write: if doc in ['main', 'shop']; }
+    // ===== จบส่วนของแอปบ้าน =====
+
   }
 }

@@ -1,0 +1,14 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===== วันนี้กินอะไรดี (BOSS / แม่ครัว ที่บ้าน) =====
+    // ถ้าใช้โปรเจกต์เดิมร่วมกับแอปอื่น: คัดลอกเฉพาะ 3 บรรทัด match ด้านล่าง
+    // ไปวางเพิ่มในไฟล์ Rules เดิม อย่าลบของเดิมทิ้ง
+    match /home_menus/{id}        { allow read, write: if true; }
+    match /home_days/{date}       { allow read, write: if date.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$'); }
+    match /home_settings/{doc}    { allow read, write: if doc in ['main', 'shop']; }
+    // ===== จบส่วนของแอปนี้ =====
+
+  }
+}

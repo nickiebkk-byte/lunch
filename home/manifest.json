@@ -1,0 +1,32 @@
+{
+  "name": "วันนี้กินอะไรดี",
+  "short_name": "กินไรดี",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#EEF6FF",
+  "theme_color": "#FFC72C",
+  "icons": [
+    {
+      "src": "assets/app-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/app-icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "lang": "th",
+  "scope": "./",
+  "orientation": "portrait",
+  "description": "วางแผนอาหาร เช้า กลางวัน ว่าง เย็น ระหว่าง BOSS กับแม่ครัว"
+}
