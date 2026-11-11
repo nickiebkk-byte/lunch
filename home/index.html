@@ -153,6 +153,33 @@
           </section>
 
           <section>
+            <div style="padding:14px 14px 16px;border-radius:26px;background:linear-gradient(160deg,#EAF1FF,#DCE6FF);border:3px solid #9DB6EC;display:grid;gap:12px">
+              <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px">
+                <div style="min-width:0">
+                  <h3 style="margin:0;font-size:24px;font-weight:800;color:#1B2B5A">✨ เมนูแนะนำ{{ mealFull }}</h3>
+                  <div style="font-size:16px;font-weight:600;color:#4D5F8A">{{ recHint }}</div>
+                </div>
+                <button onClick="{{ recReroll }}" style="flex:none;border:3px solid #9DB6EC;background:#fff;color:#2456D6;border-radius:999px;padding:6px 14px;font-weight:800;font-size:16px;box-shadow:0 3px 0 #9DB6EC">🔄 แนะนำชุดใหม่</button>
+              </div>
+              <div style="display:grid;grid-template-columns:minmax(0,1fr);gap:8px">
+                <sc-for list="{{ recItems }}" as="rc" hint-placeholder-count="1">
+                  <button onClick="{{ rc.onClick }}" style="animation:{{ rc.anim }};display:flex;align-items:center;gap:12px;text-align:left;border:3px solid {{ rc.bd }};background:{{ rc.bg }};border-radius:22px;padding:8px 12px 8px 8px;min-width:0;box-shadow:0 3px 0 {{ rc.bd }}">
+                    <span style="width:{{ rc.size }};height:{{ rc.size }};flex:none;border-radius:50%;background:{{ rc.bgc }};display:grid;place-items:center;font-size:{{ rc.font }}">{{ rc.emo }}</span>
+                    <span style="flex:1;min-width:0;display:grid;gap:1px">
+                      <sc-if value="{{ rc.slot }}"><span style="justify-self:start;font-size:13px;font-weight:800;color:#2456D6;background:#DCE6FF;border-radius:999px;padding:0 9px">{{ rc.slot }}</span></sc-if>
+                      <span style="font-size:{{ rc.nameSize }};font-weight:800;line-height:1.25;color:#1B2B5A">{{ rc.label }}</span>
+                      <span style="font-size:14px;color:#4D5F8A">{{ rc.cat }} · <b style="color:{{ rc.actColor }}">{{ rc.act }}</b></span>
+                    </span>
+                  </button>
+                </sc-for>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px">
+                <button onClick="{{ recUseAll }}" style="border:0;background:#D9431C;color:#fff;border-radius:999px;padding:11px 20px;font-weight:800;font-size:17px;box-shadow:0 4px 0 #A8300F">{{ recAllText }}</button>
+              </div>
+            </div>
+          </section>
+
+          <section>
             <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px">
               <h3 style="margin:0;font-size:26px;font-weight:800">แม่ครัวเสนอ</h3>
               <span style="font-weight:700;color:#2456D6;background:#DCE6FF;border-radius:999px;padding:2px 12px;font-size:17px">{{ optCount }}/{{ maxOpts }}</span>
@@ -673,7 +700,19 @@ const AWAY_E = {skip:"🙅", out:"🚗", order:"🛵"};
 const EXTRAS = ["ไม่เผ็ด","เผ็ดน้อย","หวานน้อย","มันน้อย","ข้าวกล้อง","ทำเผื่อมื้อถัดไป"];
 const EMOJIS = ["🍛","🍲","🍜","🍝","🍚","🍳","🥚","🍗","🍖","🥩","🥓","🐟","🦐","🦀","🦑","🦪","🥗","🥬","🥦","🌶️","🧄","🍄","🌽","🥔","🍞","🥪","🍔","🍕","🍣","🍱","🍤","🥟","🍢","🍰","🍮","🍧","🍨","🍩","🍉","🍌","🥭","🧋","☕","🍵","🥛","🥤","🍹","🍽️"];
 const QUICK = ["ไข่ไก่","ข้าวสาร","หมูสับ","อกไก่","กุ้ง","ผักบุ้ง","คะน้า","มะนาว","พริก","กระเทียม","น้ำปลา","น้ำมันพืช","นมสด","ผลไม้"];
-const MAXO = 4, MAXP = 5;
+const MAXO = 5, MAXP = 8;
+const ONE_DISH = ["bkthai","kaprao","rice","garlic","special","noodlesoup","noodlefry","khanomjeen"];
+const NOT_ONE = /^(ไข่ตุ๋น|ปาท่องโก๋|ผัดคะน้า|ผัดผักบุ้ง|ผัดผักรวม|กะหล่ำปลี|ผัดขิง|ไก่ผัดเม็ด|ผัดพริก|ผัดขี้เมา \(|ทอดกระเทียม)/;
+const REC = {
+  b:{n:1, slots:[["", c => ONE_DISH.includes(c)]]},
+  l:{n:1, slots:[["", c => ONE_DISH.includes(c)]]},
+  s:{n:1, slots:[["", c => ["thaisweet","bakery","icecream","fruit","wsides","jp","kr","yum","somtam","grill"].includes(c)]]},
+  d:{n:5, slots:[["🍲 ต้ม / แกง", c => ["clearsoup","tomyum","curry"].includes(c)], ["🥬 ผัด", c => ["kabfry","garlic"].includes(c)],
+     ["🍳 ทอด / ไข่", c => ["kabdeep","grill"].includes(c)], ["🥗 ยำ / ลาบ / ตำ", c => ["yum","larb","somtam"].includes(c)],
+     ["🐟 ปลา / ซีฟู้ด", c => ["fish","shrimp","crab","squid","shell","seaset"].includes(c)]]}
+};
+const hashStr = str => { let h = 2166136261; for (let i=0;i<str.length;i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
+const rng = seed => () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
 const MEATS = ["หมูสับ","หมูชิ้น","หมูกรอบ","ไก่","เนื้อ","กุ้ง","ปลาหมึก","ปลา","รวมทะเล","เต้าหู้"];
 const ADDONS = ["ไข่ดาว","ไข่เจียว","ไข่ต้ม","พิเศษ","ไม่ใส่ผัก","เจ"];
 const splitO = o => (o||"").split("+").map(x => x.trim()).filter(Boolean);
@@ -811,6 +850,21 @@ class Component extends DCLogic {
     const mm = {id:"x"+Date.now().toString(36)+Math.random().toString(36).slice(2,4), ...f, fav:false, hidden:false, ord:1000+s.menus.length, mine:true};
     this.persist({menus:[...s.menus, mm]}); this.cloudSet("menus/"+mm.id, mm); this.resetForm({fMeals:s.fMeals});
     return mm;
+  }
+  recommend(date, mk){
+    const m = this.meal(date, mk), R = REC[mk], rnd = rng(hashStr(date+"|"+mk+"|"+(m.rec||0)));
+    const avoid = this.recent(date, mk, 3), used = new Set(), out = [];
+    const one = mk==="b" || mk==="l";
+    for (const [slot, ok] of R.slots) {
+      const base = this.state.menus.filter(x => x.kind==="food" && !x.hidden && ok(x.cat) && (!one || !NOT_ONE.test(x.name)) && !used.has(x.id));
+      let pool = base.filter(x => (x.meals||"ld").includes(mk) && !avoid.has(x.id));
+      if (!pool.length) pool = base.filter(x => (x.meals||"ld").includes(mk));
+      if (!pool.length) pool = base;
+      if (!pool.length) continue;
+      const w = pool.flatMap(x => x.fav ? [x,x,x] : [x]); const x = w[Math.floor(rnd()*w.length)]; used.add(x.id);
+      out.push({slot, sel:{m:x.id, o: x.opts && x.opts.length ? x.opts[Math.floor(rnd()*x.opts.length)] : ""}});
+    }
+    return out;
   }
   pastCutoff(date, mk){ const t = todayStr(); if (date !== t) return date < t; return nowMin() >= toMin(this.state.cfg.cut[mk]); }
   openPick(mode){ this.setState({pick:{mode, kind: mode==="drink" ? "drink" : "food", q:"", cat: mode==="drink" ? "" : "meal", open:null}}); }
@@ -1004,6 +1058,26 @@ class Component extends DCLogic {
       extras: EXTRAS.map(x => { const on = m.x.includes(x); return {t:x, ...(on ? {bg:"#FFC72C", fg:"#1B2B5A", bd:"#C98F00", anim:POP} : OFF),
         onClick: () => { const xs = new Set(m.x); xs.has(x) ? xs.delete(x) : xs.add(x); this.saveMeal(s.sel, mk, {x:[...xs]}); }}; }),
       emptyChoiceText: boss ? "ยังไม่ได้เลือก แตะเมนูที่แม่ครัวเสนอ หรือเลือกจากเมนูทั้งหมด" : "BOSS ยังไม่ได้เลือก",
+      ...(() => { const rec = this.recommend(s.sel, mk), big = rec.length===1;
+        const has = (arr, x) => arr.some(y => this.same(y, x.sel));
+        return {
+          recHint: mk==="d" ? "ชุดกับข้าว 5 อย่าง ทานกับข้าวสวย" : mk==="s" ? "ของว่าง 1 อย่าง" : "อาหารจานเดียว 1 จาน",
+          recItems: rec.map(x => { const on = boss ? has(m.picks, x) : has(m.options, x);
+            return {slot:x.slot, label:this.label(x.sel), emo:this.emo(x.sel), bgc:this.bgc(x.sel), cat:this.catOf(x.sel),
+              size: big ? "72px" : "54px", font: big ? "40px" : "30px", nameSize: big ? "22px" : "18px",
+              bg: on ? "#FFF6D6" : "#fff", bd: on ? "#FFC72C" : "#C9D6F5", anim: on ? POP : "none",
+              act: on ? "✓ เลือกแล้ว" : boss ? "แตะเพื่อเลือก" : "+ เสนอ", actColor: on ? "#7A5600" : "#D9431C",
+              onClick: () => { if (boss) return this.togglePick(x.sel); const mm = this.meal(s.sel, mk);
+                if (has(mm.options, x)) this.saveMeal(s.sel, mk, {options: mm.options.filter(y => !this.same(y, x.sel))});
+                else if (mm.options.length < MAXO) this.saveMeal(s.sel, mk, {options:[...mm.options, x.sel]}); }}; }),
+          recAllText: boss ? (big ? "✅ เอาจานนี้" : "✅ เลือกทั้ง " + rec.length + " อย่าง") : (big ? "+ เสนอเมนูนี้" : "+ เสนอทั้ง " + rec.length + " อย่าง"),
+          recUseAll: () => { const mm = this.meal(s.sel, mk);
+            if (boss) { const add = rec.map(x => x.sel).filter(x => !mm.picks.some(y => this.same(y, x)));
+              this.saveMeal(s.sel, mk, {picks:[...mm.picks, ...add].slice(-MAXP), status: mm.status==="plan" ? "chosen" : mm.status, changeReq:false, away:""}); }
+            else { const add = rec.map(x => x.sel).filter(x => !mm.options.some(y => this.same(y, x)));
+              this.saveMeal(s.sel, mk, {options:[...mm.options, ...add].slice(0, MAXO)}); } },
+          recReroll: () => this.saveMeal(s.sel, mk, {rec: (m.rec||0) + 1})
+        }; })(),
       maxOpts: MAXO, optCount: m.options.length, options, hasOptions: m.options.length>0, noOptions: !m.options.length,
       emptyOptText: boss ? "แม่ครัวยังไม่ได้เสนอเมนู" : "ยังไม่มีตัวเลือก กดเพิ่มหรือสุ่มได้เลย",
       showReqMsg: m.changeReq && !boss, reqText: m.bossNote || "อยากได้ตัวเลือกใหม่", resolveReq: () => this.saveMeal(s.sel, mk, {changeReq:false}),
