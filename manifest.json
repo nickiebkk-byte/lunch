@@ -1,0 +1,30 @@
+{
+  "name": "เที่ยงนี้กินอะไรดี",
+  "short_name": "เที่ยงนี้กินไรดี",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#EEF6FF",
+  "theme_color": "#1E7BEA",
+  "icons": [
+    {
+      "src": "assets/app-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "lang": "th",
+  "scope": "./",
+  "orientation": "portrait",
+  "description": "วางแผนมื้อเที่ยงระหว่าง BOSS กับ STAFF"
+}

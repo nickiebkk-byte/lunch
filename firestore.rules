@@ -1,0 +1,14 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===== เที่ยงนี้กินไรดี (BOSS / STAFF) =====
+    // ถ้าใช้โปรเจกต์เดิมร่วมกับแอปอื่น: คัดลอกเฉพาะ 3 บรรทัด match ด้านล่าง
+    // ไปวางเพิ่มในไฟล์ Rules เดิม อย่าลบของเดิมทิ้ง
+    match /lunch_menus/{id}     { allow read, write: if true; }
+    match /lunch_days/{date}    { allow read, write: if date.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$'); }
+    match /lunch_settings/main  { allow read, write: if true; }
+    // ===== จบส่วนของแอปนี้ =====
+
+  }
+}

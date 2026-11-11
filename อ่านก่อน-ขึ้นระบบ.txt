@@ -1,0 +1,24 @@
+เที่ยงนี้กินอะไรดี — ขั้นตอนเอาขึ้นระบบแบบ realtime (BOSS + STAFF)
+
+1) สร้างฐานข้อมูล (ทำครั้งเดียว)
+   - https://console.firebase.google.com → Add project
+   - Build → Firestore Database → Create database (เลือก asia-southeast1)
+   - แท็บ Rules → วางเนื้อหาจากไฟล์ firestore.rules → Publish
+   - ใช้โปรเจกต์ Firebase เดิมได้ (เช่นที่มีแอปอื่นอยู่แล้ว): ข้ามการสร้างโปรเจกต์ใหม่
+     แล้วคัดลอกเฉพาะ 3 บรรทัด match ของแอปนี้ไปเพิ่มใน Rules เดิม ห้ามลบของเดิม
+
+2) ใส่ค่าเชื่อมต่อ
+   - Project settings → Your apps → Web (</>) → Register
+   - คัดลอก firebaseConfig ไปวางในไฟล์ firebase-config.js แทนคำว่า null
+
+3) เอาขึ้นเว็บ (เลือกทางเดียว)
+   ก. Firebase Hosting:  npm i -g firebase-tools → firebase login → firebase init (เลือก Hosting, ใช้ไฟล์ firebase.json ที่มีอยู่) → firebase deploy
+   ข. GitHub Pages:     อัปโหลดทั้งโฟลเดอร์ขึ้น repo → Settings → Pages → Deploy from branch
+
+4) ใช้งาน
+   - ส่งลิงก์ให้ BOSS และ STAFF เปิดบนมือถือ → Add to Home Screen
+   - แต่ละคนเลือกบทบาทของตัวเองครั้งแรก เครื่องจะจำไว้
+   - มุมบนจะขึ้น ● ออนไลน์ เมื่อเชื่อมต่อสำเร็จ
+   - เปิดครั้งแรก แอปจะใส่เมนูทั้งหมดลงฐานข้อมูลให้อัตโนมัติ
+
+หมายเหตุ: Rules ชุดนี้ไม่มีระบบล็อกอิน ใครมีลิงก์ก็แก้ข้อมูลได้ อย่าแชร์ลิงก์ออกนอกทีม

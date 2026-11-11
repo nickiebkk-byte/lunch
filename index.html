@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>เที่ยงนี้กินอะไรดี</title>
+<link rel="apple-touch-icon" href="assets/app-icon-180.png">
+<link rel="icon" type="image/png" href="assets/app-icon-512.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="เที่ยงนี้กินไรดี">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#1E7BEA">
+<script src="firebase-config.js"></script>
+<script src="menu-data.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&display=swap">
+<style>body{margin:0;background:#EEF6FF;font-family:Prompt,system-ui,sans-serif;color:#1B2B5A}*{box-sizing:border-box}button,input,select,textarea{font-family:inherit;color:inherit}button{cursor:pointer}a{color:#D9431C}a:hover{color:#F2552C}
+::-webkit-scrollbar{display:none}
+@keyframes chibiPop{0%{transform:scale(1)}30%{transform:scale(1.14,.88)}55%{transform:scale(.94,1.08) translateY(-4px)}75%{transform:scale(1.04,.97)}100%{transform:scale(1)}}
+@keyframes chibiJump{0%,100%{transform:translateY(0) scale(1,1) rotate(0)}15%{transform:translateY(0) scale(1.08,.92)}40%{transform:translateY(-14px) scale(.95,1.06) rotate(-5deg)}60%{transform:translateY(-14px) scale(.97,1.03) rotate(5deg)}82%{transform:translateY(0) scale(1.06,.94)}}
+@keyframes chibiBob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-10px) rotate(3deg)}}
+@keyframes chibiWiggle{0%,100%{transform:rotate(-10deg) scale(.95)}50%{transform:rotate(10deg) scale(1.08)}}</style>
+</helmet>
+<div style="height:100dvh;display:flex;justify-content:center;background:#D8E9FA">
+<div data-screen-label="App" style="position:relative;width:100%;max-width:520px;height:100%;flex:none;overflow:hidden;display:flex;flex-direction:column;background:#EEF6FF;padding-top:env(safe-area-inset-top,0px);box-shadow:0 0 40px -18px rgba(27,43,90,.35)">
+<div style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding-bottom:env(safe-area-inset-bottom,0px);scrollbar-width:none;background:#EEF6FF radial-gradient(#D3E6FA 2px,transparent 2.6px) 0 0/30px 30px">
+
+<header style="position:sticky;top:0;z-index:5;background:rgba(238,246,255,.94);backdrop-filter:blur(8px);border-bottom:2px dashed #C5DBF2">
+  <div style="max-width:1140px;margin:0 auto;padding:8px 16px 4px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px">
+    <div style="display:flex;align-items:center;gap:6px;flex:1 1 0;min-width:0">
+      <img src="assets/food/01.png" alt="" style="width:40px;height:40px;object-fit:contain;transform:rotate(-6deg)">
+      <div style="min-width:0">
+        <div style="font-weight:800;font-size:21px;line-height:1.05;color:#F2552C;text-shadow:2px 2px 0 #BFDDF8;white-space:nowrap">เที่ยงนี้กินอะไรดี</div>
+        <div style="font-size:13px;font-weight:500;color:#56688C;white-space:nowrap">BOSS × STAFF · <span style="color:{{ syncColor }}">● {{ syncText }}</span></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:4px;background:#fff;border:2px solid #C5DBF2;border-radius:999px;padding:4px">
+      <button onClick="{{ setBoss }}" style="animation:{{ roleBossAnim }};border:0;border-radius:999px;padding:6px 10px;font-weight:700;font-size:13px;background:{{ roleBossBg }};color:{{ roleBossFg }}">BOSS</button>
+      <button onClick="{{ setSec }}" style="animation:{{ roleSecAnim }};border:0;border-radius:999px;padding:6px 10px;font-weight:700;font-size:13px;background:{{ roleSecBg }};color:{{ roleSecFg }}">STAFF</button>
+    </div>
+    <nav style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;width:100%;padding:2px 0 8px">
+      <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="3">
+        <button onClick="{{ tb.onClick }}" style="animation:{{ tb.anim }};display:flex;align-items:center;justify-content:center;gap:4px;border:2px solid {{ tb.bd }};border-radius:999px;padding:3px 8px 3px 4px;font-weight:700;font-size:14px;white-space:nowrap;min-width:0;background:{{ tb.bg }};color:{{ tb.fg }};box-shadow:0 3px 0 {{ tb.bd }}">
+          <img src="{{ tb.icon }}" alt="" style="width:26px;height:26px;object-fit:contain;flex:none">{{ tb.label }}
+        </button>
+      </sc-for>
+    </nav>
+  </div>
+</header>
+
+<main style="padding:16px 16px 48px">
+<sc-if value="{{ hasSyncErr }}">
+  <div style="margin:10px 16px 0;padding:10px 14px;border-radius:16px;background:#FFE1E8;color:#B4284F;font-size:14px;font-weight:600">{{ syncErr }}</div>
+</sc-if>
+<sc-if value="{{ ready }}" hint-placeholder-val="{{ false }}">
+
+<!-- ================= DAY ================= -->
+<sc-if value="{{ isDay }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px">
+    <button onClick="{{ prevWeek }}" aria-label="สัปดาห์ก่อน" style="flex:none;width:30px;height:56px;border-radius:14px;border:2px solid #C5DBF2;background:#fff;font-size:22px;font-weight:700;color:#56688C">‹</button>
+    <div style="flex:1;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px">
+      <sc-for list="{{ strip }}" as="c" hint-placeholder-count="5">
+        <button onClick="{{ c.onClick }}" style="animation:{{ c.anim }};position:relative;border:2.5px solid {{ c.bd }};background:{{ c.bg }};border-radius:18px;padding:8px 2px;line-height:1.15;box-shadow:0 4px 0 {{ c.bd }};transform:translateY({{ c.lift }})">
+          <span style="position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:{{ c.dot }}"></span>
+          <div style="font-weight:800;font-size:17px">{{ c.dow }}</div>
+          <div style="font-size:13px;color:#56688C">{{ c.num }}</div>
+          <sc-if value="{{ c.isToday }}"><div style="font-size:11px;font-weight:700;color:#D9431C">วันนี้</div></sc-if>
+        </button>
+      </sc-for>
+    </div>
+    <button onClick="{{ nextWeek }}" aria-label="สัปดาห์หน้า" style="flex:none;width:30px;height:56px;border-radius:14px;border:2px solid #C5DBF2;background:#fff;font-size:22px;font-weight:700;color:#56688C">›</button>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start">
+    <article style="flex:1 1 100%;min-width:0;background:#fff;border-radius:30px;border:2.5px solid #C5DBF2;box-shadow:0 8px 0 #C5DBF2;overflow:hidden">
+      <div style="padding:18px 20px 14px;display:flex;flex-wrap:wrap;align-items:flex-end;gap:8px 14px;background:#DDEEFF;border-bottom:2.5px dashed #B3D0EE">
+        <div style="flex:1 1 auto;min-width:0">
+          <div style="font-size:14px;font-weight:600;color:#56688C">ใบสั่ง #{{ ticketNo }}</div>
+          <h2 style="margin:0;font-weight:800;font-size:46px;line-height:1.05;color:#F2552C;text-shadow:3px 3px 0 #fff">{{ dayName }}</h2>
+          <div style="font-size:20px;font-weight:600;color:#1B2B5A">{{ dateText }}</div>
+        </div>
+        <span style="display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:999px;font-weight:700;font-size:15px;background:{{ pillBg }};color:{{ pillFg }}"><span style="width:9px;height:9px;border-radius:50%;background:currentColor"></span>{{ pillText }}</span>
+      </div>
+
+      <div style="padding:18px 16px 22px;display:grid;gap:22px">
+        <sc-if value="{{ isAway }}">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:24px;text-align:center;border:2.5px dashed #C5DBF2;border-radius:26px">
+            <img src="assets/icon/16.png" alt="" style="width:130px">
+            <div style="font-size:24px;font-weight:700">BOSS แจ้งว่า {{ awayText }}</div>
+            <div style="color:#56688C">STAFF ไม่ต้องสั่งอาหารวันนี้</div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ notAway }}" hint-placeholder-val="{{ true }}">
+          <section>
+            <div style="font-size:15px;font-weight:700;color:#56688C;margin-bottom:10px">เมนูที่เลือก</div>
+            <sc-if value="{{ hasChoice }}">
+              <div style="display:flex;flex-wrap:wrap;align-items:center;gap:18px;padding:18px 22px;border-radius:28px;background:#FFF0E4;border:2.5px solid #FFC79E">
+                <div style="width:100%;height:150px;display:grid;place-items:center">{{ heroEl }}</div>
+                <div style="flex:1 1 100%;min-width:0;display:grid;gap:6px;text-align:center;justify-items:center">
+                  <div style="font-size:28px;font-weight:800;line-height:1.15;color:#1B2B5A">{{ choiceLabel }}</div>
+                  <div style="font-size:15px;color:#56688C">{{ choiceSub }}</div>
+                  <sc-if value="{{ hasDrink }}">
+                    <div style="display:flex;align-items:center;gap:8px;margin-top:4px;background:#fff;border-radius:999px;padding:4px 14px 4px 4px;width:max-content;max-width:100%">
+                      <img src="{{ drinkImg }}" alt="" style="width:40px;height:40px;object-fit:contain"><span style="font-size:15px">เครื่องดื่ม <b>{{ drinkLabel }}</b></span>
+                    </div>
+                  </sc-if>
+                </div>
+              </div>
+              <sc-if value="{{ isBoss }}">
+                <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">
+                  <sc-for list="{{ extras }}" as="x" hint-placeholder-count="6">
+                    <button onClick="{{ x.onClick }}" style="animation:{{ x.anim }};border:2px solid {{ x.bd }};background:{{ x.bg }};color:{{ x.fg }};border-radius:999px;padding:6px 14px;font-size:14px;font-weight:600">{{ x.t }}</button>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </sc-if>
+            <sc-if value="{{ noChoice }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;align-items:center;gap:14px;padding:16px 20px;border:2.5px dashed #C5DBF2;border-radius:26px;color:#56688C;font-size:16px">
+                <img src="assets/icon/22.png" alt="" style="width:56px;flex:none">{{ emptyChoiceText }}
+              </div>
+              <sc-if value="{{ hasDrinkOnly }}"><div style="margin-top:8px;font-size:15px;color:#56688C">เครื่องดื่ม: <b style="color:#1B2B5A">{{ drinkLabel }}</b></div></sc-if>
+            </sc-if>
+          </section>
+
+          <section>
+            <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:12px">
+              <h3 style="margin:0;font-size:22px;font-weight:800">ตัวเลือกที่ STAFF เสนอ</h3>
+              <span style="font-weight:700;color:#D9431C;background:#DDEEFF;border-radius:999px;padding:2px 12px;font-size:14px">{{ optCount }}/3</span>
+            </div>
+            <sc-if value="{{ showReqMsg }}">
+              <div style="padding:14px 18px;border-radius:22px;background:#FFE1E8;border:2px solid #FFB8C8;margin-bottom:12px">
+                <div style="font-weight:700;color:#B4284F">BOSS ขอเปลี่ยนตัวเลือก</div>
+                <div style="margin:2px 0 10px">{{ reqText }}</div>
+                <button onClick="{{ resolveReq }}" style="border:2px solid #FFB8C8;background:#fff;border-radius:999px;padding:6px 16px;font-weight:700;color:#B4284F">ปรับตัวเลือกแล้ว</button>
+              </div>
+            </sc-if>
+            <sc-if value="{{ hasOptions }}" hint-placeholder-val="{{ true }}">
+              <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+                <sc-for list="{{ options }}" as="o" hint-placeholder-count="3">
+                  <div onClick="{{ o.onClick }}" style="animation:{{ o.anim }};position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;padding:16px 12px 14px;border-radius:26px;background:{{ o.bg }};border:2.5px solid {{ o.bd }};box-shadow:0 5px 0 {{ o.bd }};cursor:{{ o.cursor }}" style-hover="transform:translateY(-3px)">
+                    <span style="position:absolute;top:10px;left:12px;width:30px;height:30px;border-radius:50%;background:#F2552C;color:#fff;font-weight:800;display:grid;place-items:center;font-size:15px">{{ o.n }}</span>
+                    <sc-if value="{{ o.canRemove }}">
+                      <button onClick="{{ o.remove }}" aria-label="ลบตัวเลือกนี้" style="position:absolute;top:8px;right:10px;width:32px;height:32px;border-radius:50%;border:2px solid #C5DBF2;background:#fff;font-size:18px;line-height:1;color:#56688C">×</button>
+                    </sc-if>
+                    <img src="{{ o.img }}" alt="" style="animation:{{ o.imgAnim }};width:88px;height:88px;object-fit:contain">
+                    <div style="font-size:16px;font-weight:700;line-height:1.25">{{ o.label }}</div>
+                    <div style="font-size:13px;color:#56688C">{{ o.cat }}</div>
+                    <div style="margin-top:6px;font-size:14px;font-weight:700;color:{{ o.actColor }}">{{ o.actText }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ noOptions }}">
+              <div style="display:flex;align-items:center;justify-content:center;gap:12px;padding:20px;border:2.5px dashed #C5DBF2;border-radius:26px;color:#56688C">
+                <img src="assets/icon/19.png" alt="" style="width:70px">{{ emptyOptText }}
+              </div>
+            </sc-if>
+
+            <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:18px">
+              <sc-if value="{{ isBoss }}">
+                <button onClick="{{ openChoice }}" style="border:0;background:#D9431C;color:#fff;border-radius:999px;padding:12px 22px;font-weight:700;font-size:16px;box-shadow:0 4px 0 #A8300F" style-active="transform:translateY(3px);box-shadow:0 1px 0 #A8300F">เลือกจากเมนูทั้งหมด</button>
+                <button onClick="{{ openDrink }}" style="border:2px solid #C5DBF2;background:#fff;border-radius:999px;padding:10px 20px;font-weight:700;font-size:16px;box-shadow:0 4px 0 #C5DBF2" style-active="transform:translateY(3px);box-shadow:0 1px 0 #C5DBF2">{{ drinkBtnText }}</button>
+                <button onClick="{{ doRandom }}" style="border:2px solid #8EC8F2;background:#DDF0FF;color:#1D4E89;border-radius:999px;padding:10px 20px;font-weight:700;font-size:16px;box-shadow:0 4px 0 #8EC8F2" style-active="transform:translateY(3px);box-shadow:0 1px 0 #8EC8F2">สุ่มให้หน่อย</button>
+              </sc-if>
+              <sc-if value="{{ isSec }}">
+                <button onClick="{{ openOption }}" disabled="{{ optsFull }}" style="border:0;background:#D9431C;color:#fff;border-radius:999px;padding:12px 22px;font-weight:700;font-size:16px;box-shadow:0 4px 0 #A8300F;opacity:{{ fullOpacity }}">+ เพิ่มตัวเลือก</button>
+                <button onClick="{{ fillDay }}" disabled="{{ optsFull }}" style="border:2px solid #8EC8F2;background:#DDF0FF;color:#1D4E89;border-radius:999px;padding:10px 20px;font-weight:700;font-size:16px;box-shadow:0 4px 0 #8EC8F2;opacity:{{ fullOpacity }}">สุ่มเติมให้ครบ 3</button>
+              </sc-if>
+            </div>
+
+            <sc-if value="{{ spinning }}">
+              <div style="margin-top:16px;display:flex;align-items:center;gap:16px;padding:16px 20px;border-radius:26px;background:#DDF0FF;border:2.5px dashed #6FB6EC">
+                <div style="width:110px;height:110px;display:grid;place-items:center">{{ spinEl }}</div>
+                <div style="font-size:24px;font-weight:800;color:#1D4E89">กำลังสุ่ม…</div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ hasSuggest }}">
+              <div style="margin-top:16px;display:flex;flex-wrap:wrap;align-items:center;gap:16px;padding:16px 20px;border-radius:26px;background:#DDF0FF;border:2.5px dashed #6FB6EC">
+                <img src="{{ suggestImg }}" alt="" style="width:110px;height:110px;object-fit:contain">
+                <div style="flex:1 1 200px;display:grid;gap:8px">
+                  <div style="font-size:14px;font-weight:600;color:#1D4E89">ลองอันนี้ไหม</div>
+                  <div style="font-size:26px;font-weight:800">{{ suggestLabel }}</div>
+                  <div style="display:flex;flex-wrap:wrap;gap:8px">
+                    <button onClick="{{ takeSuggest }}" style="border:0;background:#D9431C;color:#fff;border-radius:999px;padding:8px 18px;font-weight:700;box-shadow:0 3px 0 #A8300F">เอาอันนี้</button>
+                    <button onClick="{{ doRandom }}" style="border:2px solid #8EC8F2;background:#fff;border-radius:999px;padding:6px 16px;font-weight:700">สุ่มใหม่</button>
+                    <button onClick="{{ dropSuggest }}" style="border:0;background:none;padding:6px 10px;font-weight:600;color:#56688C">ไม่เอา</button>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ showCutoffHint }}"><p style="margin:14px 0 0;font-size:14px;color:#56688C">เลือกก่อน {{ cutoffText }} น. ถ้าเลยเวลา STAFF จะสั่งตัวเลือกที่ 1 ให้</p></sc-if>
+            <sc-if value="{{ showLateMsg }}">
+              <div style="margin-top:14px;padding:14px 18px;border-radius:22px;background:#DDF0FF;border:2px solid #8EC8F2">
+                <div style="font-weight:700;color:#1D4E89">เลยเวลา {{ cutoffText }} น. แล้ว</div>
+                <div style="margin:2px 0 10px">BOSS ยังไม่เลือก</div>
+                <button onClick="{{ useFirst }}" style="border:2px solid #8EC8F2;background:#fff;border-radius:999px;padding:6px 16px;font-weight:700">ใช้ตัวเลือกที่ 1</button>
+              </div>
+            </sc-if>
+          </section>
+
+          <sc-if value="{{ isSec }}">
+            <section>
+              <h3 style="margin:0 0 12px;font-size:22px;font-weight:800">สถานะการสั่ง</h3>
+              <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">
+                <sc-for list="{{ steps }}" as="s" hint-placeholder-count="4">
+                  <button onClick="{{ s.onClick }}" style="animation:{{ s.anim }};border:2.5px solid {{ s.bd }};background:{{ s.bg }};color:{{ s.fg }};border-radius:20px;padding:12px 8px;font-weight:700;font-size:15px">{{ s.t }}</button>
+                </sc-for>
+              </div>
+            </section>
+          </sc-if>
+        </sc-if>
+      </div>
+    </article>
+
+    <aside style="flex:1 1 100%;min-width:0;display:grid;gap:16px">
+      <sc-if value="{{ hasOtherNote }}">
+        <div style="position:relative;padding:16px 20px;border-radius:26px;background:#E6E7FF;border:2.5px solid #C9CBFF">
+          <div style="font-size:14px;font-weight:700;color:#4B4FC9">{{ otherNoteTitle }}</div>
+          <div style="font-size:17px">{{ otherNote }}</div>
+        </div>
+      </sc-if>
+      <div style="background:#fff;border-radius:30px;border:2.5px solid #C5DBF2;box-shadow:0 6px 0 #C5DBF2;padding:20px 22px;display:grid;gap:12px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <img src="assets/icon/13.png" alt="" style="width:54px">
+          <h3 style="margin:0;font-size:24px;font-weight:800">{{ noteTitle }}</h3>
+        </div>
+        <textarea value="{{ noteDraft }}" onChange="{{ onNote }}" placeholder="{{ notePlaceholder }}" style="width:100%;min-height:90px;resize:vertical;background:#F6FAFF;border:2px solid #C5DBF2;border-radius:20px;padding:12px 16px;font-size:15px;outline:none" style-focus="border-color:#F2552C"></textarea>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <button onClick="{{ saveNote }}" style="border:0;background:#D9431C;color:#fff;border-radius:999px;padding:10px 20px;font-weight:700;box-shadow:0 4px 0 #A8300F">บันทึกข้อความ</button>
+          <sc-if value="{{ isBoss }}"><button onClick="{{ changeReq }}" style="border:2px solid #FFB8C8;background:#FFE1E8;color:#B4284F;border-radius:999px;padding:8px 18px;font-weight:700;box-shadow:0 4px 0 #FFB8C8">ขอเปลี่ยนตัวเลือก</button></sc-if>
+        </div>
+      </div>
+      <sc-if value="{{ isBoss }}">
+        <div style="background:#fff;border-radius:30px;border:2.5px solid #C5DBF2;box-shadow:0 6px 0 #C5DBF2;padding:20px 22px;display:grid;gap:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <img src="assets/icon/16.png" alt="" style="width:58px">
+            <h3 style="margin:0;font-size:24px;font-weight:800">วันนี้มีธุระไหม</h3>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <sc-for list="{{ awayChips }}" as="a" hint-placeholder-count="3">
+              <button onClick="{{ a.onClick }}" style="animation:{{ a.anim }};border:2px solid {{ a.bd }};background:{{ a.bg }};color:{{ a.fg }};border-radius:999px;padding:8px 16px;font-size:15px;font-weight:600">{{ a.t }}</button>
+            </sc-for>
+          </div>
+          <p style="margin:0;font-size:13px;color:#56688C">กดอีกครั้งเพื่อยกเลิก</p>
+        </div>
+      </sc-if>
+      <sc-if value="{{ isSec }}">
+        <div style="background:#fff;border-radius:30px;border:2.5px solid #C5DBF2;box-shadow:0 6px 0 #C5DBF2;padding:20px 22px;display:grid;gap:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <img src="assets/icon/15.png" alt="" style="width:54px">
+            <h3 style="margin:0;font-size:24px;font-weight:800">เวลาปิดรับเลือกเมนู</h3>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="time" value="{{ cutoffDraft }}" onChange="{{ onCutoff }}" style="max-width:150px;background:#F6FAFF;border:2px solid #C5DBF2;border-radius:16px;padding:10px 14px;font-size:16px">
+            <button onClick="{{ saveCutoff }}" style="border:2px solid #C5DBF2;background:#fff;border-radius:999px;padding:8px 18px;font-weight:700;box-shadow:0 4px 0 #C5DBF2">บันทึก</button>
+          </div>
+          <p style="margin:0;font-size:13px;color:#56688C">ถ้า BOSS ยังไม่เลือกเกินเวลานี้ จะมีปุ่มให้ใช้ตัวเลือกที่ 1</p>
+        </div>
+      </sc-if>
+    </aside>
+  </div>
+</sc-if>
+
+<!-- ================= WEEK ================= -->
+<sc-if value="{{ isWeek }}">
+  <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <button onClick="{{ prevWeek }}" aria-label="สัปดาห์ก่อน" style="width:44px;height:48px;border-radius:16px;border:2px solid #C5DBF2;background:#fff;font-size:22px;font-weight:700;color:#56688C">‹</button>
+      <h2 style="margin:0;font-size:28px;font-weight:800;color:#F2552C;text-shadow:3px 3px 0 #fff">{{ weekRange }}</h2>
+      <button onClick="{{ nextWeek }}" aria-label="สัปดาห์หน้า" style="width:44px;height:48px;border-radius:16px;border:2px solid #C5DBF2;background:#fff;font-size:22px;font-weight:700;color:#56688C">›</button>
+    </div>
+    <sc-if value="{{ isSec }}"><button onClick="{{ fillWeek }}" style="border:0;background:#D9431C;color:#fff;border-radius:999px;padding:12px 22px;font-weight:700;font-size:16px;box-shadow:0 4px 0 #A8300F">สุ่มตัวเลือกให้วันที่ยังว่าง</button></sc-if>
+    <sc-if value="{{ isBoss }}"><span style="font-size:15px;color:#56688C">แตะวันเพื่อเลือกเมนู</span></sc-if>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+    <sc-for list="{{ weekCards }}" as="w" hint-placeholder-count="5">
+      <button onClick="{{ w.onClick }}" style="text-align:left;display:flex;flex-direction:column;gap:8px;background:#fff;border-radius:24px;border:2.5px solid {{ w.bd }};box-shadow:0 5px 0 {{ w.bd }};padding:12px 12px 14px;min-width:0" style-hover="transform:translateY(-3px)">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:0 6px">
+          <b style="font-size:20px;font-weight:800">{{ w.dayName }}</b><span style="font-size:13px;color:#56688C">{{ w.date }}</span>
+        </div>
+        <span style="align-self:flex-start;padding:3px 12px;border-radius:999px;font-weight:700;font-size:13px;background:{{ w.pillBg }};color:{{ w.pillFg }}">{{ w.pillText }}</span>
+        <sc-if value="{{ w.hasChoice }}">
+          <img src="{{ w.img }}" alt="" style="animation:chibiJump 1.6s ease-in-out infinite;width:84px;height:84px;object-fit:contain;align-self:center">
+          <div style="font-weight:700;font-size:17px;line-height:1.25">{{ w.label }}</div>
+        </sc-if>
+        <sc-if value="{{ w.hasOpts }}">
+          <ol style="margin:0;padding-left:20px;font-size:14px;color:#56688C">
+            <sc-for list="{{ w.opts }}" as="wo"><li>{{ wo.t }}</li></sc-for>
+          </ol>
+        </sc-if>
+        <sc-if value="{{ w.isEmpty }}"><span style="font-size:14px;color:#56688C">ยังไม่มีตัวเลือก</span></sc-if>
+        <sc-if value="{{ w.hasDrink }}"><span style="font-size:14px;color:#56688C">+ {{ w.drink }}</span></sc-if>
+        <sc-if value="{{ w.req }}"><span style="font-size:14px;font-weight:700;color:#B4284F">BOSS ขอเปลี่ยน</span></sc-if>
+      </button>
+    </sc-for>
+  </div>
+</sc-if>
+
+<!-- ================= MENU ================= -->
+<sc-if value="{{ isMenu }}">
+  <div style="display:flex;flex-wrap:wrap;gap:18px;margin-bottom:28px">
+    <div style="flex:1 1 100%;background:#fff;border-radius:30px;border:2.5px solid #C5DBF2;box-shadow:0 6px 0 #C5DBF2;padding:20px 24px;display:grid;gap:12px;align-content:start">
+      <div style="display:flex;align-items:center;gap:10px">
+        <img src="assets/icon/20.png" alt="" style="width:64px">
+        <h3 style="margin:0;font-size:26px;font-weight:800">เลือกบ่อยที่สุด</h3>
+      </div>
+      <sc-if value="{{ hasTop }}">
+        <div style="display:grid;gap:6px">
+          <sc-for list="{{ top5 }}" as="t">
+            <div style="display:flex;align-items:center;gap:10px;font-size:16px">
+              <span style="width:28px;height:28px;flex:none;border-radius:50%;background:#DDEEFF;color:#D9431C;font-weight:800;display:grid;place-items:center;font-size:14px">{{ t.rank }}</span>
+              <span style="flex:1;min-width:0">{{ t.name }}</span><span style="font-size:13px;color:#56688C">{{ t.count }} ครั้ง</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ noTop }}"><p style="margin:0;color:#56688C">ยังไม่มีประวัติ เริ่มเลือกเมนูแล้วจะเห็นอันดับตรงนี้</p></sc-if>
+      <p style="margin:0;font-size:13px;color:#56688C">กด ♥ เมนูที่ชอบ ปุ่มสุ่มจะเลือกเมนูที่ชอบบ่อยขึ้น</p>
+    </div>
+    <sc-if value="{{ isSec }}">
+      <div style="flex:1 1 100%;background:#fff;border-radius:30px;border:2.5px solid #C5DBF2;box-shadow:0 6px 0 #C5DBF2;padding:20px 24px;display:grid;gap:10px;align-content:start">
+        <div style="display:flex;align-items:center;gap:10px">
+          <img src="assets/icon/12.png" alt="" style="width:60px">
+          <h3 style="margin:0;font-size:26px;font-weight:800">เพิ่มเมนูใหม่</h3>
+        </div>
+        <input type="text" value="{{ fName }}" onChange="{{ onFName }}" placeholder="ชื่อเมนู เช่น ข้าวมันไก่" style="background:#F6FAFF;border:2px solid #C5DBF2;border-radius:18px;padding:11px 16px;font-size:15px;outline:none" style-focus="border-color:#F2552C">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px">
+          <select value="{{ fCat }}" onChange="{{ onFCat }}" style="background:#F6FAFF;border:2px solid #C5DBF2;border-radius:18px;padding:11px 14px;font-size:15px">
+            <sc-for list="{{ catOptions }}" as="co"><option value="{{ co.k }}">{{ co.l }}</option></sc-for>
+          </select>
+          <input type="text" value="{{ fOpts }}" onChange="{{ onFOpts }}" placeholder="ตัวเลือก คั่นด้วย ," style="background:#F6FAFF;border:2px solid #C5DBF2;border-radius:18px;padding:11px 16px;font-size:15px;outline:none" style-focus="border-color:#F2552C">
+        </div>
+        <button onClick="{{ addMenu }}" style="justify-self:start;border:0;background:#D9431C;color:#fff;border-radius:999px;padding:10px 22px;font-weight:700;box-shadow:0 4px 0 #A8300F">เพิ่มเข้าคลังเมนู</button>
+      </div>
+    </sc-if>
+    <sc-if value="{{ isBoss }}">
+      <div style="flex:1 1 100%;background:#DDF0FF;border-radius:30px;border:2.5px solid #8EC8F2;padding:20px 24px;display:flex;align-items:center;gap:14px">
+        <img src="assets/icon/17.png" alt="" style="width:80px;flex:none">
+        <div><h3 style="margin:0 0 4px;font-size:24px;font-weight:800">คลังเมนู</h3><p style="margin:0;color:#1D4E89">STAFF เป็นคนดูแลรายการเมนู BOSS กด ♥ เมนูที่ชอบได้เลย</p></div>
+      </div>
+    </sc-if>
+  </div>
+
+  <sc-for list="{{ sections }}" as="sec" hint-placeholder-count="3">
+    <section style="margin-bottom:32px">
+      <sc-if value="{{ sec.groupImg }}"><img src="{{ sec.groupImg }}" alt="{{ sec.groupLabel }}" style="height:64px;margin:8px 0 16px;display:block"></sc-if>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <sc-if value="{{ sec.hasImg }}"><img src="{{ sec.img }}" alt="{{ sec.label }}" style="height:60px;display:block"></sc-if>
+        <sc-if value="{{ sec.noImg }}"><span style="display:inline-block;background:#F2552C;color:#fff;font-weight:800;font-size:24px;padding:6px 20px;border-radius:18px;transform:rotate(-2deg);box-shadow:0 4px 0 #A8300F;border:3px solid #fff">{{ sec.label }}</span></sc-if>
+        <span style="font-size:14px;color:#56688C">{{ sec.count }} รายการ</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+        <sc-for list="{{ sec.items }}" as="it">
+          <div style="position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;padding:14px 12px;background:#fff;border-radius:24px;border:2.5px solid #C5DBF2;box-shadow:0 5px 0 #C5DBF2;opacity:{{ it.opacity }}">
+            <button onClick="{{ it.onFav }}" aria-label="ชอบเมนูนี้" style="animation:{{ it.favAnim }};position:absolute;top:8px;right:10px;border:0;background:none;font-size:22px;line-height:1;color:{{ it.favColor }}">♥</button>
+            <img src="{{ it.img }}" alt="" style="width:88px;height:88px;object-fit:contain">
+            <div style="font-weight:700;font-size:16px;line-height:1.25">{{ it.name }}</div>
+            <sc-if value="{{ it.hasOpts }}"><div style="font-size:12px;color:#56688C">{{ it.opts }}</div></sc-if>
+            <div style="font-size:12px;font-weight:600;color:#D9431C;background:#DDEEFF;border-radius:999px;padding:1px 10px;margin-top:2px">{{ it.count }} ครั้ง</div>
+            <sc-if value="{{ isSec }}">
+              <div style="display:flex;gap:6px;margin-top:6px">
+                <sc-if value="{{ it.confirming }}">
+                  <button onClick="{{ it.onDel }}" style="border:2px solid #FFB8C8;background:#FFE1E8;color:#B4284F;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700">ยืนยันลบ</button>
+                  <button onClick="{{ cancelDel }}" style="border:2px solid #C5DBF2;background:#fff;border-radius:999px;padding:3px 10px;font-size:12px">ยกเลิก</button>
+                </sc-if>
+                <sc-if value="{{ it.notConfirming }}">
+                  <button onClick="{{ it.onHide }}" style="border:2px solid #C5DBF2;background:#fff;border-radius:999px;padding:3px 10px;font-size:12px;color:#56688C">{{ it.hideText }}</button>
+                  <button onClick="{{ it.onAskDel }}" style="border:2px solid #C5DBF2;background:#fff;border-radius:999px;padding:3px 10px;font-size:12px;color:#56688C">ลบ</button>
+                </sc-if>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </sc-for>
+</sc-if>
+
+</sc-if>
+<sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:60px;color:#56688C"><img src="assets/food/16.png" alt="" style="width:120px">กำลังโหลดแผนมื้อเที่ยง…</div>
+</sc-if>
+</main>
+
+<!-- ================= PICKER ================= -->
+<sc-if value="{{ pickOpen }}">
+  <div onClick="{{ closePick }}" style="position:absolute;inset:0;z-index:20;background:rgba(27,43,90,.45);display:flex;align-items:flex-end;justify-content:center">
+    <div onClick="{{ stop }}" role="dialog" aria-modal="true" style="width:100%;max-height:88%;display:flex;flex-direction:column;background:#F6FAFF;border-radius:32px 32px 0 0;box-shadow:0 -10px 40px -10px rgba(27,43,90,.4);overflow:hidden">
+      <div style="padding:20px 22px 14px;display:grid;gap:12px;background:#DDEEFF;border-bottom:2.5px dashed #B3D0EE">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+          <h3 style="margin:0;font-size:24px;font-weight:800;color:#F2552C;text-shadow:2px 2px 0 #fff">{{ pickTitle }}</h3>
+          <button onClick="{{ closePick }}" style="border:2px solid #C5DBF2;background:#fff;border-radius:999px;padding:6px 16px;font-weight:700">ปิด</button>
+        </div>
+        <input type="search" value="{{ pickQ }}" onChange="{{ onPickQ }}" placeholder="ค้นหาเมนู เช่น กะเพรา" autocomplete="off" style="background:#fff;border:2px solid #C5DBF2;border-radius:999px;padding:11px 18px;font-size:16px;outline:none" style-focus="border-color:#F2552C">
+        <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:2px">
+          <sc-for list="{{ pickCats }}" as="pc" hint-placeholder-count="5">
+            <button onClick="{{ pc.onClick }}" style="animation:{{ pc.anim }};flex:none;white-space:nowrap;border:2px solid {{ pc.bd }};background:{{ pc.bg }};color:{{ pc.fg }};border-radius:999px;padding:5px 14px;font-size:14px;font-weight:600">{{ pc.t }}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="overflow-y:auto;padding:16px 18px calc(22px + env(safe-area-inset-bottom,0px))">
+        <sc-if value="{{ pickHasOpen }}">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px;padding:14px 18px;margin-bottom:16px;border-radius:26px;background:#FFF0E4;border:2.5px solid #FFC79E">
+            <img src="{{ pickOpenImg }}" alt="" style="width:90px;height:90px;object-fit:contain">
+            <div style="flex:1 1 220px;display:grid;gap:8px">
+              <div style="font-size:20px;font-weight:800">เลือกแบบของ {{ pickOpenName }}</div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px">
+                <sc-for list="{{ pickOpenOpts }}" as="po">
+                  <button onClick="{{ po.onClick }}" style="border:0;background:#D9431C;color:#fff;border-radius:999px;padding:7px 16px;font-weight:700;font-size:14px;box-shadow:0 3px 0 #A8300F">{{ po.t }}</button>
+                </sc-for>
+              </div>
+            </div>
+            <button onClick="{{ pickBack }}" style="border:0;background:none;color:#56688C;font-weight:600">ย้อนกลับ</button>
+          </div>
+        </sc-if>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+          <sc-for list="{{ pickItems }}" as="pi" hint-placeholder-count="8">
+            <button onClick="{{ pi.onClick }}" style="animation:{{ pi.anim }};position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;padding:12px 10px;background:#fff;border-radius:22px;border:2.5px solid {{ pi.bd }};box-shadow:0 4px 0 {{ pi.bd }}" style-hover="transform:translateY(-3px)">
+              <sc-if value="{{ pi.fav }}"><span style="position:absolute;top:8px;right:10px;color:#E8476B;font-size:16px">♥</span></sc-if>
+              <img src="{{ pi.img }}" alt="" style="width:78px;height:78px;object-fit:contain">
+              <span style="font-weight:700;font-size:15px;line-height:1.25">{{ pi.name }}</span>
+              <span style="font-size:12px;color:#56688C">{{ pi.sub }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <sc-if value="{{ pickEmpty }}">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:30px;color:#56688C"><img src="assets/icon/19.png" alt="" style="width:90px">ไม่พบเมนูที่ค้นหา</div>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+</sc-if>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const KEY = "chibi-lunch-v1";
+const FB = "https://www.gstatic.com/firebasejs/10.12.2/";
+const CLOUD = !!window.FIREBASE_CONFIG;
+const P = typeof window.FIREBASE_PREFIX === "string" ? window.FIREBASE_PREFIX : "lunch_";
+const clean = o => JSON.parse(JSON.stringify(o));
+const loadScript = src => new Promise((res, rej) => { const el = document.createElement("script"); el.src = src; el.onload = res; el.onerror = () => rej(new Error("load " + src)); document.head.appendChild(el); });
+const CATS = {
+  kaprao:{l:"ผัดกะเพรา",k:"food",h:"assets/header/23.png"}, rice:{l:"ข้าวผัด",k:"food",h:"assets/header/24.png"}, garlic:{l:"ทอดกระเทียมพริกไทย",k:"food",h:"assets/header/25.png"},
+  stirfry:{l:"ผัดพริกแกง / ผัดผัก",k:"food"}, noodle:{l:"เมนูเส้น",k:"food"}, egg:{l:"ไข่และซุป",k:"food"},
+  tea:{l:"ชาและกาแฟ",k:"drink"}, milk:{l:"นมและช็อกโกแลต",k:"drink"}, soda:{l:"อิตาเลียนโซดา / น้ำอัดลม",k:"drink"}, herbal:{l:"น้ำสมุนไพรและผลไม้",k:"drink"}
+};
+const ST = {
+  plan:{t:"รอ BOSS เลือก",fg:"#B4284F",bg:"#FFE1E8",dot:"#FF7A93"},
+  chosen:{t:"เลือกแล้ว รอสั่ง",fg:"#1D4E89",bg:"#DDF0FF",dot:"#3A9BE0"},
+  ordered:{t:"สั่งแล้ว",fg:"#3F43B8",bg:"#E6E7FF",dot:"#7C83F5"},
+  arrived:{t:"มาถึงแล้ว",fg:"#136B43",bg:"#D9F5E6",dot:"#2FB67C"},
+  away:{fg:"#6E5E54",bg:"#EFE6DD",dot:"#BFAFA3"}
+};
+const AWAY = {skip:"ไม่ทานกลางวัน", out:"ประชุมข้างนอก", client:"เลี้ยงลูกค้า"};
+const EXTRAS = ["ไข่ดาว","ไข่เจียว","พิเศษ","ไม่เผ็ด","เผ็ดน้อย","ข้าวเพิ่ม"];
+const DAYF = ["อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัสบดี","ศุกร์","เสาร์"];
+const DAYS = ["อา.","จ.","อ.","พ.","พฤ.","ศ.","ส."];
+const MON = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+const pad = n => String(n).padStart(2,"0");
+const ymd = d => d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const parse = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y,m-1,d); };
+const addDays = (s,n) => { const d = parse(s); d.setDate(d.getDate()+n); return ymd(d); };
+const mondayOf = s => { const d = parse(s); d.setDate(d.getDate()-((d.getDay()+6)%7)); return ymd(d); };
+const weekOf = s => { const m = mondayOf(s); return [0,1,2,3,4].map(i => addDays(m,i)); };
+const todayStr = () => ymd(new Date());
+const defaultSel = () => { const d = new Date(); const w = d.getDay(); if (w===6) d.setDate(d.getDate()+2); if (w===0) d.setDate(d.getDate()+1); return ymd(d); };
+const fmtDate = s => { const d = parse(s); return d.getDate()+" "+MON[d.getMonth()]; };
+const blank = date => ({date, options:[], choice:null, drink:null, bossNote:"", secNote:"", changeReq:false, status:"plan", away:""});
+const POP = "chibiPop .5s cubic-bezier(.3,1.5,.5,1)";
+const ON = {bg:"#1B2B5A", fg:"#fff", bd:"#1B2B5A", anim:POP}, OFF = {bg:"#fff", fg:"#1B2B5A", bd:"#C5DBF2", anim:"none"};
+
+class Component extends DCLogic {
+  state = { ready:false };
+  componentDidMount(){ const go = () => { if (!window.LUNCH_MENUS) { this._t = setTimeout(go, 40); return; } this.boot(); }; go(); }
+  componentWillUnmount(){ clearTimeout(this._t); clearTimeout(this._fail); clearInterval(this._spin); (this._unsubs||[]).forEach(u => u()); }
+  boot(){
+    let saved = null, ui = {};
+    try { saved = JSON.parse(localStorage.getItem(KEY)); } catch(e) {}
+    try { ui = JSON.parse(localStorage.getItem(KEY+"-ui")) || {}; } catch(e) {}
+    const menus = saved && saved.menus ? saved.menus : JSON.parse(JSON.stringify(window.LUNCH_MENUS));
+    const sel = defaultSel();
+    const days = (saved && saved.days) || {};
+    this.setState({ready: !CLOUD || !!saved, syncErr:"", online:false, menus, days, cutoff:(saved && saved.cutoff) || "10:30", cutoffDraft:(saved && saved.cutoff) || "10:30",
+      role: ui.role==="sec" ? "sec" : "boss", view: ["day","week","menu"].includes(ui.view) ? ui.view : "day",
+      sel, pick:null, suggest:null, spin:null, drafts:{}, confirmDel:null, fName:"", fCat:"kaprao", fOpts:""});
+    if (CLOUD) this.connect();
+  }
+  async connect(){
+    const fail = e => { clearTimeout(this._fail); this.setState({ready:true, online:false, syncErr: e && e.code==="permission-denied" ? "ฐานข้อมูลไม่อนุญาตให้ใช้งาน ตรวจสอบ Rules ของ Firestore" : "เชื่อมต่อฐานข้อมูลไม่ได้ ตอนนี้แสดงข้อมูลล่าสุดที่เก็บในเครื่อง"}); };
+    this._fail = setTimeout(() => fail(null), 10000);
+    try {
+      if (!window.firebase) { await loadScript(FB+"firebase-app-compat.js"); await loadScript(FB+"firebase-firestore-compat.js"); }
+      if (!firebase.apps.length) firebase.initializeApp(window.FIREBASE_CONFIG);
+      const fs = this.fs = firebase.firestore();
+      let gotM = false, gotD = false;
+      const done = () => { if (gotM && gotD) { clearTimeout(this._fail); this.setState({ready:true, online:true, syncErr:""}); } };
+      this._unsubs = [
+        fs.collection(P+"menus").onSnapshot(snap => {
+          if (snap.empty) {
+            if (!this._seeded) { this._seeded = true; const b = fs.batch(); window.LUNCH_MENUS.forEach(m => b.set(fs.collection(P+"menus").doc(m.id), clean(m))); b.commit().catch(fail); }
+            return;
+          }
+          gotM = true; this.persist({menus: snap.docs.map(d => ({...d.data(), id:d.id})).sort((a,b) => (a.ord??999)-(b.ord??999))}); done();
+        }, fail),
+        fs.collection(P+"days").onSnapshot(snap => { const days = {}; snap.docs.forEach(d => { days[d.id] = d.data(); }); gotD = true; this.persist({days}); done(); }, fail),
+        fs.doc(P+"settings/main").onSnapshot(d => { const c = d.exists && d.data().cutoff; if (c && c !== this.state.cutoff) this.persist({cutoff:c, cutoffDraft:c}); }, () => {})
+      ];
+    } catch (e) { fail(e); }
+  }
+  cloudSet(path, data){ if (!this.fs) return; this.fs.doc(P+path).set(clean(data)).catch(() => this.setState({syncErr:"บันทึกขึ้นระบบไม่สำเร็จ ตรวจสอบอินเทอร์เน็ตแล้วลองใหม่"})); }
+  cloudDel(path){ if (!this.fs) return; this.fs.doc(P+path).delete().catch(() => this.setState({syncErr:"ลบไม่สำเร็จ ลองใหม่อีกครั้ง"})); }
+  persist(patch){
+    this.setState(patch, () => { const s = this.state; try { localStorage.setItem(KEY, JSON.stringify({menus:s.menus, days:s.days, cutoff:s.cutoff})); } catch(e) {} });
+  }
+  setUi(patch){ this.setState(patch, () => { try { localStorage.setItem(KEY+"-ui", JSON.stringify({role:this.state.role, view:this.state.view})); } catch(e) {} }); }
+  menu(id){ return this.state.menus.find(m => m.id===id); }
+  day(date){ return Object.assign(blank(date), this.state.days[date] || {}); }
+  label(sel){ if (!sel) return ""; const m = this.menu(sel.m); if (!m) return "เมนูที่ถูกลบไปแล้ว"; if (!sel.o) return m.name; return m.t ? m.t.replace("{o}", sel.o) : m.name + sel.o; }
+  img(sel){ const m = sel && this.menu(sel.m); if (!m) return "assets/food/16.png"; return (sel.o && m.optImg && m.optImg[sel.o]) || m.img || (m.kind==="drink" ? "assets/drink/24.png" : "assets/food/15.png"); }
+  catOf(sel){ const m = sel && this.menu(sel.m); return m && CATS[m.cat] ? CATS[m.cat].l : ""; }
+  saveDay(date, patch){ const body = Object.assign(this.day(date), patch, {date, updatedAt: Date.now()}); this.persist({days: {...this.state.days, [date]: body}}); this.cloudSet("days/"+date, body); }
+  saveMenu(id, patch){ const cur = this.menu(id); if (!cur) return; const m = {...cur, ...patch}; this.persist({menus: this.state.menus.map(x => x.id===id ? m : x)}); this.cloudSet("menus/"+id, m); }
+  recent(date, n){ const out = new Set(); for (let i=1;i<=n;i++) for (const s of [addDays(date,-i), addDays(date,i)]) { const d = this.state.days[s]; if (d && d.choice) out.add(d.choice.m); } return out; }
+  randomFood(avoid){
+    const pool = this.state.menus.filter(m => m.kind==="food" && !m.hidden && !avoid.has(m.id));
+    if (!pool.length) return null;
+    const w = pool.flatMap(m => m.fav ? [m,m,m] : [m]); const m = w[Math.floor(Math.random()*w.length)];
+    return {m:m.id, o: m.opts && m.opts.length ? m.opts[Math.floor(Math.random()*m.opts.length)] : ""};
+  }
+  fill(date, opts){ const out = [...opts]; const avoid = new Set([...this.recent(date,5), ...out.map(o => o.m)]); let g = 0;
+    while (out.length<3 && g++<20) { const p = this.randomFood(avoid) || this.randomFood(new Set()); if (!p) break; avoid.add(p.m); out.push(p); } return out; }
+  doRandom(){
+    const pool = this.state.menus.filter(m => m.kind==="food" && !m.hidden); if (!pool.length) return;
+    clearInterval(this._spin); let n = 0;
+    this.setState({suggest:null, spin:pool[0].img});
+    this._spin = setInterval(() => {
+      if (++n >= 14) { clearInterval(this._spin); const p = this.randomFood(this.recent(this.state.sel,5)) || this.randomFood(new Set()); this.setState({spin:null, suggest: p ? {date:this.state.sel, pick:p} : null}); return; }
+      this.setState({spin: pool[Math.floor(Math.random()*pool.length)].img});
+    }, 85);
+  }
+  pastCutoff(date){ if (date !== todayStr()) return date < todayStr(); const [h,mi] = (this.state.cutoff||"10:30").split(":").map(Number); const n = new Date(); return n.getHours()*60+n.getMinutes() >= h*60+mi; }
+  openPick(mode){ this.setState({pick:{mode, kind: mode==="drink" ? "drink" : "food", q:"", cat:"", open:null}}); }
+  picked(sel){
+    const P = this.state.pick, d = this.day(this.state.sel); this.setState({pick:null});
+    if (P.mode==="option") { if (d.options.length<3) this.saveDay(this.state.sel, {options:[...d.options, sel]}); }
+    else if (P.mode==="choice") this.saveDay(this.state.sel, {choice:{...sel, x:[]}, status:"chosen", changeReq:false, away:""});
+    else this.saveDay(this.state.sel, {drink:sel});
+  }
+  chooseSel(sel){ this.saveDay(this.state.sel, {choice:{m:sel.m, o:sel.o||"", x:[]}, status:"chosen", changeReq:false, away:""}); }
+
+  renderVals(){
+    const s = this.state;
+    if (!s.ready) return {ready:false, loading:true, tabs:[], pickOpen:false, hasSyncErr:false, syncText:"", syncColor:"#56688C"};
+    const boss = s.role==="boss", d = this.day(s.sel), dt = parse(s.sel), t = todayStr();
+    const k = d.away ? "away" : d.status, stv = ST[k];
+    const tabs = [["day","รายวัน","assets/icon/13.png"],["week","ทั้งสัปดาห์","assets/icon/21.png"],["menu","คลังเมนู","assets/icon/19.png"]].map(([v,l,i]) => {
+      const on = s.view===v; return {label:l, icon:i, bg: on ? "#1B2B5A" : "#fff", fg: on ? "#fff" : "#1B2B5A", bd: on ? "#0F1A3A" : "#C5DBF2", anim: on ? POP : "none", onClick: () => this.setUi({view:v})};
+    });
+    const shift = n => () => this.setState({sel: addDays(s.sel, n), suggest:null});
+    const strip = weekOf(s.sel).map(x => { const dd = this.day(x), on = x===s.sel, kk = dd.away ? "away" : dd.status;
+      return {dow: DAYS[parse(x).getDay()], num: parse(x).getDate(), isToday: x===t, dot: ST[kk].dot, bg: on ? "#DDEEFF" : "#fff", bd: on ? "#F2552C" : "#C5DBF2", lift: on ? "-3px" : "0", anim: on ? POP : "none", onClick: () => this.setState({sel:x, suggest:null})}; });
+    const hasChoice = !d.away && !!d.choice;
+    const options = d.options.map((o,i) => {
+      const sel = d.choice && d.choice.m===o.m && (d.choice.o||"")===(o.o||"");
+      return {n:i+1, label:this.label(o), cat:this.catOf(o), img:this.img(o), bg: sel ? "#FFF0E4" : "#fff", bd: sel ? "#3A9BE0" : "#C5DBF2", anim: sel ? POP : "none", imgAnim: sel ? "chibiJump 1.6s ease-in-out infinite" : "none",
+        cursor: boss ? "pointer" : "default", onClick: boss ? () => this.chooseSel(o) : undefined,
+        actText: boss ? (sel ? "✓ เลือกแล้ว" : "เลือกอันนี้") : (sel ? "BOSS เลือกอันนี้" : ""), actColor: sel ? "#1D4E89" : "#D9431C",
+        canRemove: !boss, remove: e => { e.stopPropagation(); this.saveDay(s.sel, {options: d.options.filter((_,j) => j!==i)}); }};
+    });
+    const full = d.options.length>=3;
+    const otherNote = boss ? d.secNote : d.bossNote;
+    const draftKey = s.sel+"-"+s.role;
+    const noteDraft = s.drafts[draftKey] ?? (boss ? d.bossNote : d.secNote);
+    const mkChip = (on, onClick, t) => ({t, onClick, ...(on ? ON : OFF)});
+
+    // week
+    const wk = weekOf(s.sel);
+    const weekCards = wk.map(x => { const dd = this.day(x), kk = dd.away ? "away" : dd.status, sv = ST[kk];
+      return {dayName: DAYF[parse(x).getDay()], date: fmtDate(x), pillText: dd.away ? AWAY[dd.away] : sv.t, pillBg: sv.bg, pillFg: sv.fg,
+        hasChoice: !dd.away && !!dd.choice, img: this.img(dd.choice), label: this.label(dd.choice),
+        hasOpts: !dd.away && !dd.choice && dd.options.length>0, opts: dd.options.map(o => ({t:this.label(o)})),
+        isEmpty: !dd.away && !dd.choice && !dd.options.length, hasDrink: !dd.away && !!dd.drink, drink: this.label(dd.drink), req: !!dd.changeReq,
+        bd: x===t ? "#F2552C" : "#C5DBF2", onClick: () => this.setState({sel:x}, () => this.setUi({view:"day"}))}; });
+
+    // menu
+    const byMenu = new Map(), byLabel = new Map();
+    for (const dd of Object.values(s.days)) { if (dd.away) continue; for (const x of [dd.choice, dd.drink]) if (x) byMenu.set(x.m, (byMenu.get(x.m)||0)+1); if (dd.choice) { const l = this.label(dd.choice); byLabel.set(l, (byLabel.get(l)||0)+1); } }
+    const top5 = [...byLabel.entries()].sort((a,b) => b[1]-a[1]).slice(0,5).map(([name,count],i) => ({rank:i+1, name, count}));
+    const list = [...s.menus].sort((a,b) => (a.ord??999)-(b.ord??999));
+    let firstDrink = true;
+    const sections = Object.entries(CATS).map(([ck,c]) => {
+      const items = list.filter(m => m.cat===ck); if (!items.length) return null;
+      const groupImg = c.k==="drink" && firstDrink ? (firstDrink = false, "assets/header/27.png") : "";
+      return {label:c.l, hasImg: !!c.h, noImg: !c.h, img:c.h, groupImg, groupLabel:"เมนูน้ำและเครื่องดื่ม", count: items.length,
+        items: items.map(m => ({name:m.name, img: this.img({m:m.id}), hasOpts: !!(m.opts && m.opts.length), opts: (m.opts||[]).join(" · "),
+          count: byMenu.get(m.id)||0, favAnim: m.fav ? POP : "none", favColor: m.fav ? "#E8476B" : "#C5DBF2", opacity: m.hidden ? .5 : 1,
+          onFav: () => this.saveMenu(m.id, {fav: !m.fav}), onHide: () => this.saveMenu(m.id, {hidden: !m.hidden}), hideText: m.hidden ? "แสดง" : "ซ่อน",
+          confirming: s.confirmDel===m.id, notConfirming: s.confirmDel!==m.id, onAskDel: () => this.setState({confirmDel:m.id}),
+          onDel: () => { this.persist({confirmDel:null, menus: s.menus.filter(x => x.id!==m.id)}); this.cloudDel("menus/"+m.id); }}))};
+    }).filter(Boolean);
+
+    // picker
+    const P = s.pick; let pickVals = {pickOpen:false};
+    if (P) {
+      const q = (P.q||"").trim();
+      const cats = Object.entries(CATS).filter(([,c]) => c.k===P.kind);
+      const items = list.filter(m => m.kind===P.kind && !m.hidden && (!P.cat || (P.cat==="fav" ? m.fav : m.cat===P.cat)) &&
+        (!q || m.name.includes(q) || (m.opts||[]).some(o => o.includes(q) || this.label({m:m.id,o}).includes(q))));
+      const om = P.open && this.menu(P.open);
+      pickVals = {pickOpen:true, pickTitle: {option:"เพิ่มตัวเลือกให้ BOSS", choice:"เลือกเมนูอาหาร", drink:"เลือกเครื่องดื่ม"}[P.mode], pickQ: P.q,
+        onPickQ: e => this.setState({pick:{...P, q:e.target.value, open:null}}),
+        pickCats: [["","ทั้งหมด"],["fav","♥ ที่ชอบ"], ...cats.map(([k,c]) => [k,c.l])].map(([v,l]) => ({t:l, ...(P.cat===v ? ON : OFF), onClick: () => this.setState({pick:{...P, cat:v, open:null}})})),
+        pickItems: items.map(m => ({name:m.name, img:this.img({m:m.id}), fav:!!m.fav, bd: P.open===m.id ? "#F2552C" : "#C5DBF2", anim: P.open===m.id ? POP : "none",
+          sub: (CATS[m.cat] ? CATS[m.cat].l : "") + (m.opts && m.opts.length ? " · "+m.opts.length+" แบบ" : ""),
+          onClick: () => (m.opts && m.opts.length) ? this.setState({pick:{...P, open: P.open===m.id ? null : m.id}}) : this.picked({m:m.id, o:""})})),
+        pickEmpty: !items.length, pickHasOpen: !!om, pickOpenName: om ? om.name : "", pickOpenImg: om ? this.img({m:om.id}) : "",
+        pickOpenOpts: om ? om.opts.map(o => ({t:this.label({m:om.id,o}), onClick: () => this.picked({m:om.id, o})})) : [],
+        pickBack: () => this.setState({pick:{...P, open:null}})};
+    }
+
+    return {
+      ready:true, loading:false, isBoss:boss, isSec:!boss,
+      hasSyncErr: !!s.syncErr, syncErr: s.syncErr, syncText: CLOUD ? (s.online ? "ออนไลน์" : "ออฟไลน์") : "เครื่องนี้", syncColor: CLOUD ? (s.online ? "#2FB67C" : "#B4284F") : "#56688C",
+      roleBossAnim: boss ? POP : "none", roleSecAnim: !boss ? POP : "none", roleBossBg: boss ? "#1B2B5A" : "transparent", roleBossFg: boss ? "#fff" : "#56688C",
+      roleSecBg: !boss ? "#1B2B5A" : "transparent", roleSecFg: !boss ? "#fff" : "#56688C",
+      setBoss: () => this.setUi({role:"boss", suggest:null}), setSec: () => this.setUi({role:"sec", suggest:null}),
+      tabs, isDay: s.view==="day", isWeek: s.view==="week", isMenu: s.view==="menu",
+      strip, prevWeek: shift(-7), nextWeek: shift(7),
+      dayName: DAYF[dt.getDay()], dateText: fmtDate(s.sel)+" "+(dt.getFullYear()+543), ticketNo: pad(dt.getDate())+pad(dt.getMonth()+1),
+      pillText: d.away ? AWAY[d.away] : stv.t, pillBg: stv.bg, pillFg: stv.fg,
+      isAway: !!d.away, notAway: !d.away, awayText: AWAY[d.away] || "",
+      hasChoice, noChoice: !d.choice,
+      heroEl: hasChoice ? React.createElement("img", {key:this.img(d.choice), src:this.img(d.choice), alt:"", style:{width:150, height:150, objectFit:"contain", animation:"chibiJump 1.6s ease-in-out infinite"}}) : null,
+      choiceLabel: this.label(d.choice), choiceSub: [this.catOf(d.choice), ...((d.choice && d.choice.x) || [])].filter(Boolean).join(" · "),
+      hasDrink: hasChoice && !!d.drink, hasDrinkOnly: !d.choice && !!d.drink, drinkLabel: this.label(d.drink), drinkImg: this.img(d.drink),
+      extras: EXTRAS.map(x => { const on = !!(d.choice && (d.choice.x||[]).includes(x)); return {t:x, ...(on ? {bg:"#F2552C", fg:"#fff", bd:"#F2552C", anim:POP} : OFF),
+        onClick: () => { const xs = new Set(d.choice.x||[]); xs.has(x) ? xs.delete(x) : xs.add(x); this.saveDay(s.sel, {choice:{...d.choice, x:[...xs]}}); }}; }),
+      emptyChoiceText: boss ? "ยังไม่ได้เลือก แตะเมนูที่ STAFF เสนอด้านล่าง หรือเลือกจากเมนูทั้งหมด" : "BOSS ยังไม่ได้เลือก",
+      optCount: d.options.length, options, hasOptions: d.options.length>0, noOptions: !d.options.length,
+      emptyOptText: boss ? "STAFF ยังไม่ได้เสนอเมนู" : "ยังไม่มีตัวเลือก เพิ่มได้สูงสุด 3 เมนู",
+      showReqMsg: d.changeReq && !boss, reqText: d.bossNote || "อยากได้ตัวเลือกใหม่", resolveReq: () => this.saveDay(s.sel, {changeReq:false}),
+      openChoice: () => this.openPick("choice"), openDrink: () => this.openPick("drink"), drinkBtnText: d.drink ? "เปลี่ยนเครื่องดื่ม" : "เพิ่มเครื่องดื่ม",
+      doRandom: () => this.doRandom(), openOption: () => !full && this.openPick("option"), optsFull: full, fullOpacity: full ? .45 : 1,
+      fillDay: () => this.saveDay(s.sel, {options: this.fill(s.sel, d.options)}),
+      spinning: boss && !!s.spin, spinEl: s.spin ? React.createElement("img", {src:s.spin, alt:"", style:{width:100, height:100, objectFit:"contain", animation:"chibiWiggle .25s ease-in-out infinite"}}) : null,
+      hasSuggest: boss && !s.spin && !!s.suggest && s.suggest.date===s.sel,
+      suggestLabel: s.suggest ? this.label(s.suggest.pick) : "", suggestImg: s.suggest ? this.img(s.suggest.pick) : "",
+      takeSuggest: () => { this.chooseSel(s.suggest.pick); this.setState({suggest:null}); }, dropSuggest: () => this.setState({suggest:null}),
+      showCutoffHint: boss && !d.choice && d.options.length>0, cutoffText: s.cutoff,
+      showLateMsg: !boss && !d.choice && d.options.length>0 && this.pastCutoff(s.sel), useFirst: () => this.chooseSel(d.options[0]),
+      steps: ["plan","chosen","ordered","arrived"].map(v => ({t:ST[v].t, bg: d.status===v ? ST[v].bg : "#fff", fg: ST[v].fg, bd: d.status===v ? ST[v].dot : "#C5DBF2", anim: d.status===v ? POP : "none", onClick: () => this.saveDay(s.sel, {status:v})})),
+      hasOtherNote: !!otherNote && !(d.changeReq && !boss), otherNoteTitle: boss ? "STAFF ฝากบอก" : "BOSS ฝากบอก", otherNote,
+      noteTitle: boss ? "บอก STAFF" : "ฝากบอก BOSS", noteDraft, notePlaceholder: boss ? "เช่น วันนี้อยากกินเบา ๆ ไม่เผ็ด" : "เช่น ร้านป้าปิดวันนี้ / ข้าวจะมาถึง 12:10",
+      onNote: e => this.setState({drafts:{...s.drafts, [draftKey]: e.target.value}}),
+      saveNote: () => { const v = (noteDraft||"").trim(); const dr = {...s.drafts}; delete dr[draftKey]; this.setState({drafts:dr}); this.saveDay(s.sel, boss ? {bossNote:v} : {secNote:v}); },
+      changeReq: () => { const v = (noteDraft||"").trim(); const dr = {...s.drafts}; delete dr[draftKey]; this.setState({drafts:dr}); this.saveDay(s.sel, {bossNote:v, changeReq:true, choice:null, status:"plan"}); },
+      awayChips: Object.entries(AWAY).map(([key,l]) => mkChip(d.away===key, () => this.saveDay(s.sel, {away: d.away===key ? "" : key}), l)),
+      cutoffDraft: s.cutoffDraft, onCutoff: e => this.setState({cutoffDraft:e.target.value}), saveCutoff: () => { const c = s.cutoffDraft || "10:30"; this.persist({cutoff:c}); this.cloudSet("settings/main", {cutoff:c}); },
+      weekRange: fmtDate(wk[0])+" – "+fmtDate(wk[4]), weekCards,
+      fillWeek: () => { const days = {...s.days}; for (const x of wk) { const dd = this.day(x); if (!dd.away && !dd.choice && dd.options.length<3) { days[x] = {...dd, options: this.fill(x, dd.options), updatedAt: Date.now()}; this.cloudSet("days/"+x, days[x]); } } this.persist({days}); },
+      top5, hasTop: top5.length>0, noTop: !top5.length, sections, cancelDel: () => this.setState({confirmDel:null}),
+      fName: s.fName, fCat: s.fCat, fOpts: s.fOpts, catOptions: Object.entries(CATS).map(([k,c]) => ({k, l:c.l})),
+      onFName: e => this.setState({fName:e.target.value}), onFCat: e => this.setState({fCat:e.target.value}), onFOpts: e => this.setState({fOpts:e.target.value}),
+      addMenu: () => { const name = s.fName.trim(); if (!name) return; const opts = s.fOpts.split(",").map(x => x.trim()).filter(Boolean);
+        const m = {id:"x"+Date.now().toString(36), name, cat:s.fCat, kind:CATS[s.fCat].k, opts, t: opts.length ? name+"{o}" : "", fav:false, hidden:false, ord:1000+s.menus.length, img:null, optImg:{}};
+        this.persist({menus:[...s.menus, m], fName:"", fOpts:""}); this.cloudSet("menus/"+m.id, m); },
+      closePick: () => this.setState({pick:null}), stop: e => e.stopPropagation(),
+      ...pickVals
+    };
+  }
+}
+</script>
+</body>
+</html>
