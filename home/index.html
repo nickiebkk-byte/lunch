@@ -815,7 +815,7 @@
 <nav style="flex:none;position:relative;z-index:6;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:8px 10px calc(10px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,#24418F,#1B2B5A);border-top:4px solid #FFC72C;box-shadow:0 -10px 24px -12px rgba(15,26,58,.5)">
   <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="4">
     <button onClick="{{ tb.onClick }}" style="animation:{{ tb.anim }};position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;border:3px solid {{ tb.bd }};border-radius:20px;padding:6px 2px;min-width:0;background:{{ tb.bg }};color:{{ tb.fg }};box-shadow:0 4px 0 {{ tb.bd }}">
-      <span style="font-size:26px;line-height:1.15">{{ tb.emo }}</span>
+      <img src="{{ tb.img }}" alt="" style="width:44px;height:44px;object-fit:contain;margin:-8px 0 -1px;filter:drop-shadow(0 2px 2px rgba(0,0,0,.25))">
       <span style="font-weight:800;font-size:17px;white-space:nowrap">{{ tb.label }}</span>
       <sc-if value="{{ tb.badge }}"><span style="position:absolute;top:-8px;right:4px;background:#FFC72C;color:#1B2B5A;border:2px solid #fff;border-radius:999px;font-size:14px;font-weight:800;padding:0 7px">{{ tb.badge }}</span></sc-if>
     </button>
@@ -1251,8 +1251,8 @@ class Component extends DCLogic {
     const boss = s.role==="boss", mk = s.meal, M = MEALS[mk], m = this.meal(s.sel, mk), dt = parse(s.sel), t = todayStr();
     const k = m.away ? "away" : m.status, stv = ST[k];
     const pendingShop = s.shop.filter(x => !x.done).length;
-    const tabs = [["day","รายวัน","📅"],["week","สัปดาห์","🗓️"],["menu","เมนู","📖"],["shop","ซื้อของ","🛒"]].map(([v,l,e]) => {
-      const on = s.view===v; return {label:l, emo:e, badge: v==="shop" && pendingShop ? String(pendingShop) : "", bg: on ? "#FFC72C" : "#1B2B5A", fg: on ? "#1B2B5A" : "#fff", bd: on ? "#C98F00" : "#0F1A3A", anim: on ? POP : "none", onClick: () => this.setUi({view:v})};
+    const tabs = [["day","รายวัน","📅"],["week","สัปดาห์","🗓️"],["menu","เมนู","📖"],["shop","ซื้อของ","🛒"]].map(([v,l,e]) => { const img = "assets/nav/" + v + ".png?v=1";
+      const on = s.view===v; return {label:l, emo:e, img, badge: v==="shop" && pendingShop ? String(pendingShop) : "", bg: on ? "#FFC72C" : "#1B2B5A", fg: on ? "#1B2B5A" : "#fff", bd: on ? "#C98F00" : "#0F1A3A", anim: on ? POP : "none", onClick: () => this.setUi({view:v})};
     });
     const shift = n => () => this.setState({sel: addDays(s.sel, n), suggest:null});
     const wk = weekOf(s.sel);
