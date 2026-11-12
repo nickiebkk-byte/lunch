@@ -201,11 +201,10 @@
 
           <section>
             <sc-if value="{{ isBoss }}">
-              <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:0">
-                <button onClick="{{ openChoice }}" style="border:0;background:#1B2B5A;color:#fff;border-radius:16px;padding:11px 4px;font-weight:800;font-size:17px;white-space:nowrap;box-shadow:0 4px 0 #0F1A3A">📋 เลือกอาหาร</button>
-                <button onClick="{{ openDrink }}" style="border:2.5px solid #1B2B5A;background:#fff;color:#1B2B5A;border-radius:16px;padding:9px 4px;font-weight:800;font-size:17px;white-space:nowrap;box-shadow:0 4px 0 #0F1A3A">{{ drinkBtnText }}</button>
-                <button onClick="{{ doRandom }}" style="border:2.5px solid #8EC8F2;background:#DDF0FF;color:#1D4E89;border-radius:16px;padding:9px 4px;font-weight:800;font-size:17px;white-space:nowrap;box-shadow:0 4px 0 #8EC8F2">🎲 สุ่มเลือกอาหาร</button>
-                <button onClick="{{ openFav }}" style="border:2.5px solid #FFB8C8;background:#FFE1E8;color:#B4284F;border-radius:16px;padding:9px 4px;font-weight:800;font-size:17px;white-space:nowrap;box-shadow:0 4px 0 #FFB8C8">{{ favBtnText }}</button>
+              <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:0">
+                <sc-for list="{{ actBtns }}" as="ab" hint-placeholder-count="4">
+                  <button onClick="{{ ab.onClick }}" style="animation:{{ ab.anim }};display:flex;align-items:center;justify-content:center;gap:6px;min-width:0;border:3px solid {{ ab.bd }};background:{{ ab.bg }};color:{{ ab.fg }};border-radius:18px;padding:10px 6px;font-weight:800;font-size:17px;white-space:nowrap;box-shadow:0 4px 0 {{ ab.bd }}"><span style="font-size:20px;line-height:1">{{ ab.icon }}</span>{{ ab.t }}</button>
+                </sc-for>
               </div>
             </sc-if>
             <sc-if value="{{ isCook }}">
@@ -1364,7 +1363,16 @@ class Component extends DCLogic {
       maxOpts: MAXO, fillN: Math.min(MAXO, mk==="d" ? this.recCount(s.sel, mk) : 3), optCount: m.options.length, options, hasOptions: m.options.length>0, noOptions: !m.options.length,
       emptyOptText: boss ? "แม่ครัวยังไม่ได้เสนอเมนู" : "ยังไม่มีตัวเลือก กดเพิ่มหรือสุ่มได้เลย",
       showReqMsg: m.changeReq && !boss, reqText: m.bossNote || "อยากได้ตัวเลือกใหม่", resolveReq: () => this.saveMeal(s.sel, mk, {changeReq:false}),
-      openChoice: () => this.openPick("choice"), openFav: () => this.setState({pick:{mode:"choice", kind:"food", q:"", cat:"fav", open:null}}),
+      openChoice: () => this.openPick("choice"),
+      actBtns: (() => { const Pk = s.pick, open = (mode, fav) => !!Pk && Pk.mode===mode && ((Pk.cat==="fav") === fav) && !Pk.edit;
+        const sty = (row, on) => on ? {bg:"#FFC72C", fg:"#1B2B5A", bd:"#C98F00", anim:POP} : row===1 ? {bg:"#1E3A8A", fg:"#fff", bd:"#0F1A3A", anim:"none"} : {bg:"#CFE6FF", fg:"#1B2B5A", bd:"#6FA8E8", anim:"none"};
+        const nFav = s.menus.filter(x => x.fav && !x.hidden && x.kind==="food").length;
+        return [
+          {icon:"📋", t:"เลือกอาหาร", ...sty(1, open("choice", false)), onClick: () => this.openPick("choice")},
+          {icon:"🥤", t: m.drink ? "เครื่องดื่ม ✓" : "เครื่องดื่ม", ...sty(1, open("drink", false) || !!m.drink), onClick: () => this.openPick("drink")},
+          {icon:"🎲", t:"สุ่มเลือกอาหาร", ...sty(2, !!s.spin || (!!s.suggest && s.suggest.date===s.sel && s.suggest.mk===mk)), onClick: () => this.doRandom()},
+          {icon:"♥", t:"เมนูที่ชอบ" + (nFav ? " (" + nFav + ")" : ""), ...sty(2, open("choice", true)), onClick: () => this.setState({pick:{mode:"choice", kind:"food", q:"", cat:"fav", open:null}})}
+        ]; })(), openFav: () => this.setState({pick:{mode:"choice", kind:"food", q:"", cat:"fav", open:null}}),
       favBtnText: "♥ เมนูที่ชอบ" + ((n => n ? " (" + n + ")" : "")(s.menus.filter(x => x.fav && !x.hidden && x.kind==="food").length)), openDrink: () => this.openPick("drink"), drinkBtnText: m.drink ? "🥤 เปลี่ยน" : "🥤 เครื่องดื่ม",
       doRandom: () => this.doRandom(), openOption: () => !full && this.openPick("option"), optsFull: full, fullOpacity: full ? .45 : 1,
       fillDay: () => this.saveMeal(s.sel, mk, {options: this.fill(s.sel, mk, m.options)}),
