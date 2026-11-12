@@ -416,19 +416,19 @@
           <b style="font-size:23px;font-weight:800">{{ w.dayName }}</b><span style="font-size:16px;color:#4D5F8A">{{ w.date }}</span>
         </div>
         <sc-for list="{{ w.rows }}" as="r">
-          <div role="button" onClick="{{ r.onClick }}" style="cursor:pointer;display:flex;align-items:flex-start;gap:8px;text-align:left;border:0;background:{{ r.rowBg }};border-radius:14px;padding:7px 10px;min-width:0">
-            <span style="flex:none;width:58px;padding-top:4px;font-size:16px;font-weight:700;color:#4D5F8A;line-height:1.2">{{ r.l }}<span style="display:block;font-size:13px;font-weight:600;color:#C98F00">{{ r.time }}</span></span>
+          <div role="button" onClick="{{ r.onClick }}" style="cursor:pointer;display:flex;align-items:center;gap:6px;text-align:left;border:0;background:{{ r.rowBg }};border-radius:14px;padding:6px 10px 6px 6px;min-width:0">
+            <span style="flex:none;width:96px;display:flex;align-items:center;gap:3px;font-size:16px;font-weight:700;color:#4D5F8A;line-height:1.15"><img src="{{ r.img }}" alt="" style="width:36px;height:36px;object-fit:contain;flex:none"><span style="min-width:0">{{ r.l }}<span style="display:block;font-size:13px;font-weight:600;color:#C98F00">{{ r.time }}</span></span></span>
             <span style="flex:1;min-width:0;display:grid;gap:4px">
               <sc-for list="{{ r.lines }}" as="ln">
                 <span style="display:flex;align-items:center;gap:8px;min-width:0">
-                  <span style="flex:none;width:30px;height:30px;border-radius:50%;background:{{ ln.bgc }};display:grid;place-items:center;font-size:19px">{{ ln.emo }}</span>
+                  <sc-if value="{{ ln.hasEmo }}"><span style="flex:none;width:30px;height:30px;border-radius:50%;background:{{ ln.bgc }};display:grid;place-items:center;font-size:19px">{{ ln.emo }}</span></sc-if>
                   <span style="flex:1;min-width:0;font-size:17px;line-height:1.3;color:{{ ln.fg }}">{{ ln.t }}</span>
                   <sc-if value="{{ ln.canDel }}"><button onClick="{{ ln.onDel }}" aria-label="เอาออก" style="flex:none;width:30px;height:30px;border-radius:50%;border:2px solid #FFB8C8;background:#FFE1E8;color:#B4284F;font-size:17px;font-weight:800;line-height:1;padding:0">✕</button></sc-if>
                 </span>
               </sc-for>
               <sc-if value="{{ r.canClear }}"><button onClick="{{ r.onClear }}" style="justify-self:start;border:2px solid #FFB8C8;background:#fff;color:#B4284F;border-radius:999px;padding:2px 12px;font-size:15px;font-weight:800">🗑️ ล้างมื้อนี้</button></sc-if>
             </span>
-            <span style="flex:none;width:8px;height:8px;margin-top:11px;border-radius:50%;background:{{ r.dot }}"></span>
+            <span style="flex:none;width:8px;height:8px;border-radius:50%;background:{{ r.dot }}"></span>
           </div>
         </sc-for>
       </div>
@@ -1258,9 +1258,9 @@ class Component extends DCLogic {
           let onDel = null;
           if (!mm.away && mm.picks.length && i < mm.picks.length) { const p = mm.picks[i]; onDel = stop(() => { const picks = mm.picks.filter((_,j) => j!==i); this.removeWithUndo(x, q, {picks, status: st(picks)}, "เอา " + this.label(p) + " ออกจาก" + when); }); }
           else if (!mm.away && mm.picks.length && mm.drink) onDel = stop(() => this.removeWithUndo(x, q, {drink: null}, "เอาเครื่องดื่มออกจาก" + when));
-          return {...ln, canDel: ed && !!onDel, onDel};
+          return {...ln, hasEmo: !!mm.away || mm.picks.length > 0, canDel: ed && !!onDel, onDel};
         });
-        return {l: MEALS[q].l, time: mm.away ? "" : this.serveOf(x, q), emo: r.emo, bgc: r.bgc, text: r.text, fg: r.fg, dot: r.dot, lines, rowBg: ed && hasAny ? "#FFF4F6" : "#F5F8FF",
+        return {img: MEALS[q].img, l: MEALS[q].l, time: mm.away ? "" : this.serveOf(x, q), emo: r.emo, bgc: r.bgc, text: r.text, fg: r.fg, dot: r.dot, lines, rowBg: ed && hasAny ? "#FFF4F6" : "#F5F8FF",
           canClear: ed && !!hasAny, onClear: stop(() => this.removeWithUndo(x, q, {picks: [], options: [], drink: null, away: "", status: "plan"}, "ล้าง" + when + "แล้ว")),
           onClick: ed ? undefined : () => this.setState({sel:x, meal:q, suggest:null}, () => this.setUi({view:"day"}))}; })}));
 
