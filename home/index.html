@@ -14,6 +14,7 @@
 <meta name="theme-color" content="#FFC72C">
 <script src="firebase-config.js?v=5"></script>
 <script src="menu-data.js?v=5"></script>
+<script src="ingredients.js?v=1"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -420,6 +421,11 @@
           <input type="text" value="{{ fOpts }}" onChange="{{ onFOpts }}" placeholder="คั่นด้วย , เช่น หมู, ไก่, กุ้ง" style="background:#F5F8FF;border:2px solid #B9CCF0;border-radius:18px;padding:11px 16px;font-size:18px;outline:none;color:#1B2B5A" style-focus="border-color:#1E3A8A">
         </label>
         <sc-if value="{{ fIsFood }}">
+          <label style="display:grid;gap:6px;font-size:17px;font-weight:600;color:#4D5F8A">🧾 วัตถุดิบหลัก (ไว้สรุปของที่ต้องซื้อ)
+            <input type="text" value="{{ fIng }}" onChange="{{ onFIng }}" placeholder="คั่นด้วย , เช่น เลือดหมู, ตำลึง, กระเทียม" style="background:#F5F8FF;border:2px solid #B9CCF0;border-radius:18px;padding:11px 16px;font-size:18px;outline:none;color:#1B2B5A" style-focus="border-color:#1E3A8A">
+          </label>
+        </sc-if>
+        <sc-if value="{{ fIsFood }}">
           <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px">
             <span style="font-size:17px;font-weight:600;color:#4D5F8A">เหมาะกับมื้อ</span>
             <sc-for list="{{ fMealChips }}" as="fm"><button onClick="{{ fm.onClick }}" style="border:2px solid {{ fm.bd }};background:{{ fm.bg }};color:{{ fm.fg }};border-radius:999px;padding:4px 12px;font-size:16px;font-weight:600">{{ fm.t }}</button></sc-for>
@@ -510,12 +516,40 @@
       </sc-if>
       <sc-if value="{{ noShop }}"><p style="margin:0;color:#4D5F8A">ยังไม่มีรายการ ใครนึกได้ก็เพิ่มได้เลย ทั้ง BOSS และแม่ครัว</p></sc-if>
     </div>
-    <div style="background:#fff;border-radius:30px;border:3px solid #B9CCF0;box-shadow:0 6px 0 #B9CCF0,0 18px 24px -12px rgba(27,43,90,.28);padding:18px 20px;display:grid;gap:8px">
-      <h3 style="margin:0 0 4px;font-size:24px;font-weight:800">🍳 เมนูที่ต้องเตรียม วันนี้ & พรุ่งนี้</h3>
-      <sc-for list="{{ prepRows }}" as="pr">
-        <div style="display:flex;gap:10px;font-size:17px;line-height:1.35"><b style="flex:none;width:110px;color:#4D5F8A">{{ pr.when }}</b><span style="flex:1;min-width:0">{{ pr.text }}</span></div>
-      </sc-for>
-      <sc-if value="{{ noPrep }}"><p style="margin:0;color:#4D5F8A">ยังไม่มีเมนูที่เลือกไว้</p></sc-if>
+    <div style="background:#fff;border-radius:30px;border:3px solid #B9CCF0;box-shadow:0 6px 0 #B9CCF0,0 18px 24px -12px rgba(27,43,90,.28);padding:18px 18px;display:grid;grid-template-columns:minmax(0,1fr);gap:12px">
+      <div>
+        <h3 style="margin:0;font-size:24px;font-weight:800">🧾 สรุปวัตถุดิบ</h3>
+        <div style="font-size:15px;color:#4D5F8A">จากเมนูที่ BOSS เลือกไว้ · ไม่รวมเครื่องปรุงพื้นฐาน (น้ำปลา น้ำตาล น้ำมัน ฯลฯ)</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <sc-for list="{{ ingRanges }}" as="ir"><button onClick="{{ ir.onClick }}" style="animation:{{ ir.anim }};border:2.5px solid {{ ir.bd }};background:{{ ir.bg }};color:{{ ir.fg }};border-radius:999px;padding:5px 14px;font-size:16px;font-weight:700">{{ ir.t }}</button></sc-for>
+      </div>
+      <sc-if value="{{ hasIng }}">
+        <div style="display:grid;gap:10px">
+          <sc-for list="{{ ingDays }}" as="idy">
+            <div style="display:grid;gap:6px;background:#F5F8FF;border-radius:18px;padding:10px 12px">
+              <b style="font-size:16px;color:#2456D6">{{ idy.head }}</b>
+              <sc-for list="{{ idy.dishes }}" as="dsh">
+                <div style="display:flex;gap:8px;align-items:flex-start;min-width:0">
+                  <span style="flex:none;width:30px;height:30px;border-radius:50%;background:{{ dsh.bgc }};display:grid;place-items:center;font-size:18px">{{ dsh.emo }}</span>
+                  <div style="flex:1;min-width:0;line-height:1.35"><div style="font-size:17px;font-weight:800">{{ dsh.label }}</div><div style="font-size:15px;color:{{ dsh.ingColor }}">{{ dsh.ing }}</div></div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:grid;gap:8px">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap">
+            <b style="font-size:19px">🛒 รวมวัตถุดิบ {{ ingTotal }} อย่าง</b>
+            <span style="font-size:14px;color:#4D5F8A">แตะเพื่อเพิ่มลงรายการซื้อ</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <sc-for list="{{ ingChips }}" as="ic"><button onClick="{{ ic.onClick }}" style="border:2.5px solid {{ ic.bd }};background:{{ ic.bg }};color:{{ ic.fg }};border-radius:999px;padding:4px 12px;font-size:16px;font-weight:700">{{ ic.t }}</button></sc-for>
+          </div>
+          <button onClick="{{ ingAddAll }}" disabled="{{ ingAllDone }}" style="justify-self:start;border:0;background:#D9431C;color:#fff;border-radius:999px;padding:11px 20px;font-weight:800;font-size:17px;box-shadow:0 4px 0 #A8300F;opacity:{{ ingAllOpacity }}">{{ ingAddAllText }}</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ noIng }}"><p style="margin:0;color:#4D5F8A">ยังไม่มีเมนูที่ BOSS เลือกไว้ในช่วงนี้</p></sc-if>
     </div>
   </div>
 </sc-if>
@@ -585,6 +619,11 @@
         <label style="display:grid;gap:6px;font-size:17px;font-weight:600;color:#4D5F8A">แบบให้เลือก (ไม่ใส่ก็ได้)
           <input type="text" value="{{ fOpts }}" onChange="{{ onFOpts }}" placeholder="คั่นด้วย , เช่น หมู, ไก่, กุ้ง" style="background:#F5F8FF;border:2px solid #B9CCF0;border-radius:18px;padding:11px 16px;font-size:18px;outline:none;color:#1B2B5A" style-focus="border-color:#1E3A8A">
         </label>
+        <sc-if value="{{ fIsFood }}">
+          <label style="display:grid;gap:6px;font-size:17px;font-weight:600;color:#4D5F8A">🧾 วัตถุดิบหลัก (ไว้สรุปของที่ต้องซื้อ)
+            <input type="text" value="{{ fIng }}" onChange="{{ onFIng }}" placeholder="คั่นด้วย , เช่น เลือดหมู, ตำลึง, กระเทียม" style="background:#F5F8FF;border:2px solid #B9CCF0;border-radius:18px;padding:11px 16px;font-size:18px;outline:none;color:#1B2B5A" style-focus="border-color:#1E3A8A">
+          </label>
+        </sc-if>
         <sc-if value="{{ fIsFood }}">
           <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px">
             <span style="font-size:17px;font-weight:600;color:#4D5F8A">เหมาะกับมื้อ</span>
@@ -748,6 +787,15 @@ const hashStr = str => { let h = 2166136261; for (let i=0;i<str.length;i++) { h 
 const rng = seed => () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
 const MEATS = ["หมูสับ","หมูชิ้น","หมูกรอบ","ไก่","เนื้อ","กุ้ง","ปลาหมึก","ปลา","รวมทะเล","เต้าหู้"];
 const ADDONS = ["ไข่ดาว","ไข่เจียว","ไข่ต้ม","พิเศษ","ไม่ใส่ผัก","เจ"];
+const OPT_ING = [["หัวหอมฝรั่งเศส","หอมใหญ่"],["เห็ดทรัฟเฟิล","เห็ด"],["ลูกชิ้นปลากราย","ลูกชิ้นปลากราย"],["ซี่โครงหมู","ซี่โครงหมู"],["หมูสับ","หมูสับ"],["หมูชิ้น","หมูชิ้น"],["หมูกรอบ","หมูกรอบ"],["หมูหมัก","หมูชิ้น"],["หมูแดง","หมูแดง"],["หมูหยอง","หมูหยอง"],["หมูยอ","หมูยอ"],["หมูปิ้ง","หมูปิ้ง"],["หมูทอด","หมูชิ้น"],["หมู","หมู"],
+  ["อกไก่","อกไก่"],["ตีนไก่","ตีนไก่"],["ข้อไก่","ข้อไก่"],["ไก่","ไก่"],["เนื้อสับ","เนื้อวัวสับ"],["เนื้อชิ้น","เนื้อวัว"],["เนื้อปู","เนื้อปู"],["เนื้อ","เนื้อวัว"],["ตับ","ตับหมู"],["เป็ด","เป็ดย่าง"],
+  ["ไข่กุ้ง","ไข่กุ้ง"],["กุ้ง","กุ้ง"],["ปลาหมึก","ปลาหมึก"],["หมึก","ปลาหมึก"],["รวมทะเล","กุ้ง|ปลาหมึก"],["ทะเล","กุ้ง|ปลาหมึก"],["หอยลาย","หอยลาย"],["หอยนางรม","หอยนางรม"],["หอยแมลงภู่","หอยแมลงภู่"],["ปู","ปู"],
+  ["ลูกชิ้น","ลูกชิ้น"],["ปลาช่อน","ปลาช่อน"],["ปลาทู","ปลาทู"],["ปลาดุก","ปลาดุก"],["ปลากะพง","ปลากะพง"],["กะพง","ปลากะพง"],["ทับทิม","ปลาทับทิม"],["หัวปลา","หัวปลา"],["ปลาเค็ม","ปลาเค็ม"],["แซลมอน","แซลมอน"],["ทูน่า","ทูน่า"],["ทู","ปลาทู"],["หัวโต","ปลาหัวโต"],["ปลา","ปลา"],
+  ["แหนม","แหนม"],["ไส้กรอก","ไส้กรอก"],["กุนเชียง","กุนเชียง"],["เบคอน","เบคอน"],["แฮม","แฮม"],["เต้าหู้","เต้าหู้"],["ไข่เค็ม","ไข่เค็ม"],["ไข่","ไข่ไก่"],
+  ["วุ้นเส้น","วุ้นเส้น"],["ถั่วฝักยาว","ถั่วฝักยาว"],["ผักกาดขาว","ผักกาดขาว"],["ผักกาดดอง","ผักกาดดอง"],["มาม่า","บะหมี่กึ่งสำเร็จรูป"],["เส้นใหญ่","เส้นใหญ่"],["เส้นหมี่","เส้นหมี่"],["หมี่กรอบ","หมี่กรอบ"],["สปาเก็ตตี้","สปาเก็ตตี้"],["ชะอม","ชะอม"],["ผักรวม","ผักรวม"],
+  ["มะม่วง","มะม่วง"],["แตงโม","แตงโม"],["สับปะรด","สับปะรด"],["มะละกอ","มะละกอ"],["ฝรั่ง","ฝรั่ง"],["ส้ม","ส้ม"],["มันหวาน","มันหวาน"],["ข้าวโพด","ข้าวโพด"],["ฟักทอง","ฟักทอง"],["อะโวคาโด","อะโวคาโด"],["สังขยา","สังขยา"],["นมสด","นมสด"],["นมข้นหวาน","นมข้นหวาน"],["ผักโขม","ผักโขม"],["มะเขือเทศ","มะเขือเทศ"],["เต้าเจี้ยว","เต้าเจี้ยว"],["ถั่วดำ","ถั่วดำ"],["น้ำขิง","ขิง"],["ชีส","ชีส"],["ครีม","ครีม"],["ใบกะเพรา","ใบกะเพรา"],["กะเพรา","ใบกะเพรา"],["โหระพา","ใบโหระพา"]];
+const optIng = o => { let rest = o; const out = []; for (const [k, v] of OPT_ING) { if (rest.includes(k)) { out.push(...v.split("|")); rest = rest.split(k).join(" "); } } return out; };
+const ingNorm = x => x.replace(/\s+/g, "").replace(/\(.*?\)/g, "");
 const splitO = o => (o||"").split("+").map(x => x.trim()).filter(Boolean);
 // เวอร์ชันเมนู = ค่า since สูงสุดใน menu-data.js ที่โหลดมาจริง (กันกรณีมือถือใช้ไฟล์เก่าจากแคช)
 const dataVer = () => Math.max(1, ...(window.HOME_MENUS || []).map(m => m.since || 1));
@@ -917,10 +965,14 @@ class Component extends DCLogic {
       this.setState({spin: pool[Math.floor(Math.random()*pool.length)].emo || "🍽️"});
     }, 85);
   }
-  resetForm(extra){ this.setState({fName:"", fOpts:"", fEmo:"", fEdit:null, fErr:"", ...(extra||{})}); }
+  baseIng(m){ return (m && (m.ing || (window.HOME_ING || {})[m.id])) || []; }
+  ingOf(sel){ const m = sel && this.menu(sel.m); if (!m) return [];
+    const out = [...optIng(splitO(sel.o).join(" ")), ...this.baseIng(m)]; const seen = new Set();
+    return out.filter(x => { const k = ingNorm(x); if (!k || seen.has(k)) return false; seen.add(k); return true; }); }
+  resetForm(extra){ this.setState({fName:"", fOpts:"", fEmo:"", fIng:"", fEdit:null, fErr:"", ...(extra||{})}); }
   editMenu(m){
     const opts = m.opts || [];
-    this.setState({fEdit:m.id, fName:m.name, fCat:m.cat, fOpts:opts.join(", "), fEmo:m.emo||"", fMeals:m.meals||"ld", fErr:""},
+    this.setState({fEdit:m.id, fName:m.name, fCat:m.cat, fOpts:opts.join(", "), fEmo:m.emo||"", fMeals:m.meals||"ld", fIng:this.baseIng(m).join(", "), fErr:""},
       () => setTimeout(() => { const el = document.getElementById("menuForm"); if (el) el.scrollIntoView({behavior:"smooth", block:"start"}); }, 30));
   }
   formMenu(){
@@ -931,7 +983,11 @@ class Component extends DCLogic {
     const opts = [...new Set(s.fOpts.split(/[,，、]/).map(x => x.trim()).filter(Boolean))];
     const old = s.fEdit && this.menu(s.fEdit);
     const t = !opts.length ? "" : (old && old.name===name && old.t && old.t.includes("{o}")) ? old.t : name+"{o}";
-    return {name, cat, kind: isDrink ? "drink" : "food", opts, t, meals: isDrink ? "blsd" : (s.fMeals || "ld"), emo: s.fEmo.trim() || "🍽️"};
+    const ing = [...new Set((s.fIng||"").split(/[,，、]/).map(x => x.trim()).filter(Boolean))];
+    const f = {name, cat, kind: isDrink ? "drink" : "food", opts, t, meals: isDrink ? "blsd" : (s.fMeals || "ld"), emo: s.fEmo.trim() || "🍽️"};
+    const def = old ? ((window.HOME_ING || {})[old.id] || []) : [];
+    if (!isDrink && (old && old.ing ? true : ing.join(",") !== def.join(","))) f.ing = ing;
+    return f;
   }
   submitMenu(){
     const f = this.formMenu(); if (!f) return null; const s = this.state;
@@ -1096,6 +1152,17 @@ class Component extends DCLogic {
     const shopItems = [...s.shop].sort((a,b) => (a.done?1:0)-(b.done?1:0)).map(it => ({t:it.t, by:it.by||"", mark: it.done ? "✓" : "", cbg: it.done ? "#2FB67C" : "#fff", bd: it.done ? "#2FB67C" : "#B9CCF0",
       bg: it.done ? "#EEF2FA" : "#F5F8FF", deco: it.done ? "line-through" : "none", fg: it.done ? "#8A99B8" : "#1B2B5A",
       onToggle: () => this.saveShop(s.shop.map(x => x.id===it.id ? {...x, done:!x.done} : x)), onDel: () => this.saveShop(s.shop.filter(x => x.id!==it.id))}));
+    const rangeDays = s.ingRange==="tomorrow" ? [addDays(t,1)] : s.ingRange==="week" ? Array.from({length:7}, (_,k) => addDays(t,k)) : [t];
+    const ingDays = [], agg = new Map(), shopTexts = s.shop.filter(x => !x.done).map(x => x.t.trim());
+    const inShop = name => { const g = name.trim(); return shopTexts.some(st => st === g || st.startsWith(g + " ")); };
+    for (const x of rangeDays) for (const q of MK) { const mm = this.meal(x, q); if (mm.away || !mm.picks.length) continue;
+      const dishes = mm.picks.map(p => { const ing = this.ingOf(p); ing.forEach(g => { const k = ingNorm(g); const a = agg.get(k) || {t:g, n:0}; a.n++; agg.set(k, a); });
+        return {label:this.label(p), emo:this.emo(p), bgc:this.bgc(p), ing: ing.length ? ing.join(", ") : "ยังไม่มีข้อมูลวัตถุดิบ (แก้ไขเมนูเพื่อใส่ได้)", ingColor: ing.length ? "#4D5F8A" : "#B4284F"}; });
+      ingDays.push({head: (x===t ? "วันนี้" : x===addDays(t,1) ? "พรุ่งนี้" : DAYS[parse(x).getDay()] + " " + fmtDate(x)) + " · " + MEALS[q].full + " · " + this.peopleOf(mm) + " ที่", dishes}); }
+    const aggList = [...agg.values()];
+    const ingChips = aggList.map(a => { const has = inShop(a.t); return {t: (has ? "✓ " : "+ ") + a.t + (a.n > 1 ? " ×" + a.n : ""), bg: has ? "#E3F7EC" : "#FFF6D6", bd: has ? "#2FB67C" : "#FFD966", fg: has ? "#136B43" : "#7A5600",
+      onClick: () => { if (!has) addShopItem(a.t); }}; });
+    const missingIng = aggList.filter(a => !inShop(a.t));
     const prepRows = [];
     for (const [x, w] of [[t,"วันนี้"],[addDays(t,1),"พรุ่งนี้"]]) for (const q of MK) { const mm = this.meal(x, q); if (!mm.away && mm.picks.length) prepRows.push({when: w+" · "+MEALS[q].l, text: this.picksText(mm) + " (" + this.peopleOf(mm) + " ที่)"}); }
 
@@ -1216,7 +1283,7 @@ class Component extends DCLogic {
         this.persist({days}); },
       top5, hasTop: top5.length>0, noTop: !top5.length, sections, menuEmpty: !sections.length, cancelDel: () => this.setState({confirmDel:null}), menuTotal: s.menus.length,
       mq: s.mq, onMq: e => this.setState({mq: e.target.value}), groupChips,
-      fName: s.fName, fCat: s.fCat, fOpts: s.fOpts, fEmo: s.fEmo, catOptions,
+      fName: s.fName, fCat: s.fCat, fOpts: s.fOpts, fEmo: s.fEmo, fIng: s.fIng || "", onFIng: e => this.setState({fIng: e.target.value}), catOptions,
       fEmoShow: s.fEmo.trim() || "🍽️", fBg: (CATS[s.fCat]||{}).bg || "#EEF2F8", fIsFood: (CATS[s.fCat]||{}).g!=="drink",
       emoChips: EMOJIS.map(e => ({e, bg: s.fEmo.trim()===e ? "#FFF6D6" : "#F5F8FF", bd: s.fEmo.trim()===e ? "#FFC72C" : "#DCE6F8", onClick: () => this.setState({fEmo:e})})),
       fMealChips: MK.map(q => { const on = s.fMeals.includes(q); return {t: MEALS[q].tag, ...(on ? ON : OFF), onClick: () => this.setState({fMeals: MK.filter(z => z===q ? !on : s.fMeals.includes(z)).join("")})}; }),
@@ -1229,6 +1296,11 @@ class Component extends DCLogic {
       addShop: () => { addShopItem(s.shopDraft); this.setState({shopDraft:""}); }, onShopKey: e => { if (e.key==="Enter") { addShopItem(s.shopDraft); this.setState({shopDraft:""}); } },
       quickShop: QUICK.map(q => ({t:q, onClick: () => addShopItem(q)})), shopItems, hasShop: s.shop.length>0, noShop: !s.shop.length,
       clearDone: () => this.saveShop(s.shop.filter(x => !x.done)), prepRows, noPrep: !prepRows.length,
+      ingRanges: [["today","วันนี้"],["tomorrow","พรุ่งนี้"],["week","7 วันข้างหน้า"]].map(([v,l]) => ({t:l, ...((s.ingRange||"today")===v ? ON : OFF), onClick: () => this.setState({ingRange:v})})),
+      ingDays, hasIng: ingDays.length>0, noIng: !ingDays.length, ingTotal: aggList.length, ingChips,
+      ingAllDone: !missingIng.length, ingAllOpacity: missingIng.length ? 1 : .5,
+      ingAddAllText: missingIng.length ? "🛒 เพิ่มที่ยังไม่มี " + missingIng.length + " อย่าง ลงรายการซื้อ" : "✓ อยู่ในรายการซื้อครบแล้ว",
+      ingAddAll: () => { if (!missingIng.length) return; const by = boss ? "BOSS" : "แม่ครัว"; this.saveShop([...s.shop, ...missingIng.map((a,k) => ({id: Date.now().toString(36)+k+Math.random().toString(36).slice(2,4), t:a.t, done:false, by}))]); },
       closePick: () => this.setState({pick:null}), stop: e => e.stopPropagation(),
       ...pickVals
     };
