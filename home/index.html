@@ -32,7 +32,7 @@
 <div style="position:relative;width:100%;max-width:520px;height:100%;flex:none;overflow:hidden;display:flex;flex-direction:column;background:#EAF1FF;padding-top:env(safe-area-inset-top,0px);box-shadow:0 0 40px -18px rgba(27,43,90,.35)">
 <div style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding-bottom:env(safe-area-inset-bottom,0px);scrollbar-width:none;background:#EAF1FF radial-gradient(#D3E0FA 2px,transparent 2.6px) 0 0/30px 30px">
 
-<header style="position:relative;z-index:5;background:linear-gradient(180deg,#1B2B5A,#24418F);border-bottom:4px solid #FFC72C;box-shadow:0 12px 24px -12px rgba(15,26,58,.6)">
+<header style="position:{{ headerPos }};top:0;z-index:5;background:linear-gradient(180deg,#1B2B5A,#24418F);border-bottom:4px solid #FFC72C;box-shadow:0 12px 24px -12px rgba(15,26,58,.6)">
   <div style="padding:10px 14px 12px;display:grid;gap:10px">
     <div style="display:flex;align-items:center;gap:12px;min-width:0">
       <img src="assets/app-icon-192.png" alt="" style="width:56px;height:56px;flex:none;border-radius:18px;transform:rotate(-6deg);border:3px solid #fff;box-shadow:0 4px 0 #C98F00">
@@ -1323,7 +1323,7 @@ class Component extends DCLogic {
       toastView: () => { const last = s.toasts[s.toasts.length-1]; this.clearToasts(); this.setState({sel:last.date, meal:last.mk, suggest:null}, () => this.setUi({view:"day"})); },
       toastClose: () => this.clearToasts(),
       setBoss: () => this.setUi({role:"boss", suggest:null}), setCook: () => this.setUi({role:"cook", suggest:null}),
-      tabs, isDay: s.view==="day", isWeek: s.view==="week", isMenu: s.view==="menu", isShop: s.view==="shop",
+      tabs, headerPos: s.view==="day" ? "relative" : "sticky", isDay: s.view==="day", isWeek: s.view==="week", isMenu: s.view==="menu", isShop: s.view==="shop",
       strip, prevWeek: shift(-7), nextWeek: shift(7), mealTabs, daySummary,
       mealEmo: M.e, mealFull: M.full, cutoffText: s.cfg.cut[mk],
       serveText: this.serveOf(s.sel, mk), serveDefault: (s.cfg.serve || {})[mk] || M.serve, serveCustom: !!m.serve, serveNotCustom: !m.serve,
