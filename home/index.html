@@ -30,25 +30,47 @@
 </helmet>
 <div style="height:100dvh;display:flex;justify-content:center;background:#C3D4F3">
 <div style="position:relative;width:100%;max-width:520px;height:100%;flex:none;overflow:hidden;display:flex;flex-direction:column;background:#EAF1FF;padding-top:env(safe-area-inset-top,0px);box-shadow:0 0 40px -18px rgba(27,43,90,.35)">
-<div style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding-bottom:env(safe-area-inset-bottom,0px);scrollbar-width:none;background:#EAF1FF radial-gradient(#D3E0FA 2px,transparent 2.6px) 0 0/30px 30px">
+<div style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding-bottom:env(safe-area-inset-bottom,0px);scrollbar-width:none;background:{{ thPage }} radial-gradient({{ thDot }} 2px,transparent 2.6px) 0 0/30px 30px">
 
-<header style="position:{{ headerPos }};top:0;z-index:5;background:linear-gradient(180deg,#1B2B5A,#24418F);border-bottom:4px solid #FFC72C;box-shadow:0 12px 24px -12px rgba(15,26,58,.6)">
+<sc-if value="{{ showLanding }}">
+<section style="min-height:100%;display:grid;align-content:start;gap:18px;padding:0 0 34px;background:#EAF1FF radial-gradient(#D3E0FA 2px,transparent 2.6px) 0 0/30px 30px">
+  <div style="position:relative;overflow:hidden;padding:calc(env(safe-area-inset-top,0px) + 22px) 18px 64px;text-align:center;background:linear-gradient(180deg,#1B2B5A,#3557B7);border-radius:0 0 50% 50% / 0 0 46px 46px;box-shadow:0 10px 0 #FFC72C">
+    <span style="position:absolute;left:18px;top:30px;font-size:26px;animation:bob 2.6s ease-in-out infinite">✨</span>
+    <span style="position:absolute;right:22px;top:46px;font-size:24px;animation:bob 2.2s ease-in-out infinite .4s">💛</span>
+    <span style="position:absolute;left:44px;bottom:40px;font-size:20px;animation:bob 2.8s ease-in-out infinite .8s">🍚</span>
+    <span style="position:absolute;right:48px;bottom:34px;font-size:20px;animation:bob 2.4s ease-in-out infinite .2s">⭐</span>
+    <img src="assets/app-logo-192.png?v=1" alt="" style="width:112px;height:112px;transform:rotate(-6deg);filter:drop-shadow(0 6px 0 #C98F00);animation:bob 2.4s ease-in-out infinite">
+    <div style="margin-top:6px;font-weight:800;font-size:38px;line-height:1.1;color:#FFC72C;text-shadow:0 3px 0 #0F1A3A,2px 0 0 #0F1A3A,-2px 0 0 #0F1A3A,0 -2px 0 #0F1A3A,0 9px 18px rgba(0,0,0,.4)">วันนี้กินอะไรดี</div>
+    <div style="display:inline-block;margin-top:12px;background:#fff;color:#1B2B5A;border-radius:999px;padding:7px 18px;font-size:18px;font-weight:800;box-shadow:0 4px 0 #C98F00">สวัสดีค่า 👋 วันนี้ใครมาเอ่ย?</div>
+  </div>
+  <div style="display:grid;gap:30px;padding:24px 18px 0">
+    <sc-for list="{{ landCards }}" as="lc" hint-placeholder-count="3">
+      <button onClick="{{ lc.onClick }}" style="position:relative;display:flex;align-items:center;gap:12px;text-align:left;border:4px solid {{ lc.bd }};border-radius:32px;background:{{ lc.bg }};padding:12px 16px 12px 128px;min-height:120px;box-shadow:0 7px 0 {{ lc.bd }},0 18px 26px -14px rgba(15,26,58,.5);min-width:0;color:{{ lc.fg }}">
+        <span style="position:absolute;left:10px;bottom:6px;width:112px;height:112px;border-radius:50%;background:#fff;border:4px solid {{ lc.bd }};box-shadow:inset 0 -8px 0 {{ lc.ring }}"></span>
+        <img src="{{ lc.img }}" alt="" style="position:absolute;left:4px;bottom:10px;width:124px;height:136px;object-fit:contain;object-position:bottom;animation:bob 2.2s ease-in-out infinite;filter:drop-shadow(0 6px 5px rgba(0,0,0,.2))">
+        <span style="position:absolute;top:-14px;right:18px;background:#fff;border:3px solid {{ lc.bd }};border-radius:999px;padding:1px 10px;font-size:15px;font-weight:800;color:{{ lc.tag }}">{{ lc.badge }}</span>
+        <span style="display:grid;gap:5px;min-width:0;flex:1">
+          <span style="font-size:29px;font-weight:800;line-height:1.1;white-space:nowrap">{{ lc.name }}</span>
+          <span style="justify-self:start;font-size:16px;font-weight:800;background:#fff;color:{{ lc.tag }};border-radius:999px;padding:3px 11px;white-space:nowrap">🏠 {{ lc.house }}</span>
+        </span>
+        <span style="flex:none;width:36px;height:36px;border-radius:50%;background:#fff;color:{{ lc.tag }};display:grid;place-items:center;font-size:24px;font-weight:800">›</span>
+      </button>
+    </sc-for>
+  </div>
+  <p style="margin:4px 0 0;text-align:center;font-size:16px;font-weight:700;color:#4D5F8A">แตะการ์ดเพื่อเข้าหน้าของตัวเอง · กด 🏠 เพื่อกลับมาที่นี่</p>
+</section>
+</sc-if>
+<sc-if value="{{ inApp }}">
+<header style="position:{{ headerPos }};top:0;z-index:5;background:{{ thHdr }};border-bottom:4px solid {{ thLine }};box-shadow:0 12px 24px -12px rgba(15,26,58,.6)">
   <div style="padding:10px 14px 12px;display:grid;gap:10px">
-    <div style="display:flex;align-items:center;gap:12px;min-width:0">
-      <img src="assets/app-logo-192.png?v=1" alt="" style="width:60px;height:60px;flex:none;transform:rotate(-6deg);filter:drop-shadow(0 4px 0 #C98F00)">
+    <div style="display:flex;align-items:center;gap:10px;min-width:0">
+      <button onClick="{{ goHome }}" aria-label="กลับหน้าแรก" style="flex:none;display:grid;place-items:center;width:52px;height:56px;border-radius:18px;border:3px solid #fff;background:rgba(255,255,255,.22);color:{{ thTitle }};padding:0;font-weight:800;line-height:1"><span style="font-size:24px">🏠</span><span style="font-size:12px">Home</span></button>
+      <img src="{{ meImg }}" alt="" style="width:62px;height:62px;flex:none;object-fit:contain;margin:-6px -4px -6px -6px;filter:drop-shadow(0 4px 4px rgba(0,0,0,.25))">
       <div style="min-width:0">
-        <div style="font-weight:800;font-size:30px;line-height:1.1;color:#FFC72C;text-shadow:0 3px 0 #0F1A3A,2px 0 0 #0F1A3A,-2px 0 0 #0F1A3A,0 -2px 0 #0F1A3A,0 9px 18px rgba(0,0,0,.4);white-space:nowrap">วันนี้กินอะไรดี</div>
-        <div style="font-size:16px;font-weight:600;color:#C9D6F5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span title="{{ syncText }}" style="color:{{ syncColor }}">●</span> <b style="color:#FFE27A">🏠 {{ houseText }}</b></div>
+        <div style="font-weight:800;font-size:27px;line-height:1.1;color:{{ thTitle }};text-shadow:0 3px 0 {{ thShadow }},2px 0 0 {{ thShadow }},-2px 0 0 {{ thShadow }},0 -2px 0 {{ thShadow }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ meName }}</div>
+        <div style="font-size:16px;font-weight:800;color:{{ thSub }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span title="{{ syncText }}" style="color:{{ syncColor }}">●</span> 🏠 {{ houseText }}</div>
       </div>
-      <button onClick="{{ toggleSound }}" aria-label="{{ soundLabel }}" title="{{ soundLabel }}" style="margin-left:auto;flex:none;width:46px;height:46px;border-radius:50%;border:3px solid #FFC72C;background:{{ soundBg }};font-size:22px;padding:0;box-shadow:0 3px 0 #C98F00">{{ soundIcon }}</button>
-    </div>
-    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.2fr);gap:8px">
-      <sc-for list="{{ roleBtns }}" as="rb" hint-placeholder-count="3">
-        <button onClick="{{ rb.onClick }}" style="animation:{{ rb.anim }};display:flex;align-items:center;gap:5px;border:3px solid {{ rb.bd }};border-radius:20px;padding:3px 6px 3px 3px;background:{{ rb.bg }};color:#1B2B5A;height:60px;min-width:0;box-shadow:0 4px 0 {{ rb.bd }}">
-          <span style="width:44px;height:44px;flex:none;border-radius:14px;background:#DCE6FF url({{ rb.img }}) {{ rb.pos }} no-repeat;border:2px solid #fff"></span>
-          <span style="display:grid;min-width:0;text-align:left;line-height:1.05"><span style="font-size:13px;font-weight:700;opacity:.75;white-space:nowrap">{{ rb.top }}</span><span style="font-size:18px;font-weight:800;white-space:nowrap">{{ rb.l }}</span></span>
-        </button>
-      </sc-for>
+      <button onClick="{{ toggleSound }}" aria-label="{{ soundLabel }}" title="{{ soundLabel }}" style="margin-left:auto;flex:none;width:46px;height:46px;border-radius:50%;border:3px solid #fff;background:{{ soundBg }};font-size:22px;padding:0;box-shadow:0 3px 0 rgba(0,0,0,.25)">{{ soundIcon }}</button>
     </div>
     <sc-if value="{{ showOrderer }}">
       <div style="display:flex;align-items:center;gap:6px;overflow-x:auto;padding-bottom:2px">
@@ -67,7 +89,7 @@
 
 <!-- ================= DAY ================= -->
 <sc-if value="{{ isDay }}" hint-placeholder-val="{{ true }}">
-  <div data-sticky="daymeal" style="position:sticky;top:0;z-index:6;margin:-16px -16px 16px;padding:10px 16px 10px;background:rgba(238,244,255,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:3px solid #FFC72C;box-shadow:0 10px 20px -14px rgba(15,26,58,.55)">
+  <div data-sticky="daymeal" style="position:sticky;top:0;z-index:6;margin:-16px -16px 16px;padding:10px 16px 10px;background:{{ thBar }};backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:3px solid #FFC72C;box-shadow:0 10px 20px -14px rgba(15,26,58,.55)">
   <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
     <button onClick="{{ prevWeek }}" aria-label="สัปดาห์ก่อน" style="flex:none;width:26px;height:56px;border-radius:12px;border:2px solid #B9CCF0;background:#fff;font-size:24px;font-weight:700;color:#4D5F8A;padding:0">‹</button>
     <div style="flex:1;min-width:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px">
@@ -627,6 +649,7 @@
   <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:60px;color:#4D5F8A"><img src="assets/chibi/chef/soup-pot.png" alt="" style="width:170px;height:170px;object-fit:contain;animation:bob 1.2s ease-in-out infinite">กำลังโหลดแผนอาหาร…</div>
 </sc-if>
 </main>
+</sc-if>
 
 <!-- ================= PICKER ================= -->
 <sc-if value="{{ hasToast }}">
@@ -788,6 +811,7 @@
   </div>
 </sc-if>
 </div>
+<sc-if value="{{ inApp }}">
 <nav style="flex:none;position:relative;z-index:6;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:8px 10px calc(10px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,#24418F,#1B2B5A);border-top:4px solid #FFC72C;box-shadow:0 -10px 24px -12px rgba(15,26,58,.5)">
   <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="4">
     <button onClick="{{ tb.onClick }}" style="animation:{{ tb.anim }};position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;border:3px solid {{ tb.bd }};border-radius:20px;padding:6px 2px;min-width:0;background:{{ tb.bg }};color:{{ tb.fg }};box-shadow:0 4px 0 {{ tb.bd }}">
@@ -797,6 +821,7 @@
     </button>
   </sc-for>
 </nav>
+</sc-if>
 </div>
 </div>
 </x-dc>
@@ -938,7 +963,7 @@ class Component extends DCLogic {
     if (saved && saved.menus && (saved.seed||1) < dataVer()) menus = mergeSeed(menus, saved.seed||1).list;
     const cfg = Object.assign(defCfg(), (saved && saved.cfg) || {});
     this.setState({ready: !CLOUD || !!saved, syncErr:"", online:false, menus, days:(saved && saved.days) || {}, cfg, cfgDraft:clean(cfg), shop:(saved && saved.shop) || [],
-      role: ui.role==="cook" ? "cook" : "boss", bossId: ui.bossId==="lek" ? "lek" : "ek", sound: ui.sound !== false, toasts: [], orderer: ui.orderer || "", view: ["day","week","menu","shop"].includes(ui.view) ? ui.view : "day",
+      role: ui.role==="cook" ? "cook" : "boss", bossId: ui.bossId==="lek" ? "lek" : "ek", landing: true, sound: ui.sound !== false, toasts: [], orderer: ui.orderer || "", view: ["day","week","menu","shop"].includes(ui.view) ? ui.view : "day",
       sel: todayStr(), meal: currentMeal(cfg), pick:null, suggest:null, spin:null, drafts:{}, confirmDel:null,
       fName:"", fCat:"kabfry", fOpts:"", fEmo:"", fMeals:"ld", fEdit:null, fErr:"", mq:"", mg:"", shopDraft:""}, () => { if (saved && (saved.seed||1) < dataVer()) this.persist({}); });
     if (CLOUD) this.connect();
@@ -1222,7 +1247,7 @@ class Component extends DCLogic {
   }
   renderVals(){
     const s = this.state;
-    if (!s.ready) return {ready:false, loading:true, tabs:[], pickOpen:false, hasSyncErr:false, syncText:"", syncColor:"#4D5F8A"};
+    if (!s.ready) return {ready:false, loading:true, inApp:true, showLanding:false, thPage:"#EAF1FF", thDot:"#D3E0FA", tabs:[], pickOpen:false, hasSyncErr:false, syncText:"", syncColor:"#4D5F8A"};
     const boss = s.role==="boss", mk = s.meal, M = MEALS[mk], m = this.meal(s.sel, mk), dt = parse(s.sel), t = todayStr();
     const k = m.away ? "away" : m.status, stv = ST[k];
     const pendingShop = s.shop.filter(x => !x.done).length;
@@ -1379,6 +1404,16 @@ class Component extends DCLogic {
       undoDo: () => { const u = s.undo; if (!u) return; clearTimeout(this._undoT); this.setState({undo: null}); this.saveMeal(u.date, u.mk, u.keep); },
       pickedTitle: pickHouses.length > 1 ? "เมนูที่สั่ง · เสิร์ฟ 2 บ้าน" : pickHouses.length ? BOSSES[pickHouses[0]].n + " สั่ง · เสิร์ฟ " + BOSSES[pickHouses[0]].house : "เมนูที่ BOSS เลือก",
       houseRows, hasHouseRows: pickHouses.length > 1,
+      ...(() => { const T = !boss ? {hdr:"linear-gradient(180deg,#F47B20,#FF9F43)", line:"#C2560A", title:"#fff", shadow:"#9A3F00", sub:"#FFF1D6", page:"#FFF3E6", dot:"#FFD9B3"}
+          : s.bossId==="lek" ? {hdr:"linear-gradient(180deg,#FFC72C,#FFDA5C)", line:"#C98F00", title:"#fff", shadow:"#8A6200", sub:"#5A4300", page:"#FFF9E0", dot:"#FBE7A1"}
+          : {hdr:"linear-gradient(180deg,#1B2B5A,#24418F)", line:"#FFC72C", title:"#FFC72C", shadow:"#0F1A3A", sub:"#FFE27A", page:"#EAF1FF", dot:"#D3E0FA"};
+        return {thHdr:T.hdr, thLine:T.line, thTitle:T.title, thShadow:T.shadow, thSub:T.sub, thBar: !boss ? "rgba(255,243,230,.95)" : s.bossId==="lek" ? "rgba(255,249,224,.95)" : "rgba(238,244,255,.94)", thPage: s.landing ? "#EAF1FF" : T.page, thDot: s.landing ? "#D3E0FA" : T.dot}; })(),
+      showLanding: !!s.landing, inApp: !s.landing, goHome: () => this.setState({landing:true, pick:null}),
+      meName: boss ? BOSSES[s.bossId].n : "แม่ครัว", meImg: boss ? bImg(s.bossId, "wave") : "assets/chibi/chef/soup-pot.png",
+      landCards: [
+        {name:"BOSS เอก", house:"บ้านแสนศุข", badge:"😎 สั่งอาหาร", img: bImg("ek","wave"), bg:"linear-gradient(135deg,#2C4FA8,#4A74DA)", bd:"#1B2B5A", ring:"#DCE6FF", fg:"#fff", tag:"#2456D6", onClick: () => this.setUi({role:"boss", bossId:"ek", landing:false, suggest:null})},
+        {name:"BOSS เล็ก", house:"บ้านแสนรักษ์", badge:"🙏 สั่งอาหาร", img: bImg("lek","wave"), bg:"linear-gradient(135deg,#FFC72C,#FFE38A)", bd:"#C98F00", ring:"#FFF1C2", fg:"#1B2B5A", tag:"#8A6200", onClick: () => this.setUi({role:"boss", bossId:"lek", landing:false, suggest:null})},
+        {name:"แม่ครัว", house:"ดูแล 2 บ้าน", badge:"🍳 ทำอาหาร", img:"assets/chibi/chef/soup-pot.png", bg:"linear-gradient(135deg,#F47B20,#FFA95E)", bd:"#C2560A", ring:"#FFE2C8", fg:"#fff", tag:"#C2560A", onClick: () => this.setUi({role:"cook", landing:false, suggest:null})}],
       houseText: boss ? "เสิร์ฟ " + BX.house : "แสนศุข · แสนรักษ์",
       roleBtns: [roleBtn(boss && s.bossId==="ek", bImg("ek","wave"), "50% 0/150% auto", "BOSS", "เอก", () => this.setUi({role:"boss", bossId:"ek", suggest:null})),
         roleBtn(boss && s.bossId==="lek", bImg("lek","wave"), "50% 0/150% auto", "BOSS", "เล็ก", () => this.setUi({role:"boss", bossId:"lek", suggest:null})),
