@@ -13,8 +13,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#FFC72C">
 <script src="firebase-config.js?v=5"></script>
-<script src="menu-data.js?v=6"></script>
-<script src="ingredients.js?v=2"></script>
+<script src="menu-data.js?v=7"></script>
+<script src="ingredients.js?v=3"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -761,7 +761,7 @@ const MEALS = {
 };
 const GROUPS = {
   bk:"อาหารเช้า", one:"จานเดียว / ตามสั่ง", spec:"ข้าวราดเฉพาะทาง", nood:"เส้น & ก๋วยเตี๋ยว", soup:"ต้ม ซุป & แกง",
-  isan:"ยำ ลาบ & ส้มตำ", kab:"กับข้าว ผัด & ทอด", nprik:"น้ำพริก & ผักจิ้ม", royal:"👑 อาหารชาววัง", sea:"อาหารทะเล & ซีฟู้ด", health:"🥗 อาหารสุขภาพ", asia:"ญี่ปุ่น & เกาหลี", west:"อาหารตะวันตก", sweet:"ของว่าง & ของหวาน", drink:"เครื่องดื่ม"
+  isan:"ยำ ลาบ & ส้มตำ", kab:"กับข้าว ผัด & ทอด", nprik:"น้ำพริก & ผักจิ้ม", royal:"👑 อาหารชาววัง", chinese:"🥢 อาหารจีน", sea:"อาหารทะเล & ซีฟู้ด", health:"🥗 อาหารสุขภาพ", asia:"ญี่ปุ่น & เกาหลี", west:"อาหารตะวันตก", sweet:"ของว่าง & ของหวาน", drink:"เครื่องดื่ม"
 };
 const CATS = {
   bkthai:{l:"อาหารเช้าแบบไทย",g:"bk",bg:"#FFF1D6"}, bkwest:{l:"อาหารเช้าแบบฝรั่ง",g:"bk",bg:"#FFF1D6"}, dimsum:{l:"ติ่มซำ & ซาลาเปา",g:"bk",bg:"#FFF1D6"},
@@ -774,6 +774,7 @@ const CATS = {
   namprik:{l:"น้ำพริก & ผักจิ้ม",g:"nprik",bg:"#FFE6DC"},
   royalrice:{l:"ข้าวจานพิเศษชาววัง",g:"royal",bg:"#FFF3C4"}, royalcurry:{l:"แกง & ต้มชาววัง",g:"royal",bg:"#FFF3C4"}, royalyum:{l:"ยำ & เครื่องจิ้มชาววัง",g:"royal",bg:"#FFF3C4"},
   royalsnack:{l:"ของว่างชาววัง",g:"royal",bg:"#FFF3C4"}, royalsweet:{l:"ขนมไทยชาววัง",g:"royal",bg:"#FFF3C4"},
+  chmain:{l:"กับข้าวจีน",g:"chinese",bg:"#FFE5E0"}, chsoup:{l:"ซุป & ต้มตุ๋นจีน",g:"chinese",bg:"#FFE5E0"}, chrice:{l:"ข้าว & เส้นจีน",g:"chinese",bg:"#FFE5E0"}, chsnack:{l:"ของว่างจีน",g:"chinese",bg:"#FFE5E0"},
   shrimp:{l:"กุ้ง",g:"sea",bg:"#FFE4DC"}, crab:{l:"ปู",g:"sea",bg:"#FFE0D6"}, squid:{l:"ปลาหมึก",g:"sea",bg:"#F1E6FF"}, shell:{l:"หอย",g:"sea",bg:"#E6F0FA"},
   fish:{l:"ปลาทะเล",g:"sea",bg:"#DDEFFC"}, seaset:{l:"รวมมิตรซีฟู้ด & หม้อไฟ",g:"sea",bg:"#FFE9D6"},
   clean:{l:"อาหารคลีน จานหลัก",g:"health",bg:"#E5F7E4"}, bowl:{l:"สลัด & โบวล์สุขภาพ",g:"health",bg:"#E5F7E4"},
@@ -799,16 +800,16 @@ const QUICK = ["ไข่ไก่","ข้าวสาร","หมูสับ"
 const MAXO = 7, MAXP = 8;
 // มื้อเย็น: จำนวนกับข้าวตามจำนวนคน (2 คน → 3 อย่าง, 3–4 → 4, 5–6 → 6, 7 ขึ้นไป → 7)
 const dinnerCount = ppl => ppl <= 2 ? 3 : ppl <= 4 ? 4 : ppl <= 6 ? 6 : 7;
-const VEG_RE = /^(ผัด(คะน้า|ผักบุ้ง|ผักรวม|ถั่วงอก|บวบ|ฟักทอง|ผักกาด|ถั่วลันเตา|ดอกกะหล่ำ|มะเขือ|หน่อไม้)|กะหล่ำปลี|ผักกาดดอง|ใบเหลียง)/;
-const SOUP_CATS = ["clearsoup","tomyum","curry","royalcurry"];
-const MAIN_CATS = ["kabfry","garlic","kabdeep","grill","larb","yum","royalyum","fish","shrimp","crab","squid","shell","namprik"];
+const VEG_RE = /^(ผัด(คะน้า|ผักบุ้ง|ผักรวม|ถั่วงอก|บวบ|ฟักทอง|ผักกาด|ถั่วลันเตา|ถั่วฝักยาว|ดอกกะหล่ำ|มะเขือ|หน่อไม้)|กะหล่ำปลี|ผักกาดดอง|ใบเหลียง)/;
+const SOUP_CATS = ["clearsoup","tomyum","curry","royalcurry","chsoup"];
+const MAIN_CATS = ["kabfry","garlic","chmain","kabdeep","grill","larb","yum","royalyum","fish","shrimp","crab","squid","shell","namprik"];
 const isNamprik = x => x.cat==="namprik" || /^(น้ำพริก|หลน|เต้าเจี้ยวหลน)/.test(x.name);
-const ONE_DISH = ["bkthai","kaprao","rice","garlic","special","noodlesoup","noodlefry","khanomjeen","clean","royalrice","bowl","hbreak"];
+const ONE_DISH = ["bkthai","kaprao","rice","garlic","special","noodlesoup","noodlefry","khanomjeen","clean","royalrice","bowl","hbreak","chrice"];
 const NOT_ONE = /^(ไข่ตุ๋น|ปาท่องโก๋|ผัดคะน้า|ผัดผักบุ้ง|ผัดผักรวม|กะหล่ำปลี|ผัดขิง|ไก่ผัดเม็ด|ผัดพริก|ผัดขี้เมา \(|ทอดกระเทียม)/;
 const REC = {
   b:{n:1, slots:[["", c => ONE_DISH.includes(c)]]},
   l:{n:1, slots:[["", c => ONE_DISH.includes(c)]]},
-  s:{n:1, slots:[["", c => ["thaisweet","thaisnack","dimsum","royalsnack","royalsweet","hsnack","bakery","icecream","fruit","wsides","jp","kr","yum","somtam","grill"].includes(c)]]},
+  s:{n:1, slots:[["", c => ["thaisweet","thaisnack","dimsum","royalsnack","royalsweet","hsnack","chsnack","bakery","icecream","fruit","wsides","jp","kr","yum","somtam","grill"].includes(c)]]},
   d:{n:5, slots:[["🍲 ต้ม / แกง", c => ["clearsoup","tomyum","curry","royalcurry"].includes(c)], ["🥬 ผัด", c => ["kabfry","garlic"].includes(c)],
      ["🍳 ทอด / ไข่", c => ["kabdeep","grill"].includes(c)], ["🥗 ยำ / ลาบ / น้ำพริก", c => ["yum","larb","somtam","namprik","royalyum"].includes(c)],
      ["🐟 ปลา / ซีฟู้ด", c => ["fish","shrimp","crab","squid","shell","seaset"].includes(c)]]}
@@ -1042,7 +1043,7 @@ class Component extends DCLogic {
     if (mk==="d") {
       const n = dinnerCount(this.peopleOf(m));
       slots = [["🍲 น้ำแกง / ซุป / แกง", x => SOUP_CATS.includes(x.cat)],
-               ["🥬 ผักผัด", x => ["kabfry","garlic"].includes(x.cat) && VEG_RE.test(x.name)],
+               ["🥬 ผักผัด", x => ["kabfry","garlic","chmain"].includes(x.cat) && VEG_RE.test(x.name)],
                ...Array.from({length: n-2}, () => [null, x => MAIN_CATS.includes(x.cat) && !VEG_RE.test(x.name) && !/^ผักลวก/.test(x.name)
                  && !(isNamprik(x) && out.some(o => isNamprik(this.menu(o.sel.m))))])];
     } else slots = REC[mk].slots.map(([l, ok]) => [l, x => ok(x.cat)]);
