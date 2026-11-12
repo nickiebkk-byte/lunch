@@ -38,13 +38,17 @@
       <img src="assets/app-logo-192.png?v=1" alt="" style="width:60px;height:60px;flex:none;transform:rotate(-6deg);filter:drop-shadow(0 4px 0 #C98F00)">
       <div style="min-width:0">
         <div style="font-weight:800;font-size:30px;line-height:1.1;color:#FFC72C;text-shadow:0 3px 0 #0F1A3A,2px 0 0 #0F1A3A,-2px 0 0 #0F1A3A,0 -2px 0 #0F1A3A,0 9px 18px rgba(0,0,0,.4);white-space:nowrap">วันนี้กินอะไรดี</div>
-        <div style="font-size:16px;font-weight:600;color:#C9D6F5;white-space:nowrap">BOSS × แม่ครัว · <span style="color:{{ syncColor }}">● {{ syncText }}</span></div>
+        <div style="font-size:16px;font-weight:600;color:#C9D6F5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span title="{{ syncText }}" style="color:{{ syncColor }}">●</span> <b style="color:#FFE27A">🏠 {{ houseText }}</b></div>
       </div>
       <button onClick="{{ toggleSound }}" aria-label="{{ soundLabel }}" title="{{ soundLabel }}" style="margin-left:auto;flex:none;width:46px;height:46px;border-radius:50%;border:3px solid #FFC72C;background:{{ soundBg }};font-size:22px;padding:0;box-shadow:0 3px 0 #C98F00">{{ soundIcon }}</button>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
-      <button onClick="{{ setBoss }}" style="animation:{{ roleBossAnim }};display:flex;align-items:center;gap:10px;border:3px solid {{ roleBossBd }};border-radius:20px;padding:4px 12px 4px 4px;background:{{ roleBossBg }};color:{{ roleBossFg }};font-weight:800;font-size:20px;height:60px;min-width:0;box-shadow:0 4px 0 {{ roleBossBd }}"><span style="width:48px;height:48px;flex:none;border-radius:15px;background:#DCE6FF url(assets/chibi/boss/01-wave.png) 50% 4%/190% auto no-repeat;border:2px solid #fff"></span><span style="white-space:nowrap">BOSS</span></button>
-      <button onClick="{{ setCook }}" style="animation:{{ roleCookAnim }};display:flex;align-items:center;gap:10px;border:3px solid {{ roleCookBd }};border-radius:20px;padding:4px 12px 4px 4px;background:{{ roleCookBg }};color:{{ roleCookFg }};font-weight:800;font-size:20px;height:60px;min-width:0;box-shadow:0 4px 0 {{ roleCookBd }}"><span style="width:48px;height:48px;flex:none;border-radius:15px;background:#DCE6FF url(assets/chibi/chef/soup-pot.png) 50% 34%/210% auto no-repeat;border:2px solid #fff"></span><span style="white-space:nowrap">แม่ครัว</span></button>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.2fr);gap:8px">
+      <sc-for list="{{ roleBtns }}" as="rb" hint-placeholder-count="3">
+        <button onClick="{{ rb.onClick }}" style="animation:{{ rb.anim }};display:flex;align-items:center;gap:5px;border:3px solid {{ rb.bd }};border-radius:20px;padding:3px 6px 3px 3px;background:{{ rb.bg }};color:#1B2B5A;height:60px;min-width:0;box-shadow:0 4px 0 {{ rb.bd }}">
+          <span style="width:44px;height:44px;flex:none;border-radius:14px;background:#DCE6FF url({{ rb.img }}) {{ rb.pos }} no-repeat;border:2px solid #fff"></span>
+          <span style="display:grid;min-width:0;text-align:left;line-height:1.05"><span style="font-size:13px;font-weight:700;opacity:.75;white-space:nowrap">{{ rb.top }}</span><span style="font-size:18px;font-weight:800;white-space:nowrap">{{ rb.l }}</span></span>
+        </button>
+      </sc-for>
     </div>
     <sc-if value="{{ showOrderer }}">
       <div style="display:flex;align-items:center;gap:6px;overflow-x:auto;padding-bottom:2px">
@@ -117,7 +121,7 @@
         <sc-if value="{{ notAway }}" hint-placeholder-val="{{ true }}">
           <section>
             <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:10px">
-              <div style="font-size:18px;font-weight:700;color:#4D5F8A">เมนูที่ BOSS เลือก</div>
+              <div style="font-size:18px;font-weight:700;color:#4D5F8A">{{ pickedTitle }}</div>
               <div style="font-size:17px;font-weight:700;color:#1D4E89">🍽️ {{ peopleText }}</div>
             </div>
             <sc-if value="{{ hasPicks }}">
@@ -429,7 +433,7 @@
   </div>
   <div style="display:grid;grid-template-columns:minmax(0,1fr);gap:16px;margin-bottom:22px">
     <div style="background:#fff;border-radius:30px;border:3px solid #B9CCF0;box-shadow:0 6px 0 #B9CCF0,0 18px 24px -12px rgba(27,43,90,.28);padding:18px 22px;display:grid;gap:10px">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin:-6px 0 0"><h3 style="margin:0;font-size:26px;font-weight:800">เลือกบ่อยที่สุด</h3><img src="assets/chibi/boss/08-eating.png" alt="" style="width:80px;height:80px;flex:none;object-fit:contain;margin:-6px -6px -6px 0"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin:-6px 0 0"><h3 style="margin:0;font-size:26px;font-weight:800">เลือกบ่อยที่สุด</h3><img src="{{ bEat }}" alt="" style="width:80px;height:80px;flex:none;object-fit:contain;margin:-6px -6px -6px 0"></div>
       <sc-if value="{{ hasTop }}">
         <div style="display:grid;gap:6px">
           <sc-for list="{{ top5 }}" as="t">
@@ -535,7 +539,7 @@
 <!-- ================= SHOP ================= -->
 <sc-if value="{{ isShop }}">
   <div style="display:flex;align-items:flex-end;gap:8px;margin-bottom:18px;padding:12px 16px 0 6px;background:radial-gradient(circle at 16% 82%,#FFC72C 0 62px,transparent 63px),radial-gradient(circle at 16% 82%,rgba(255,199,44,.28) 0 96px,transparent 97px),radial-gradient(circle at 16% 82%,rgba(255,255,255,.08) 0 132px,transparent 133px),radial-gradient(rgba(255,255,255,.09) 2px,transparent 2.6px) 0 0/22px 22px,linear-gradient(160deg,#2C4FA8,#1B2B5A 70%);border:3px solid #0F1A3A;border-radius:30px;box-shadow:0 6px 0 #0F1A3A,0 22px 34px -14px rgba(15,26,58,.55);overflow:hidden">
-    <img src="assets/chibi/boss/09-shopping.png" alt="" style="filter:drop-shadow(0 12px 10px rgba(0,0,0,.4));animation:bob 2.6s ease-in-out infinite;width:136px;height:136px;flex:none;object-fit:contain;margin-bottom:-4px">
+    <img src="{{ bOk }}" alt="" style="filter:drop-shadow(0 12px 10px rgba(0,0,0,.4));animation:bob 2.6s ease-in-out infinite;width:136px;height:136px;flex:none;object-fit:contain;margin-bottom:-4px">
     <div style="flex:1;min-width:0;padding-bottom:18px;display:grid;gap:4px"><div style="font-size:clamp(28px,8vw,36px);font-weight:800;line-height:1.1;color:#FFC72C;text-shadow:0 3px 0 #0F1A3A,2px 0 0 #0F1A3A,-2px 0 0 #0F1A3A,0 -2px 0 #0F1A3A,0 9px 18px rgba(0,0,0,.4)">ไปตลาดกัน</div><div style="font-size:19px;font-weight:700;color:#fff">{{ shopSub }}</div></div>
   </div>
   <div style="display:grid;grid-template-columns:minmax(0,1fr);gap:16px">
@@ -628,7 +632,7 @@
     <div onClick="{{ stop }}" role="dialog" aria-modal="true" style="width:100%;max-height:88%;display:flex;flex-direction:column;background:#F5F8FF;border-radius:32px 32px 0 0;box-shadow:0 -10px 40px -10px rgba(27,43,90,.4);overflow:hidden">
       <div style="padding:18px 20px 12px;display:grid;gap:10px;background:#DCE6FF;border-bottom:3px dashed #9DB6E6">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-          <div style="display:flex;align-items:center;gap:6px;min-width:0"><img src="assets/chibi/boss/03-select-meal.png" alt="" style="width:70px;height:70px;flex:none;object-fit:contain;margin:-10px 0 -10px -6px"><h3 style="margin:0;font-size:28px;font-weight:800;line-height:1.15;color:#1E3A8A;text-shadow:2px 2px 0 #fff,-2px -2px 0 #fff,2px -2px 0 #fff,-2px 2px 0 #fff,0 3px 0 #fff,3px 0 0 #fff,0 -3px 0 #fff,-3px 0 0 #fff,0 7px 0 #FFC72C">{{ pickTitle }}</h3></div>
+          <div style="display:flex;align-items:center;gap:6px;min-width:0"><img src="{{ bThink }}" alt="" style="width:70px;height:70px;flex:none;object-fit:contain;margin:-10px 0 -10px -6px"><h3 style="margin:0;font-size:28px;font-weight:800;line-height:1.15;color:#1E3A8A;text-shadow:2px 2px 0 #fff,-2px -2px 0 #fff,2px -2px 0 #fff,-2px 2px 0 #fff,0 3px 0 #fff,3px 0 0 #fff,0 -3px 0 #fff,-3px 0 0 #fff,0 7px 0 #FFC72C">{{ pickTitle }}</h3></div>
           <button onClick="{{ closePick }}" style="border:2px solid #B9CCF0;background:#fff;border-radius:999px;padding:6px 16px;font-weight:700">ปิด</button>
         </div>
         <sc-if value="{{ pickShowList }}">
@@ -782,6 +786,11 @@ const clean = o => JSON.parse(JSON.stringify(o));
 const loadScript = src => new Promise((res, rej) => { const el = document.createElement("script"); el.src = src; el.onload = res; el.onerror = () => rej(new Error("load " + src)); document.head.appendChild(el); });
 
 const MK = ["b","l","s","d"];
+const BOSSES = {
+  ek:  {n:"BOSS เอก", s:"เอก", house:"บ้านแสนศุข", wave:"01-wave", ok:"02-thumbs", love:"03-heart", eat:"04-rice", think:"05-thinking", yay:"06-jump"},
+  lek: {n:"BOSS เล็ก", s:"เล็ก", house:"บ้านแสนรักษ์", wave:"01-wai", ok:"04-ok", love:"06-thanks", eat:"03-soup", think:"02-drink", yay:"05-plate"}
+};
+const bImg = (id, k) => "assets/chibi/" + id + "/" + BOSSES[id][k] + ".png?v=1";
 const MEALS = {
   b:{tag:"เช้า", l:"เช้า", full:"มื้อเช้า", e:"🌅", img:"assets/meals/b.png?v=1", cut:"06:30", serve:"08:00"},
   l:{tag:"เที่ยง", l:"กลางวัน", full:"มื้อกลางวัน", e:"☀️", img:"assets/meals/l.png?v=1", cut:"10:00", serve:"12:30"},
@@ -905,7 +914,7 @@ class Component extends DCLogic {
     if (saved && saved.menus && (saved.seed||1) < dataVer()) menus = mergeSeed(menus, saved.seed||1).list;
     const cfg = Object.assign(defCfg(), (saved && saved.cfg) || {});
     this.setState({ready: !CLOUD || !!saved, syncErr:"", online:false, menus, days:(saved && saved.days) || {}, cfg, cfgDraft:clean(cfg), shop:(saved && saved.shop) || [],
-      role: ui.role==="cook" ? "cook" : "boss", sound: ui.sound !== false, toasts: [], orderer: ui.orderer || "", view: ["day","week","menu","shop"].includes(ui.view) ? ui.view : "day",
+      role: ui.role==="cook" ? "cook" : "boss", bossId: ui.bossId==="lek" ? "lek" : "ek", sound: ui.sound !== false, toasts: [], orderer: ui.orderer || "", view: ["day","week","menu","shop"].includes(ui.view) ? ui.view : "day",
       sel: todayStr(), meal: currentMeal(cfg), pick:null, suggest:null, spin:null, drafts:{}, confirmDel:null,
       fName:"", fCat:"kabfry", fOpts:"", fEmo:"", fMeals:"ld", fEdit:null, fErr:"", mq:"", mg:"", shopDraft:""}, () => { if (saved && (saved.seed||1) < dataVer()) this.persist({}); });
     if (CLOUD) this.connect();
@@ -946,25 +955,25 @@ class Component extends DCLogic {
     for (const [date, d] of Object.entries(days)) {
       if (date < t) continue;
       for (const mk of MK) {
-        const cur = d.meals && d.meals[mk]; if (!cur || !cur.by || cur.by===me) continue;
+        const cur = d.meals && d.meals[mk]; if (!cur || !cur.by || (cur.by===me && (me!=="boss" || (cur.bw||this.state.bossId)===this.state.bossId))) continue;
         const prevRaw = prevDays[date] && prevDays[date].meals && prevDays[date].meals[mk];
         if (prevRaw && (prevRaw.at||0) >= (cur.at||0)) continue;
         const prev = Object.assign(blankMeal(), prevRaw || {}), c = Object.assign(blankMeal(), cur);
         const when = MEALS[mk].full + " (" + (date===t ? "วันนี้" : date===addDays(t,1) ? "พรุ่งนี้" : DAYF[parse(date).getDay()] + " " + fmtDate(date)) + ")";
         const added = (a, b) => a.filter(x => !b.some(y => this.same(x, y)));
         const push = text => out.push({date, mk, text});
-        if (c.by==="boss") {
+        if (c.by==="boss") { const BN = c.bw && BOSSES[c.bw] ? BOSSES[c.bw].n : "BOSS";
           const np = added(c.picks, prev.picks);
-          if (np.length) push("BOSS เลือก" + when + ": " + np.map(p => this.pickName(p)).join(", "));
-          else if (c.picks.length !== prev.picks.length) push("BOSS แก้ไขเมนู" + when);
-          else if (c.picks.some(x => { const o = prev.picks.find(y => this.same(x, y)); return o && (o.who||[]).join() !== (x.who||[]).join(); })) push("BOSS ระบุชื่อคนทาน" + when + ": " + c.picks.filter(x => (x.who||[]).length).map(p => this.pickName(p)).join(", "));
-          if (c.drink && (!prev.drink || !this.same(c.drink, prev.drink))) push("BOSS ขอเครื่องดื่ม" + when + ": " + this.label(c.drink));
-          if (c.changeReq && !prev.changeReq) push("BOSS ขอเปลี่ยนตัวเลือก" + when);
-          if (c.away && c.away !== prev.away) push("BOSS แจ้ง " + AWAY[c.away] + " · " + when);
-          if (!c.away && prev.away) push("BOSS ทาน" + when + " ที่บ้านตามปกติ");
-          if ((c.people||0) !== (prev.people||0) && c.people) push("BOSS เปลี่ยนเป็น " + c.people + " ที่ · " + when);
-          if ((c.serve||"") !== (prev.serve||"")) push("BOSS ขอเสิร์ฟ" + when + " เวลา " + (c.serve || (this.state.cfg.serve||{})[mk] || MEALS[mk].serve) + " น.");
-          if (c.bossNote && c.bossNote !== prev.bossNote) push("BOSS ฝากบอก (" + MEALS[mk].full + "): " + c.bossNote);
+          if (np.length) push(BN+" เลือก" + when + ": " + np.map(p => this.pickName(p)).join(", "));
+          else if (c.picks.length !== prev.picks.length) push(BN+" แก้ไขเมนู" + when);
+          else if (c.picks.some(x => { const o = prev.picks.find(y => this.same(x, y)); return o && (o.who||[]).join() !== (x.who||[]).join(); })) push(BN+" ระบุชื่อคนทาน" + when + ": " + c.picks.filter(x => (x.who||[]).length).map(p => this.pickName(p)).join(", "));
+          if (c.drink && (!prev.drink || !this.same(c.drink, prev.drink))) push(BN+" ขอเครื่องดื่ม" + when + ": " + this.label(c.drink));
+          if (c.changeReq && !prev.changeReq) push(BN+" ขอเปลี่ยนตัวเลือก" + when);
+          if (c.away && c.away !== prev.away) push(BN+" แจ้ง " + AWAY[c.away] + " · " + when);
+          if (!c.away && prev.away) push(BN+" ทาน" + when + " ที่บ้านตามปกติ");
+          if ((c.people||0) !== (prev.people||0) && c.people) push(BN+" เปลี่ยนเป็น " + c.people + " ที่ · " + when);
+          if ((c.serve||"") !== (prev.serve||"")) push(BN+" ขอเสิร์ฟ" + when + " เวลา " + (c.serve || (this.state.cfg.serve||{})[mk] || MEALS[mk].serve) + " น.");
+          if (c.bossNote && c.bossNote !== prev.bossNote) push(BN+" ฝากบอก (" + MEALS[mk].full + "): " + c.bossNote);
         } else {
           const no = added(c.options, prev.options);
           if (no.length) push("แม่ครัวเสนอ" + when + ": " + no.map(p => this.label(p)).join(", "));
@@ -995,7 +1004,7 @@ class Component extends DCLogic {
     } catch(e) {}
   }
   clearToasts(){ this.setState({toasts: []}); document.title = "วันนี้กินอะไรดี"; try { navigator.clearAppBadge && navigator.clearAppBadge(); } catch(e) {} }
-  setUi(patch){ this.setState(patch, () => { try { localStorage.setItem(KEY+"-ui", JSON.stringify({role:this.state.role, view:this.state.view, sound:this.state.sound, orderer:this.state.orderer||""})); } catch(e) {} }); }
+  setUi(patch){ this.setState(patch, () => { try { localStorage.setItem(KEY+"-ui", JSON.stringify({role:this.state.role, bossId:this.state.bossId, view:this.state.view, sound:this.state.sound, orderer:this.state.orderer||""})); } catch(e) {} }); }
 
   menu(id){ return this.state.menus.find(m => m.id===id); }
   meal(date, mk, days){ const d = (days || this.state.days)[date]; return Object.assign(blankMeal(), (d && d.meals && d.meals[mk]) || {}); }
@@ -1014,7 +1023,7 @@ class Component extends DCLogic {
   picksText(m){ return m.picks.map(p => this.pickName(p)).join(" · "); }
   saveMeal(date, mk, patch){
     const now = Date.now();
-    const body = {...this.meal(date, mk), ...patch, by: this.state.role, at: now}; const cur = this.state.days[date] || {};
+    const body = {...this.meal(date, mk), ...patch, by: this.state.role, bw: this.state.role==="boss" ? this.state.bossId : (this.meal(date, mk).bw || ""), at: now}; const cur = this.state.days[date] || {};
     this.persist({days: {...this.state.days, [date]: {...cur, date, meals: {...(cur.meals||{}), [mk]: body}, updatedAt: now}}});
     this.cloudSet("days/"+date, {date, meals:{[mk]: body}, updatedAt: now}, true);
   }
@@ -1245,7 +1254,7 @@ class Component extends DCLogic {
     const groupChips = [["","ทั้งหมด"], ...Object.entries(GROUPS)].map(([v,l]) => ({t:l, ...(s.mg===v ? ON : OFF), onClick: () => this.setState({mg:v})}));
 
     // shop
-    const addShopItem = txt => { const v = (txt||"").trim(); if (!v) return; this.saveShop([...s.shop, {id: Date.now().toString(36)+Math.random().toString(36).slice(2,5), t:v, done:false, by: boss ? "BOSS" : "แม่ครัว"}]); };
+    const addShopItem = txt => { const v = (txt||"").trim(); if (!v) return; this.saveShop([...s.shop, {id: Date.now().toString(36)+Math.random().toString(36).slice(2,5), t:v, done:false, by: boss ? BOSSES[s.bossId].n : "แม่ครัว"}]); };
     const shopItems = [...s.shop].sort((a,b) => (a.done?1:0)-(b.done?1:0)).map(it => ({t:it.t, by:it.by||"", mark: it.done ? "✓" : "", cbg: it.done ? "#2FB67C" : "#fff", bd: it.done ? "#2FB67C" : "#B9CCF0",
       bg: it.done ? "#EEF2FA" : "#F5F8FF", deco: it.done ? "line-through" : "none", fg: it.done ? "#8A99B8" : "#1B2B5A",
       onToggle: () => this.saveShop(s.shop.map(x => x.id===it.id ? {...x, done:!x.done} : x)), onDel: () => this.saveShop(s.shop.filter(x => x.id!==it.id))}));
@@ -1294,18 +1303,24 @@ class Component extends DCLogic {
     const catOptions = Object.entries(CATS).filter(([k,c]) => !pkKind || (pkKind==="drink") === (c.g==="drink")).map(([k,c]) => ({k, l: GROUPS[c.g]+" › "+c.l}));
     const fOptsArr = s.fOpts.split(/[,，、]/).map(x => x.trim()).filter(Boolean), fNm = s.fName.trim();
     const fPreview = !fNm ? "" : fOptsArr.length ? fOptsArr.slice(0,3).map(o => fNm+o).join(" / ") + (fOptsArr.length>3 ? " …" : "") : "";
-    const CB = "assets/chibi/boss/", CC = "assets/chibi/chef/";
+    const CC = "assets/chibi/chef/", bid = boss ? s.bossId : (m.bw && BOSSES[m.bw] ? m.bw : "ek"), BI = k => bImg(bid, k), BX = BOSSES[s.bossId];
     let heroImg, heroSay;
-    if (m.away) { heroImg = CB+"01-wave.png"; heroSay = boss ? "มื้อนี้ไม่ต้องทำนะ" : "BOSS ไม่ทานมื้อนี้"; }
-    else if (m.status==="ready") { heroImg = CB+"07-ready.png"; heroSay = "พร้อมทานแล้ว!"; }
-    else if (m.status==="cooking") { heroImg = boss ? CB+"06-waiting.png" : CC+"soup-pot.png"; heroSay = boss ? "รอแป๊บนะ…" : "กำลังทำจ้า"; }
-    else if (m.picks.length) { heroImg = boss ? CB+"04-confirmed.png" : CC+"recipe-book.png"; heroSay = boss ? "เลือกแล้ว!" : "ได้เลย!"; }
-    else { heroImg = boss ? CB+"02-thinking.png" : CC+"daily-calendar.png"; heroSay = boss ? "กินอะไรดีน้า?" : (m.options.length ? "รอ BOSS เลือก" : "เสนอเมนูกัน!"); }
+    if (m.away) { heroImg = BI("wave"); heroSay = boss ? "มื้อนี้ไม่ต้องทำนะ" : BOSSES[bid].n + " ไม่ทานมื้อนี้"; }
+    else if (m.status==="ready") { heroImg = BI("yay"); heroSay = "พร้อมทานแล้ว!"; }
+    else if (m.status==="cooking") { heroImg = boss ? BI("eat") : CC+"soup-pot.png"; heroSay = boss ? "รอแป๊บนะ…" : "กำลังทำจ้า"; }
+    else if (m.picks.length) { heroImg = boss ? BI("ok") : CC+"recipe-book.png"; heroSay = boss ? "เลือกแล้ว!" : "ได้เลย!"; }
+    else { heroImg = boss ? BI("think") : CC+"daily-calendar.png"; heroSay = boss ? "กินอะไรดีน้า?" : (m.options.length ? "รอ BOSS เลือก" : "เสนอเมนูกัน!"); }
+    const roleBtn = (on, img, pos, top, l, onClick) => ({img, pos, top, l, onClick, bg: on ? "#FFC72C" : "#fff", bd: on ? "#C98F00" : "#0F1A3A", anim: on ? POP : "none"});
     const cd = s.cfgDraft || s.cfg;
     return {
       ready:true, loading:false, isBoss:boss, isCook:!boss,
-      heroImg, heroSay, thinkImg: boss ? CB+"02-thinking.png" : CC+"recipe-book.png", noteImg: boss ? CB+"05-message.png" : CC+"soup-pot.png",
-      weekImg: boss ? CB+"10-weekly-plan.png" : CC+"weekly-planner.png", shopSub: pendingShop ? "ค้างซื้อ "+pendingShop+" รายการ" : "ยังไม่มีของค้าง",
+      heroImg, heroSay, thinkImg: boss ? BI("think") : CC+"recipe-book.png", noteImg: boss ? BI("love") : CC+"soup-pot.png", bEat: BI("eat"), bOk: BI("ok"), bThink: BI("think"),
+      pickedTitle: "เมนูที่ " + (m.bw && BOSSES[m.bw] && m.picks.length ? BOSSES[m.bw].n : "BOSS") + " เลือก",
+      houseText: boss ? "เสิร์ฟ " + BX.house : "แสนศุข · แสนรักษ์",
+      roleBtns: [roleBtn(boss && s.bossId==="ek", bImg("ek","wave"), "50% 0/150% auto", "BOSS", "เอก", () => this.setUi({role:"boss", bossId:"ek", suggest:null})),
+        roleBtn(boss && s.bossId==="lek", bImg("lek","wave"), "50% 0/150% auto", "BOSS", "เล็ก", () => this.setUi({role:"boss", bossId:"lek", suggest:null})),
+        roleBtn(!boss, "assets/chibi/chef/soup-pot.png", "50% 34%/210% auto", "2 บ้าน", "แม่ครัว", () => this.setUi({role:"cook", suggest:null}))],
+      weekImg: boss ? BI("eat") : CC+"weekly-planner.png", shopSub: pendingShop ? "ค้างซื้อ "+pendingShop+" รายการ" : "ยังไม่มีของค้าง",
       roleBossBd: boss ? "#C98F00" : "#0F1A3A", roleCookBd: !boss ? "#C98F00" : "#0F1A3A",
       hasSyncErr: !!s.syncErr, syncErr: s.syncErr, syncText: CLOUD ? (s.online ? "ออนไลน์" : "ออฟไลน์") : "เครื่องนี้", syncColor: CLOUD ? (s.online ? "#5BE39F" : "#FF8FA8") : "#C9D6F5",
       roleBossAnim: boss ? POP : "none", roleCookAnim: !boss ? POP : "none", roleBossBg: boss ? "#FFC72C" : "#fff", roleBossFg: "#1B2B5A",
