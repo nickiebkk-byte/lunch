@@ -224,7 +224,7 @@
               </sc-if>
               <sc-if value="{{ isCook }}">
                 <button onClick="{{ openOption }}" disabled="{{ optsFull }}" style="border:0;background:#FFC72C;color:#1B2B5A;border-radius:999px;padding:12px 20px;font-weight:700;font-size:18px;box-shadow:0 4px 0 #C98F00;opacity:{{ fullOpacity }}">+ เพิ่มตัวเลือก</button>
-                <button onClick="{{ fillDay }}" disabled="{{ optsFull }}" style="border:2px solid #8EC8F2;background:#DDF0FF;color:#1D4E89;border-radius:999px;padding:10px 18px;font-weight:700;font-size:18px;box-shadow:0 4px 0 #8EC8F2;opacity:{{ fullOpacity }}">🎲 สุ่มเติมให้ครบ {{ maxOpts }}</button>
+                <button onClick="{{ fillDay }}" disabled="{{ optsFull }}" style="border:2px solid #8EC8F2;background:#DDF0FF;color:#1D4E89;border-radius:999px;padding:10px 18px;font-weight:700;font-size:18px;box-shadow:0 4px 0 #8EC8F2;opacity:{{ fullOpacity }}">🎲 สุ่มเติมให้ครบ {{ fillN }}</button>
               </sc-if>
             </div>
 
@@ -711,7 +711,13 @@ const AWAY_E = {skip:"🙅", out:"🚗", order:"🛵"};
 const EXTRAS = ["ไม่เผ็ด","เผ็ดน้อย","หวานน้อย","มันน้อย","ข้าวกล้อง","ทำเผื่อมื้อถัดไป"];
 const EMOJIS = ["🍛","🍲","🍜","🍝","🍚","🍳","🥚","🍗","🍖","🥩","🥓","🐟","🦐","🦀","🦑","🦪","🥗","🥬","🥦","🌶️","🧄","🍄","🌽","🥔","🍞","🥪","🍔","🍕","🍣","🍱","🍤","🥟","🍢","🍰","🍮","🍧","🍨","🍩","🍉","🍌","🥭","🧋","☕","🍵","🥛","🥤","🍹","🍽️"];
 const QUICK = ["ไข่ไก่","ข้าวสาร","หมูสับ","อกไก่","กุ้ง","ผักบุ้ง","คะน้า","มะนาว","พริก","กระเทียม","น้ำปลา","น้ำมันพืช","นมสด","ผลไม้"];
-const MAXO = 5, MAXP = 8;
+const MAXO = 7, MAXP = 8;
+// มื้อเย็น: จำนวนกับข้าวตามจำนวนคน (2 คน → 3 อย่าง, 3–4 → 4, 5–6 → 6, 7 ขึ้นไป → 7)
+const dinnerCount = ppl => ppl <= 2 ? 3 : ppl <= 4 ? 4 : ppl <= 6 ? 6 : 7;
+const VEG_RE = /^(ผัด(คะน้า|ผักบุ้ง|ผักรวม|ถั่วงอก|บวบ|ฟักทอง|ผักกาด|ถั่วลันเตา|ดอกกะหล่ำ|มะเขือ|หน่อไม้)|กะหล่ำปลี|ผักกาดดอง|ใบเหลียง)/;
+const SOUP_CATS = ["clearsoup","tomyum","curry","royalcurry"];
+const MAIN_CATS = ["kabfry","garlic","kabdeep","grill","larb","yum","royalyum","fish","shrimp","crab","squid","shell","namprik"];
+const isNamprik = x => x.cat==="namprik" || /^(น้ำพริก|หลน|เต้าเจี้ยวหลน)/.test(x.name);
 const ONE_DISH = ["bkthai","kaprao","rice","garlic","special","noodlesoup","noodlefry","khanomjeen","clean","royalrice","bowl","hbreak"];
 const NOT_ONE = /^(ไข่ตุ๋น|ปาท่องโก๋|ผัดคะน้า|ผัดผักบุ้ง|ผัดผักรวม|กะหล่ำปลี|ผัดขิง|ไก่ผัดเม็ด|ผัดพริก|ผัดขี้เมา \(|ทอดกระเทียม)/;
 const REC = {
@@ -830,7 +836,7 @@ class Component extends DCLogic {
     return {m:m.id, o: m.opts && m.opts.length ? m.opts[Math.floor(Math.random()*m.opts.length)] : ""};
   }
   fill(date, mk, opts){ const out = [...opts]; const avoid = new Set([...this.recent(date, mk, 3), ...out.map(o => o.m)]); let g = 0;
-    while (out.length<MAXO && g++<30) { const p = this.randomFood(mk, avoid) || this.randomFood(mk, new Set(out.map(o => o.m))); if (!p) break; avoid.add(p.m); out.push(p); } return out; }
+    while (out.length<Math.min(MAXO, mk==="d" ? this.recCount(date, mk) : 3) && g++<30) { const p = this.randomFood(mk, avoid) || this.randomFood(mk, new Set(out.map(o => o.m))); if (!p) break; avoid.add(p.m); out.push(p); } return out; }
   doRandom(){
     const mk = this.state.meal, pool = this.pool(mk); if (!pool.length) return;
     clearInterval(this._spin); let n = 0;
@@ -863,18 +869,28 @@ class Component extends DCLogic {
     this.persist({menus:[...s.menus, mm]}); this.cloudSet("menus/"+mm.id, mm); this.resetForm({fMeals:s.fMeals});
     return mm;
   }
+  recCount(date, mk){ return mk==="d" ? dinnerCount(this.peopleOf(this.meal(date, mk))) : 1; }
   recommend(date, mk){
-    const m = this.meal(date, mk), R = REC[mk], rnd = rng(hashStr(date+"|"+mk+"|"+(m.rec||0)));
-    const avoid = this.recent(date, mk, 3), used = new Set(), out = [];
+    const m = this.meal(date, mk), rnd = rng(hashStr(date+"|"+mk+"|"+(m.rec||0)));
+    const avoid = this.recent(date, mk, 3), used = new Set(), usedCats = new Set(), out = [];
     const one = mk==="b" || mk==="l";
-    for (const [slot, ok] of R.slots) {
-      const base = this.state.menus.filter(x => x.kind==="food" && !x.hidden && ok(x.cat) && (!one || !NOT_ONE.test(x.name)) && !used.has(x.id));
-      let pool = base.filter(x => (x.meals||"ld").includes(mk) && !avoid.has(x.id));
-      if (!pool.length) pool = base.filter(x => (x.meals||"ld").includes(mk));
-      if (!pool.length) pool = base;
+    let slots;
+    if (mk==="d") {
+      const n = dinnerCount(this.peopleOf(m));
+      slots = [["🍲 น้ำแกง / ซุป / แกง", x => SOUP_CATS.includes(x.cat)],
+               ["🥬 ผักผัด", x => ["kabfry","garlic"].includes(x.cat) && VEG_RE.test(x.name)],
+               ...Array.from({length: n-2}, () => [null, x => MAIN_CATS.includes(x.cat) && !VEG_RE.test(x.name) && !/^ผักลวก/.test(x.name)
+                 && !(isNamprik(x) && out.some(o => isNamprik(this.menu(o.sel.m))))])];
+    } else slots = REC[mk].slots.map(([l, ok]) => [l, x => ok(x.cat)]);
+    for (const [slot, ok] of slots) {
+      const base = this.state.menus.filter(x => x.kind==="food" && !x.hidden && ok(x) && (!one || !NOT_ONE.test(x.name)) && !used.has(x.id));
+      const fits = base.filter(x => (x.meals||"ld").includes(mk));
+      let pool = fits.filter(x => !avoid.has(x.id) && !usedCats.has(x.cat));
+      if (!pool.length) pool = fits.filter(x => !avoid.has(x.id));
+      if (!pool.length) pool = fits.length ? fits : base;
       if (!pool.length) continue;
-      const w = pool.flatMap(x => x.fav ? [x,x,x] : [x]); const x = w[Math.floor(rnd()*w.length)]; used.add(x.id);
-      out.push({slot, sel:{m:x.id, o: x.opts && x.opts.length ? x.opts[Math.floor(rnd()*x.opts.length)] : ""}});
+      const w = pool.flatMap(x => x.fav ? [x,x,x] : [x]); const x = w[Math.floor(rnd()*w.length)]; used.add(x.id); usedCats.add(x.cat);
+      out.push({slot: slot === null ? (isNamprik(x) ? "🌶️ น้ำพริก" : "🍖 เนื้อสัตว์") : slot, sel:{m:x.id, o: x.opts && x.opts.length ? x.opts[Math.floor(rnd()*x.opts.length)] : ""}});
     }
     return out;
   }
@@ -1076,7 +1092,7 @@ class Component extends DCLogic {
       ...(() => { const rec = this.recommend(s.sel, mk), big = rec.length===1;
         const has = (arr, x) => arr.some(y => this.same(y, x.sel));
         return {
-          recHint: mk==="d" ? "ชุดกับข้าว 5 อย่าง ทานกับข้าวสวย" : mk==="s" ? "ของว่าง 1 อย่าง" : "อาหารจานเดียว 1 จาน",
+          recHint: mk==="d" ? "ชุดกับข้าว " + rec.length + " อย่าง สำหรับ " + this.peopleOf(m) + " คน · ทานกับข้าวสวย" : mk==="s" ? "ของว่าง 1 อย่าง" : "อาหารจานเดียว 1 จาน",
           recItems: rec.map(x => { const on = boss ? has(m.picks, x) : has(m.options, x);
             return {slot:x.slot, label:this.label(x.sel), emo:this.emo(x.sel), bgc:this.bgc(x.sel), cat:this.catOf(x.sel),
               size: big ? "72px" : "54px", font: big ? "40px" : "30px", nameSize: big ? "22px" : "18px",
@@ -1093,7 +1109,7 @@ class Component extends DCLogic {
               this.saveMeal(s.sel, mk, {options:[...mm.options, ...add].slice(0, MAXO)}); } },
           recReroll: () => this.saveMeal(s.sel, mk, {rec: (m.rec||0) + 1})
         }; })(),
-      maxOpts: MAXO, optCount: m.options.length, options, hasOptions: m.options.length>0, noOptions: !m.options.length,
+      maxOpts: MAXO, fillN: Math.min(MAXO, mk==="d" ? this.recCount(s.sel, mk) : 3), optCount: m.options.length, options, hasOptions: m.options.length>0, noOptions: !m.options.length,
       emptyOptText: boss ? "แม่ครัวยังไม่ได้เสนอเมนู" : "ยังไม่มีตัวเลือก กดเพิ่มหรือสุ่มได้เลย",
       showReqMsg: m.changeReq && !boss, reqText: m.bossNote || "อยากได้ตัวเลือกใหม่", resolveReq: () => this.saveMeal(s.sel, mk, {changeReq:false}),
       openChoice: () => this.openPick("choice"), openDrink: () => this.openPick("drink"), drinkBtnText: m.drink ? "เปลี่ยนเครื่องดื่ม" : "+ เครื่องดื่ม",
