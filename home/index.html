@@ -32,7 +32,7 @@
 <div style="position:relative;width:100%;max-width:520px;height:100%;flex:none;overflow:hidden;display:flex;flex-direction:column;background:#EAF1FF;padding-top:env(safe-area-inset-top,0px);box-shadow:0 0 40px -18px rgba(27,43,90,.35)">
 <div style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding-bottom:env(safe-area-inset-bottom,0px);scrollbar-width:none;background:#EAF1FF radial-gradient(#D3E0FA 2px,transparent 2.6px) 0 0/30px 30px">
 
-<header style="position:sticky;top:0;z-index:5;background:linear-gradient(180deg,#1B2B5A,#24418F);border-bottom:4px solid #FFC72C;box-shadow:0 12px 24px -12px rgba(15,26,58,.6)">
+<header style="position:relative;z-index:5;background:linear-gradient(180deg,#1B2B5A,#24418F);border-bottom:4px solid #FFC72C;box-shadow:0 12px 24px -12px rgba(15,26,58,.6)">
   <div style="padding:10px 14px 12px;display:grid;gap:10px">
     <div style="display:flex;align-items:center;gap:12px;min-width:0">
       <img src="assets/app-icon-192.png" alt="" style="width:56px;height:56px;flex:none;border-radius:18px;transform:rotate(-6deg);border:3px solid #fff;box-shadow:0 4px 0 #C98F00">
@@ -63,7 +63,8 @@
 
 <!-- ================= DAY ================= -->
 <sc-if value="{{ isDay }}" hint-placeholder-val="{{ true }}">
-  <div style="display:flex;align-items:center;gap:6px;margin-bottom:14px">
+  <div data-sticky="daymeal" style="position:sticky;top:0;z-index:6;margin:-16px -16px 16px;padding:10px 16px 10px;background:rgba(238,244,255,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:3px solid #FFC72C;box-shadow:0 10px 20px -14px rgba(15,26,58,.55)">
+  <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
     <button onClick="{{ prevWeek }}" aria-label="สัปดาห์ก่อน" style="flex:none;width:26px;height:56px;border-radius:12px;border:2px solid #B9CCF0;background:#fff;font-size:24px;font-weight:700;color:#4D5F8A;padding:0">‹</button>
     <div style="flex:1;min-width:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px">
       <sc-for list="{{ strip }}" as="c" hint-placeholder-count="7">
@@ -78,14 +79,15 @@
     <button onClick="{{ nextWeek }}" aria-label="สัปดาห์หน้า" style="flex:none;width:26px;height:56px;border-radius:12px;border:2px solid #B9CCF0;background:#fff;font-size:24px;font-weight:700;color:#4D5F8A;padding:0">›</button>
   </div>
 
-  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:18px;background:#fff;border:3px solid #B9CCF0;border-radius:22px;padding:5px">
+  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;background:#fff;border:3px solid #B9CCF0;border-radius:22px;padding:4px">
     <sc-for list="{{ mealTabs }}" as="mt" hint-placeholder-count="4">
       <button onClick="{{ mt.onClick }}" style="animation:{{ mt.anim }};position:relative;border:0;border-radius:17px;padding:6px 2px;background:{{ mt.bg }};color:{{ mt.fg }};display:grid;justify-items:center;gap:0;min-width:0">
-        <span style="font-size:28px;line-height:1.2">{{ mt.emo }}</span>
+        <span style="font-size:22px;line-height:1.15">{{ mt.emo }}</span>
         <span style="font-weight:700;font-size:17px;white-space:nowrap">{{ mt.l }}</span>
         <span style="position:absolute;top:6px;right:8px;width:8px;height:8px;border-radius:50%;background:{{ mt.dot }}"></span>
       </button>
     </sc-for>
+  </div>
   </div>
 
   <div style="display:grid;grid-template-columns:minmax(0,1fr);gap:18px">
@@ -826,7 +828,7 @@ const AWAY_E = {skip:"🙅", out:"🚗", order:"🛵"};
 const EXTRAS = ["ไม่เผ็ด","เผ็ดน้อย","หวานน้อย","มันน้อย","ข้าวกล้อง","ทำเผื่อมื้อถัดไป"];
 const EXTRA_SHORT = {"เผ็ดน้อย":"เผ็ดนิด","หวานน้อย":"หวานนิด","มันน้อย":"มันนิด","ทำเผื่อมื้อถัดไป":"ทำเผื่อ"};
 const STEP_SHORT = {plan:"รอเลือก", chosen:"รอทำ", cooking:"กำลังทำ", ready:"พร้อมทาน"};
-const AWAY_SHORT = {skip:"ไม่ทาน", out:"ทานข้างนอก", order:"สั่งมา"};
+const AWAY_SHORT = {skip:"ไม่ทาน", out:"นอกบ้าน", order:"สั่งมา"};
 const EMOJIS = ["🍛","🍲","🍜","🍝","🍚","🍳","🥚","🍗","🍖","🥩","🥓","🐟","🦐","🦀","🦑","🦪","🥗","🥬","🥦","🌶️","🧄","🍄","🌽","🥔","🍞","🥪","🍔","🍕","🍣","🍱","🍤","🥟","🍢","🍰","🍮","🍧","🍨","🍩","🍉","🍌","🥭","🧋","☕","🍵","🥛","🥤","🍹","🍽️"];
 const QUICK = ["ไข่ไก่","ข้าวสาร","หมูสับ","อกไก่","กุ้ง","ผักบุ้ง","คะน้า","มะนาว","พริก","กระเทียม","น้ำปลา","น้ำมันพืช","นมสด","ผลไม้"];
 const MAXO = 7, MAXP = 8;
