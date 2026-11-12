@@ -22,7 +22,7 @@
 <helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&display=swap">
-<style>body{margin:0;background:#EAF1FF;font-family:Prompt,system-ui,sans-serif;color:#1B2B5A}*{box-sizing:border-box}button,input,select,textarea{font-family:inherit;color:inherit}button{cursor:pointer}input,select,textarea{min-width:0;max-width:100%;width:100%}
+<style>body{margin:0;background:#EAF1FF;font-family:Prompt,system-ui,sans-serif;color:#1B2B5A}*{box-sizing:border-box}button,input,select,textarea{font-family:inherit;color:inherit}button{cursor:pointer}section{min-width:0}input,select,textarea{min-width:0;max-width:100%;width:100%}
 ::-webkit-scrollbar{display:none}
 @keyframes pop{0%{transform:scale(1)}30%{transform:scale(1.12,.9)}55%{transform:scale(.95,1.06) translateY(-3px)}75%{transform:scale(1.03,.98)}100%{transform:scale(1)}}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
@@ -103,7 +103,7 @@
         </div>
       </div>
 
-      <div style="padding:18px 16px 22px;display:grid;gap:22px">
+      <div style="padding:18px 16px 22px;display:grid;grid-template-columns:minmax(0,1fr);gap:22px">
         <sc-if value="{{ isAway }}">
           <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:24px;text-align:center;border:3px dashed #B9CCF0;border-radius:26px">
             <span style="font-size:56px">{{ awayEmo }}</span>
@@ -151,24 +151,24 @@
               <sc-if value="{{ hasDrink }}"><div style="margin-top:8px;font-size:18px;color:#4D5F8A">เครื่องดื่ม: <b style="color:#1B2B5A">{{ drinkLabel }}</b></div></sc-if>
             </sc-if>
             <sc-if value="{{ isBoss }}">
-              <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">
+              <div data-row="extras" style="display:flex;flex-wrap:nowrap;justify-content:space-between;gap:2px;margin-top:12px;overflow-x:auto;padding-bottom:2px">
                 <sc-for list="{{ extras }}" as="x" hint-placeholder-count="6">
-                  <button onClick="{{ x.onClick }}" style="animation:{{ x.anim }};border:2px solid {{ x.bd }};background:{{ x.bg }};color:{{ x.fg }};border-radius:999px;padding:6px 13px;font-size:17px;font-weight:600">{{ x.t }}</button>
+                  <button onClick="{{ x.onClick }}" style="animation:{{ x.anim }};flex:none;white-space:nowrap;border:2px solid {{ x.bd }};background:{{ x.bg }};color:{{ x.fg }};border-radius:999px;padding:3px 4px;font-size:12.5px;font-weight:700;letter-spacing:-.3px">{{ x.t }}</button>
                 </sc-for>
               </div>
-              <div style="display:flex;align-items:center;gap:10px;margin-top:12px">
-                <span style="font-size:18px;font-weight:700">ทานกี่ที่</span>
-                <button onClick="{{ peopleDown }}" aria-label="ลด" style="width:36px;height:36px;border-radius:50%;border:2px solid #B9CCF0;background:#fff;font-size:24px;font-weight:700;padding:0">−</button>
-                <b style="font-size:24px;min-width:24px;text-align:center">{{ people }}</b>
-                <button onClick="{{ peopleUp }}" aria-label="เพิ่ม" style="width:36px;height:36px;border-radius:50%;border:2px solid #B9CCF0;background:#fff;font-size:24px;font-weight:700;padding:0">+</button>
-                <span style="font-size:16px;color:#4D5F8A">มีแขกกดเพิ่มได้</span>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;flex-wrap:nowrap">
+                <div style="display:flex;align-items:center;gap:6px;flex:none">
+                  <span style="font-size:16px;font-weight:700;white-space:nowrap">👥 ที่</span>
+                  <button onClick="{{ peopleDown }}" aria-label="ลด" style="width:32px;height:32px;border-radius:50%;border:2px solid #B9CCF0;background:#fff;font-size:20px;font-weight:700;padding:0">−</button>
+                  <b style="font-size:21px;min-width:20px;text-align:center">{{ people }}</b>
+                  <button onClick="{{ peopleUp }}" aria-label="เพิ่ม" style="width:32px;height:32px;border-radius:50%;border:2px solid #B9CCF0;background:#fff;font-size:20px;font-weight:700;padding:0">+</button>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;min-width:0">
+                  <span style="font-size:16px;font-weight:700;white-space:nowrap">⏰ เสิร์ฟ</span>
+                  <input type="time" value="{{ serveText }}" onChange="{{ onServe }}" aria-label="เวลาเสิร์ฟ" style="width:112px;min-width:0;background:#FFF6D6;border:2.5px solid #FFC72C;border-radius:12px;padding:4px 6px;font-size:17px;font-weight:700;color:#1B2B5A">
+                </div>
               </div>
-              <div style="display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap">
-                <span style="font-size:18px;font-weight:700">⏰ เวลาเสิร์ฟ</span>
-                <input type="time" value="{{ serveText }}" onChange="{{ onServe }}" aria-label="เวลาเสิร์ฟ" style="width:auto;background:#FFF6D6;border:2.5px solid #FFC72C;border-radius:14px;padding:6px 10px;font-size:20px;font-weight:700;color:#1B2B5A">
-                <sc-if value="{{ serveCustom }}"><button onClick="{{ serveReset }}" style="border:2px solid #B9CCF0;background:#fff;border-radius:999px;padding:4px 12px;font-size:15px;font-weight:700;color:#4D5F8A">ใช้เวลาปกติ ({{ serveDefault }})</button></sc-if>
-                <sc-if value="{{ serveNotCustom }}"><span style="font-size:16px;color:#4D5F8A">เวลาปกติของมื้อนี้</span></sc-if>
-              </div>
+              <sc-if value="{{ serveCustom }}"><div style="text-align:right;margin-top:4px"><button onClick="{{ serveReset }}" style="border:0;background:none;padding:0;font-size:14px;font-weight:700;color:#2456D6;text-decoration:underline">กลับไปใช้เวลาปกติ ({{ serveDefault }})</button></div></sc-if>
             </sc-if>
           </section>
 
@@ -236,17 +236,19 @@
               </div>
             </sc-if>
 
-            <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:18px">
-              <sc-if value="{{ isBoss }}">
-                <button onClick="{{ openChoice }}" style="border:0;background:#FFC72C;color:#1B2B5A;border-radius:999px;padding:12px 20px;font-weight:700;font-size:18px;box-shadow:0 4px 0 #C98F00">เลือกจากเมนูทั้งหมด</button>
-                <button onClick="{{ openDrink }}" style="border:2px solid #B9CCF0;background:#fff;border-radius:999px;padding:10px 18px;font-weight:700;font-size:18px;box-shadow:0 4px 0 #B9CCF0">{{ drinkBtnText }}</button>
-                <button onClick="{{ doRandom }}" style="border:2px solid #8EC8F2;background:#DDF0FF;color:#1D4E89;border-radius:999px;padding:10px 18px;font-weight:700;font-size:18px;box-shadow:0 4px 0 #8EC8F2">🎲 สุ่มให้หน่อย</button>
-              </sc-if>
-              <sc-if value="{{ isCook }}">
-                <button onClick="{{ openOption }}" disabled="{{ optsFull }}" style="border:0;background:#FFC72C;color:#1B2B5A;border-radius:999px;padding:12px 20px;font-weight:700;font-size:18px;box-shadow:0 4px 0 #C98F00;opacity:{{ fullOpacity }}">+ เพิ่มตัวเลือก</button>
-                <button onClick="{{ fillDay }}" disabled="{{ optsFull }}" style="border:2px solid #8EC8F2;background:#DDF0FF;color:#1D4E89;border-radius:999px;padding:10px 18px;font-weight:700;font-size:18px;box-shadow:0 4px 0 #8EC8F2;opacity:{{ fullOpacity }}">🎲 สุ่มเติมให้ครบ {{ fillN }}</button>
-              </sc-if>
-            </div>
+            <sc-if value="{{ isBoss }}">
+              <div style="display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr) minmax(0,1fr);gap:6px;margin-top:18px">
+                <button onClick="{{ openChoice }}" style="border:0;background:#FFC72C;color:#1B2B5A;border-radius:16px;padding:10px 4px;font-weight:800;font-size:16px;white-space:nowrap;box-shadow:0 4px 0 #C98F00">📋 เลือกเมนู</button>
+                <button onClick="{{ openDrink }}" style="border:2px solid #B9CCF0;background:#fff;border-radius:16px;padding:8px 4px;font-weight:800;font-size:16px;white-space:nowrap;box-shadow:0 4px 0 #B9CCF0">{{ drinkBtnText }}</button>
+                <button onClick="{{ doRandom }}" style="border:2px solid #8EC8F2;background:#DDF0FF;color:#1D4E89;border-radius:16px;padding:8px 4px;font-weight:800;font-size:16px;white-space:nowrap;box-shadow:0 4px 0 #8EC8F2">🎲 สุ่ม</button>
+              </div>
+            </sc-if>
+            <sc-if value="{{ isCook }}">
+              <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:18px">
+                <button onClick="{{ openOption }}" disabled="{{ optsFull }}" style="border:0;background:#FFC72C;color:#1B2B5A;border-radius:16px;padding:10px 4px;font-weight:800;font-size:16px;white-space:nowrap;box-shadow:0 4px 0 #C98F00;opacity:{{ fullOpacity }}">➕ เพิ่มเมนู</button>
+                <button onClick="{{ fillDay }}" disabled="{{ optsFull }}" style="border:2px solid #8EC8F2;background:#DDF0FF;color:#1D4E89;border-radius:16px;padding:8px 4px;font-weight:800;font-size:16px;white-space:nowrap;box-shadow:0 4px 0 #8EC8F2;opacity:{{ fullOpacity }}">🎲 สุ่มเติม ({{ fillN }})</button>
+              </div>
+            </sc-if>
 
             <sc-if value="{{ spinning }}">
               <div style="margin-top:16px;display:flex;align-items:center;gap:16px;padding:16px 20px;border-radius:26px;background:#DDF0FF;border:3px dashed #6FB6EC">
@@ -280,9 +282,9 @@
 
           <section>
             <h3 style="margin:0 0 12px;font-size:26px;font-weight:800">สถานะในครัว</h3>
-            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">
+            <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px">
               <sc-for list="{{ steps }}" as="s" hint-placeholder-count="4">
-                <button onClick="{{ s.onClick }}" disabled="{{ isBoss }}" style="animation:{{ s.anim }};border:3px solid {{ s.bd }};background:{{ s.bg }};color:{{ s.fg }};border-radius:20px;padding:12px 8px;font-weight:700;font-size:18px;cursor:{{ stepCursor }}">{{ s.t }}</button>
+                <button onClick="{{ s.onClick }}" disabled="{{ isBoss }}" style="animation:{{ s.anim }};border:3px solid {{ s.bd }};background:{{ s.bg }};color:{{ s.fg }};border-radius:16px;padding:9px 2px;font-weight:800;font-size:15px;white-space:nowrap;min-width:0;cursor:{{ stepCursor }}">{{ s.t }}</button>
               </sc-for>
             </div>
             <sc-if value="{{ isBoss }}"><p style="margin:8px 0 0;font-size:16px;color:#4D5F8A">แม่ครัวเป็นคนอัปเดตสถานะ</p></sc-if>
@@ -320,9 +322,9 @@
       <sc-if value="{{ isBoss }}">
         <div style="background:#fff;border-radius:30px;border:3px solid #B9CCF0;box-shadow:0 6px 0 #B9CCF0,0 18px 24px -12px rgba(27,43,90,.28);padding:18px 20px;display:grid;gap:12px">
           <h3 style="margin:0;font-size:26px;font-weight:800">🚪 {{ mealFull }} ทานที่บ้านไหม</h3>
-          <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px">
             <sc-for list="{{ awayChips }}" as="a" hint-placeholder-count="3">
-              <button onClick="{{ a.onClick }}" style="animation:{{ a.anim }};border:2px solid {{ a.bd }};background:{{ a.bg }};color:{{ a.fg }};border-radius:999px;padding:8px 16px;font-size:18px;font-weight:600">{{ a.t }}</button>
+              <button onClick="{{ a.onClick }}" style="animation:{{ a.anim }};border:2px solid {{ a.bd }};background:{{ a.bg }};color:{{ a.fg }};border-radius:16px;padding:8px 2px;font-size:15px;font-weight:700;white-space:nowrap;min-width:0">{{ a.t }}</button>
             </sc-for>
           </div>
           <p style="margin:0;font-size:16px;color:#4D5F8A">กดอีกครั้งเพื่อยกเลิก</p>
@@ -822,6 +824,9 @@ const ST = {
 const AWAY = {skip:"ไม่ทานมื้อนี้", out:"ทานข้างนอก", order:"สั่งมาทาน"};
 const AWAY_E = {skip:"🙅", out:"🚗", order:"🛵"};
 const EXTRAS = ["ไม่เผ็ด","เผ็ดน้อย","หวานน้อย","มันน้อย","ข้าวกล้อง","ทำเผื่อมื้อถัดไป"];
+const EXTRA_SHORT = {"เผ็ดน้อย":"เผ็ดนิด","หวานน้อย":"หวานนิด","มันน้อย":"มันนิด","ทำเผื่อมื้อถัดไป":"ทำเผื่อ"};
+const STEP_SHORT = {plan:"รอเลือก", chosen:"รอทำ", cooking:"กำลังทำ", ready:"พร้อมทาน"};
+const AWAY_SHORT = {skip:"ไม่ทาน", out:"ทานข้างนอก", order:"สั่งมา"};
 const EMOJIS = ["🍛","🍲","🍜","🍝","🍚","🍳","🥚","🍗","🍖","🥩","🥓","🐟","🦐","🦀","🦑","🦪","🥗","🥬","🥦","🌶️","🧄","🍄","🌽","🥔","🍞","🥪","🍔","🍕","🍣","🍱","🍤","🥟","🍢","🍰","🍮","🍧","🍨","🍩","🍉","🍌","🥭","🧋","☕","🍵","🥛","🥤","🍹","🍽️"];
 const QUICK = ["ไข่ไก่","ข้าวสาร","หมูสับ","อกไก่","กุ้ง","ผักบุ้ง","คะน้า","มะนาว","พริก","กระเทียม","น้ำปลา","น้ำมันพืช","นมสด","ผลไม้"];
 const MAXO = 7, MAXP = 8;
@@ -1332,7 +1337,7 @@ class Component extends DCLogic {
       peopleText: ppl+" ที่", people: ppl,
       peopleDown: () => this.saveMeal(s.sel, mk, {people: Math.max(1, ppl-1)}), peopleUp: () => this.saveMeal(s.sel, mk, {people: Math.min(30, ppl+1)}),
       hasDrink: !!m.drink, drinkLabel: this.label(m.drink), drinkEmo: this.emo(m.drink),
-      extras: EXTRAS.map(x => { const on = m.x.includes(x); return {t:x, ...(on ? {bg:"#FFC72C", fg:"#1B2B5A", bd:"#C98F00", anim:POP} : OFF),
+      extras: EXTRAS.map(x => { const on = m.x.includes(x); return {t:EXTRA_SHORT[x] || x, ...(on ? {bg:"#FFC72C", fg:"#1B2B5A", bd:"#C98F00", anim:POP} : OFF),
         onClick: () => { const xs = new Set(m.x); xs.has(x) ? xs.delete(x) : xs.add(x); this.saveMeal(s.sel, mk, {x:[...xs]}); }}; }),
       emptyChoiceText: boss ? "ยังไม่ได้เลือก แตะเมนูที่แม่ครัวเสนอ หรือเลือกจากเมนูทั้งหมด" : "BOSS ยังไม่ได้เลือก",
       ...(() => { const rec = this.recommend(s.sel, mk), big = rec.length===1;
@@ -1358,7 +1363,7 @@ class Component extends DCLogic {
       maxOpts: MAXO, fillN: Math.min(MAXO, mk==="d" ? this.recCount(s.sel, mk) : 3), optCount: m.options.length, options, hasOptions: m.options.length>0, noOptions: !m.options.length,
       emptyOptText: boss ? "แม่ครัวยังไม่ได้เสนอเมนู" : "ยังไม่มีตัวเลือก กดเพิ่มหรือสุ่มได้เลย",
       showReqMsg: m.changeReq && !boss, reqText: m.bossNote || "อยากได้ตัวเลือกใหม่", resolveReq: () => this.saveMeal(s.sel, mk, {changeReq:false}),
-      openChoice: () => this.openPick("choice"), openDrink: () => this.openPick("drink"), drinkBtnText: m.drink ? "เปลี่ยนเครื่องดื่ม" : "+ เครื่องดื่ม",
+      openChoice: () => this.openPick("choice"), openDrink: () => this.openPick("drink"), drinkBtnText: m.drink ? "🥤 เปลี่ยน" : "🥤 เครื่องดื่ม",
       doRandom: () => this.doRandom(), openOption: () => !full && this.openPick("option"), optsFull: full, fullOpacity: full ? .45 : 1,
       fillDay: () => this.saveMeal(s.sel, mk, {options: this.fill(s.sel, mk, m.options)}),
       spinning: boss && !!s.spin, spinEmo: s.spin || "",
@@ -1368,13 +1373,13 @@ class Component extends DCLogic {
       showCutoffHint: boss && !m.picks.length && m.options.length>0 && !this.pastCutoff(s.sel, mk),
       showLateMsg: !boss && !m.picks.length && m.options.length>0 && this.pastCutoff(s.sel, mk), useFirst: () => this.addPick(m.options[0]),
       stepCursor: boss ? "default" : "pointer",
-      steps: ["plan","chosen","cooking","ready"].map(v => ({t:ST[v].t, bg: m.status===v ? ST[v].bg : "#fff", fg: ST[v].fg, bd: m.status===v ? ST[v].dot : "#B9CCF0", anim: m.status===v ? POP : "none", onClick: () => !boss && this.saveMeal(s.sel, mk, {status:v})})),
+      steps: ["plan","chosen","cooking","ready"].map(v => ({t:STEP_SHORT[v], bg: m.status===v ? ST[v].bg : "#fff", fg: ST[v].fg, bd: m.status===v ? ST[v].dot : "#B9CCF0", anim: m.status===v ? POP : "none", onClick: () => !boss && this.saveMeal(s.sel, mk, {status:v})})),
       hasOtherNote: !!otherNote && !(m.changeReq && !boss), otherNoteTitle: boss ? "แม่ครัวฝากบอก" : "BOSS ฝากบอก", otherNote,
       noteTitle: boss ? "บอกแม่ครัว ("+M.full+")" : "ฝากบอก BOSS ("+M.full+")", noteDraft, notePlaceholder: boss ? "เช่น วันนี้อยากกินเบา ๆ ไม่เผ็ด" : "เช่น ปลาหมดแล้ว เปลี่ยนเป็นไก่ได้ไหม",
       onNote: e => this.setState({drafts:{...s.drafts, [draftKey]: e.target.value}}),
       saveNote: () => { const v = (noteDraft||"").trim(); const dr = {...s.drafts}; delete dr[draftKey]; this.setState({drafts:dr}); this.saveMeal(s.sel, mk, boss ? {bossNote:v} : {cookNote:v}); },
       changeReq: () => { const v = (noteDraft||"").trim(); const dr = {...s.drafts}; delete dr[draftKey]; this.setState({drafts:dr}); this.saveMeal(s.sel, mk, {bossNote:v, changeReq:true, picks:[], status:"plan"}); },
-      awayChips: Object.entries(AWAY).map(([key,l]) => mkChip(m.away===key, () => this.saveMeal(s.sel, mk, {away: m.away===key ? "" : key}), AWAY_E[key]+" "+l)),
+      awayChips: Object.entries(AWAY).map(([key,l]) => mkChip(m.away===key, () => this.saveMeal(s.sel, mk, {away: m.away===key ? "" : key}), AWAY_E[key]+" "+AWAY_SHORT[key])),
       cutRows: MK.map(q => ({l: MEALS[q].e+" "+MEALS[q].full, v: cd.cut[q], onChange: e => this.setState({cfgDraft: {...cd, cut:{...cd.cut, [q]: e.target.value}}})})),
       defPeople: cd.people, defPeopleDown: () => this.setState({cfgDraft:{...cd, people: Math.max(1, cd.people-1)}}), defPeopleUp: () => this.setState({cfgDraft:{...cd, people: Math.min(30, cd.people+1)}}),
       saveCfg: () => { const cfg = {...s.cfg, cut: clean(cd.cut), people: cd.people}; this.persist({cfg}); this.cloudSet("settings/main", {cut: cfg.cut, people: cfg.people}, true); },
