@@ -13,8 +13,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#FFC72C">
 <script src="firebase-config.js?v=5"></script>
-<script src="menu-data.js?v=7"></script>
-<script src="ingredients.js?v=3"></script>
+<script src="menu-data.js?v=8"></script>
+<script src="ingredients.js?v=4"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -761,29 +761,31 @@ const MEALS = {
 };
 const GROUPS = {
   bk:"อาหารเช้า", one:"จานเดียว / ตามสั่ง", spec:"ข้าวราดเฉพาะทาง", nood:"เส้น & ก๋วยเตี๋ยว", soup:"ต้ม ซุป & แกง",
-  isan:"ยำ ลาบ & ส้มตำ", kab:"กับข้าว ผัด & ทอด", nprik:"น้ำพริก & ผักจิ้ม", royal:"👑 อาหารชาววัง", chinese:"🥢 อาหารจีน", sea:"อาหารทะเล & ซีฟู้ด", health:"🥗 อาหารสุขภาพ", asia:"ญี่ปุ่น & เกาหลี", west:"อาหารตะวันตก", sweet:"ของว่าง & ของหวาน", drink:"เครื่องดื่ม"
+  isan:"ยำ ลาบ & ส้มตำ", kab:"กับข้าว ผัด & ทอด", nprik:"น้ำพริก & ผักจิ้ม", royal:"👑 อาหารชาววัง", chinese:"🥢 อาหารจีน", hotpot:"🔥 หม้อไฟ & ปิ้งย่าง", jay:"🥬 อาหารเจ / มังสวิรัติ", sea:"อาหารทะเล & ซีฟู้ด", health:"🥗 อาหารสุขภาพ", asia:"อาหารเอเชีย (ญี่ปุ่น เกาหลี เวียดนาม อินเดีย)", west:"อาหารตะวันตก", sweet:"ของว่าง & ของหวาน", drink:"เครื่องดื่ม"
 };
 const CATS = {
   bkthai:{l:"อาหารเช้าแบบไทย",g:"bk",bg:"#FFF1D6"}, bkwest:{l:"อาหารเช้าแบบฝรั่ง",g:"bk",bg:"#FFF1D6"}, dimsum:{l:"ติ่มซำ & ซาลาเปา",g:"bk",bg:"#FFF1D6"},
-  kaprao:{l:"ผัดกะเพรา & ผัดพริก",g:"one",bg:"#E3F5DC"}, rice:{l:"ข้าวผัด",g:"one",bg:"#FFF0D0"}, garlic:{l:"ทอดกระเทียม & ผัดผัก",g:"one",bg:"#EAF6E3"},
+  kaprao:{l:"ผัดกะเพรา & ผัดพริก",g:"one",bg:"#E3F5DC"}, rice:{l:"ข้าวผัด",g:"one",bg:"#FFF0D0"}, garlic:{l:"ทอดกระเทียม & ผัดผัก",g:"one",bg:"#EAF6E3"}, quick:{l:"อาหารง่ายทำเร็ว",g:"one",bg:"#FFF3CC"},
   special:{l:"ข้าวมัน ข้าวหมู ข้าวหน้า",g:"spec",bg:"#FFE9DC"},
   noodlesoup:{l:"ก๋วยเตี๋ยวน้ำ / แห้ง",g:"nood",bg:"#FFEBD8"}, noodlefry:{l:"ผัดเส้น & ราดหน้า",g:"nood",bg:"#FFEBD8"}, khanomjeen:{l:"ขนมจีน & ข้าวซอย",g:"nood",bg:"#FFF3D6"},
   clearsoup:{l:"ต้มจืด & แกงจืด",g:"soup",bg:"#E4F2FF"}, tomyum:{l:"ต้มยำ & ซุปเผ็ด",g:"soup",bg:"#FFE3DC"}, curry:{l:"แกงกะทิ & แกงเผ็ด",g:"soup",bg:"#FFE8CF"},
-  somtam:{l:"ส้มตำ",g:"isan",bg:"#E8F7DA"}, yum:{l:"ยำ",g:"isan",bg:"#FFE6EA"}, larb:{l:"ลาบ & น้ำตก",g:"isan",bg:"#F3E6DC"}, grill:{l:"ย่าง & ทอด",g:"isan",bg:"#FBE3D3"},
+  somtam:{l:"ส้มตำ",g:"isan",bg:"#E8F7DA"}, isansoup:{l:"แกง & ซุปอีสาน",g:"isan",bg:"#E8F7DA"}, yum:{l:"ยำ",g:"isan",bg:"#FFE6EA"}, larb:{l:"ลาบ & น้ำตก",g:"isan",bg:"#F3E6DC"}, grill:{l:"ย่าง & ทอด",g:"isan",bg:"#FBE3D3"},
   kabfry:{l:"ผัดกับข้าว",g:"kab",bg:"#FFE9DC"}, kabdeep:{l:"ของทอด & ไข่",g:"kab",bg:"#FFF3CC"},
   namprik:{l:"น้ำพริก & ผักจิ้ม",g:"nprik",bg:"#FFE6DC"},
   royalrice:{l:"ข้าวจานพิเศษชาววัง",g:"royal",bg:"#FFF3C4"}, royalcurry:{l:"แกง & ต้มชาววัง",g:"royal",bg:"#FFF3C4"}, royalyum:{l:"ยำ & เครื่องจิ้มชาววัง",g:"royal",bg:"#FFF3C4"},
   royalsnack:{l:"ของว่างชาววัง",g:"royal",bg:"#FFF3C4"}, royalsweet:{l:"ขนมไทยชาววัง",g:"royal",bg:"#FFF3C4"},
   chmain:{l:"กับข้าวจีน",g:"chinese",bg:"#FFE5E0"}, chsoup:{l:"ซุป & ต้มตุ๋นจีน",g:"chinese",bg:"#FFE5E0"}, chrice:{l:"ข้าว & เส้นจีน",g:"chinese",bg:"#FFE5E0"}, chsnack:{l:"ของว่างจีน",g:"chinese",bg:"#FFE5E0"},
+  hotpot:{l:"หม้อไฟ & ปิ้งย่างที่บ้าน",g:"hotpot",bg:"#FFE3D6"},
+  jay:{l:"อาหารเจ / มังสวิรัติ",g:"jay",bg:"#E8F7DA"},
   shrimp:{l:"กุ้ง",g:"sea",bg:"#FFE4DC"}, crab:{l:"ปู",g:"sea",bg:"#FFE0D6"}, squid:{l:"ปลาหมึก",g:"sea",bg:"#F1E6FF"}, shell:{l:"หอย",g:"sea",bg:"#E6F0FA"},
   fish:{l:"ปลาทะเล",g:"sea",bg:"#DDEFFC"}, seaset:{l:"รวมมิตรซีฟู้ด & หม้อไฟ",g:"sea",bg:"#FFE9D6"},
   clean:{l:"อาหารคลีน จานหลัก",g:"health",bg:"#E5F7E4"}, bowl:{l:"สลัด & โบวล์สุขภาพ",g:"health",bg:"#E5F7E4"},
-  hbreak:{l:"อาหารเช้าสุขภาพ",g:"health",bg:"#E5F7E4"}, hsnack:{l:"ของว่างสุขภาพ",g:"health",bg:"#E5F7E4"},
-  jp:{l:"อาหารญี่ปุ่น",g:"asia",bg:"#FFE5E5"}, kr:{l:"อาหารเกาหลี",g:"asia",bg:"#FFE3E9"},
+  hbreak:{l:"อาหารเช้าสุขภาพ",g:"health",bg:"#E5F7E4"}, hsnack:{l:"ของว่างสุขภาพ",g:"health",bg:"#E5F7E4"}, soft:{l:"อาหารนิ่ม ย่อยง่าย",g:"health",bg:"#E5F7E4"},
+  jp:{l:"อาหารญี่ปุ่น",g:"asia",bg:"#FFE5E5"}, kr:{l:"อาหารเกาหลี",g:"asia",bg:"#FFE3E9"}, vn:{l:"อาหารเวียดนาม",g:"asia",bg:"#E6F5E2"}, in:{l:"อาหารอินเดีย & มุสลิม",g:"asia",bg:"#FFEED6"},
   pasta:{l:"พาสต้า",g:"west",bg:"#FFF0D9"}, steak:{l:"สเต็ก & จานหลัก",g:"west",bg:"#F3E4DA"}, burger:{l:"เบอร์เกอร์ & แซนด์วิช",g:"west",bg:"#FFEDD3"},
   pizza:{l:"พิซซ่า",g:"west",bg:"#FFE7D6"}, wsoup:{l:"ซุป & สลัด",g:"west",bg:"#E6F5E2"}, wsides:{l:"ทานเล่น & ของทอด",g:"west",bg:"#FFF3CC"},
   thaisweet:{l:"ขนมไทย",g:"sweet",bg:"#FDE7F0"}, thaisnack:{l:"ของว่างไทย",g:"sweet",bg:"#FFF1D6"}, bakery:{l:"เบเกอรี่ & เค้ก",g:"sweet",bg:"#F6E8DD"}, icecream:{l:"ไอศกรีม & บิงซู",g:"sweet",bg:"#E9EEFF"}, fruit:{l:"ผลไม้",g:"sweet",bg:"#E5F7E4"},
-  tea:{l:"ชา & กาแฟ",g:"drink",bg:"#F5E6D8"}, milk:{l:"นม & ช็อกโกแลต",g:"drink",bg:"#FCE8EE"}, soda:{l:"อิตาเลียนโซดา & น้ำอัดลม",g:"drink",bg:"#FFE3E3"}, herbal:{l:"น้ำสมุนไพร & ผลไม้สด",g:"drink",bg:"#E3F4FF"}, hdrink:{l:"เครื่องดื่มสุขภาพ",g:"drink",bg:"#E5F7E4"}
+  tea:{l:"ชา & กาแฟ",g:"drink",bg:"#F5E6D8"}, milk:{l:"นม & ช็อกโกแลต",g:"drink",bg:"#FCE8EE"}, soda:{l:"อิตาเลียนโซดา & น้ำอัดลม",g:"drink",bg:"#FFE3E3"}, herbal:{l:"น้ำสมุนไพร & ผลไม้สด",g:"drink",bg:"#E3F4FF"}, hdrink:{l:"เครื่องดื่มสุขภาพ",g:"drink",bg:"#E5F7E4"}, alcohol:{l:"เครื่องดื่มแอลกอฮอล์",g:"drink",bg:"#FFE9C7"}
 };
 const ST = {
   plan:{t:"รอ BOSS เลือก",fg:"#B4284F",bg:"#FFE1E8",dot:"#FF7A93"},
@@ -801,10 +803,10 @@ const MAXO = 7, MAXP = 8;
 // มื้อเย็น: จำนวนกับข้าวตามจำนวนคน (2 คน → 3 อย่าง, 3–4 → 4, 5–6 → 6, 7 ขึ้นไป → 7)
 const dinnerCount = ppl => ppl <= 2 ? 3 : ppl <= 4 ? 4 : ppl <= 6 ? 6 : 7;
 const VEG_RE = /^(ผัด(คะน้า|ผักบุ้ง|ผักรวม|ถั่วงอก|บวบ|ฟักทอง|ผักกาด|ถั่วลันเตา|ถั่วฝักยาว|ดอกกะหล่ำ|มะเขือ|หน่อไม้)|กะหล่ำปลี|ผักกาดดอง|ใบเหลียง)/;
-const SOUP_CATS = ["clearsoup","tomyum","curry","royalcurry","chsoup"];
+const SOUP_CATS = ["clearsoup","tomyum","curry","royalcurry","chsoup","isansoup"];
 const MAIN_CATS = ["kabfry","garlic","chmain","kabdeep","grill","larb","yum","royalyum","fish","shrimp","crab","squid","shell","namprik"];
 const isNamprik = x => x.cat==="namprik" || /^(น้ำพริก|หลน|เต้าเจี้ยวหลน)/.test(x.name);
-const ONE_DISH = ["bkthai","kaprao","rice","garlic","special","noodlesoup","noodlefry","khanomjeen","clean","royalrice","bowl","hbreak","chrice"];
+const ONE_DISH = ["bkthai","kaprao","rice","garlic","special","noodlesoup","noodlefry","khanomjeen","clean","royalrice","bowl","hbreak","chrice","quick","vn","in"];
 const NOT_ONE = /^(ไข่ตุ๋น|ปาท่องโก๋|ผัดคะน้า|ผัดผักบุ้ง|ผัดผักรวม|กะหล่ำปลี|ผัดขิง|ไก่ผัดเม็ด|ผัดพริก|ผัดขี้เมา \(|ทอดกระเทียม)/;
 const REC = {
   b:{n:1, slots:[["", c => ONE_DISH.includes(c)]]},
