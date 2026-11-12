@@ -119,6 +119,12 @@
                     <div style="position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;padding:12px 8px;background:#fff;border-radius:20px">
                       <span style="animation:bob 1.8s ease-in-out infinite;width:70px;height:70px;border-radius:50%;background:{{ pk.bgc }};display:grid;place-items:center;font-size:40px">{{ pk.emo }}</span>
                       <div style="font-size:19px;font-weight:700;line-height:1.25">{{ pk.label }}</div>
+                      <sc-if value="{{ pk.hasWho }}"><div style="font-size:15px;font-weight:800;color:#2456D6;background:#DCE6FF;border-radius:999px;padding:1px 10px">👤 {{ pk.whoText }}</div></sc-if>
+                      <sc-if value="{{ pk.showWhoChips }}">
+                        <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;margin-top:2px">
+                          <sc-for list="{{ pk.whoChips }}" as="wc"><button onClick="{{ wc.onClick }}" style="border:2px solid {{ wc.bd }};background:{{ wc.bg }};color:{{ wc.fg }};border-radius:999px;padding:1px 9px;font-size:14px;font-weight:700">{{ wc.t }}</button></sc-for>
+                        </div>
+                      </sc-if>
                       <sc-if value="{{ isBoss }}"><button onClick="{{ pk.edit }}" style="margin-top:4px;border:2.5px solid #FFD966;background:#FFF6D6;color:#7A5600;border-radius:999px;padding:4px 12px;font-size:15px;font-weight:800">🥩 เปลี่ยน / เพิ่ม</button></sc-if>
                       <sc-if value="{{ isBoss }}"><button onClick="{{ pk.remove }}" aria-label="เอาออก" style="position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;border:2px solid #FFD966;background:#fff;font-size:19px;line-height:1;color:#B4284F;padding:0">×</button></sc-if>
                     </div>
@@ -326,6 +332,19 @@
           </div>
           <button onClick="{{ saveServe }}" style="justify-self:start;border:0;background:#FFC72C;color:#1B2B5A;border-radius:999px;padding:10px 20px;font-weight:800;box-shadow:0 4px 0 #C98F00">บันทึกเวลาเสิร์ฟ</button>
           <p style="margin:0;font-size:16px;color:#4D5F8A">ใช้ทุกวัน · ถ้าวันไหนต้องการเวลาอื่น เปลี่ยนที่ "เวลาเสิร์ฟ" ในมื้อนั้นได้</p>
+        </div>
+        <div style="background:#fff;border-radius:30px;border:3px solid #B9CCF0;box-shadow:0 6px 0 #B9CCF0,0 18px 24px -12px rgba(27,43,90,.28);padding:18px 20px;display:grid;grid-template-columns:minmax(0,1fr);gap:10px">
+          <h3 style="margin:0;font-size:26px;font-weight:800">👥 รายชื่อคนทาน</h3>
+          <p style="margin:0;font-size:16px;color:#4D5F8A">เพิ่มชื่อคนในบ้าน แล้วแตะชื่อใต้เมนูที่เลือก เพื่อบอกแม่ครัวว่าจานนี้ของใคร</p>
+          <div style="display:flex;gap:8px">
+            <input type="text" value="{{ nameDraft }}" onChange="{{ onNameDraft }}" placeholder="เช่น คุณแม่, น้องเอ" style="flex:1;min-width:0;background:#F5F8FF;border:2px solid #B9CCF0;border-radius:16px;padding:9px 14px;font-size:18px;outline:none" style-focus="border-color:#1E3A8A">
+            <button onClick="{{ addName }}" style="flex:none;border:0;background:#FFC72C;color:#1B2B5A;border-radius:16px;padding:0 16px;font-weight:800;box-shadow:0 3px 0 #C98F00">เพิ่ม</button>
+          </div>
+          <sc-if value="{{ hasNames }}">
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              <sc-for list="{{ nameList }}" as="nm"><span style="display:inline-flex;align-items:center;gap:4px;background:#DCE6FF;color:#1B2B5A;border-radius:999px;padding:3px 4px 3px 12px;font-size:17px;font-weight:700">👤 {{ nm.t }}<button onClick="{{ nm.onDel }}" aria-label="ลบชื่อ" style="border:0;background:#fff;border-radius:50%;width:24px;height:24px;font-size:15px;line-height:1;color:#B4284F;padding:0">×</button></span></sc-for>
+            </div>
+          </sc-if>
         </div>
       </sc-if>
       <sc-if value="{{ isCook }}">
@@ -923,8 +942,9 @@ class Component extends DCLogic {
         const push = text => out.push({date, mk, text});
         if (c.by==="boss") {
           const np = added(c.picks, prev.picks);
-          if (np.length) push("BOSS เลือก" + when + ": " + np.map(p => this.label(p)).join(", "));
+          if (np.length) push("BOSS เลือก" + when + ": " + np.map(p => this.pickName(p)).join(", "));
           else if (c.picks.length !== prev.picks.length) push("BOSS แก้ไขเมนู" + when);
+          else if (c.picks.some(x => { const o = prev.picks.find(y => this.same(x, y)); return o && (o.who||[]).join() !== (x.who||[]).join(); })) push("BOSS ระบุชื่อคนทาน" + when + ": " + c.picks.filter(x => (x.who||[]).length).map(p => this.pickName(p)).join(", "));
           if (c.drink && (!prev.drink || !this.same(c.drink, prev.drink))) push("BOSS ขอเครื่องดื่ม" + when + ": " + this.label(c.drink));
           if (c.changeReq && !prev.changeReq) push("BOSS ขอเปลี่ยนตัวเลือก" + when);
           if (c.away && c.away !== prev.away) push("BOSS แจ้ง " + AWAY[c.away] + " · " + when);
@@ -967,6 +987,7 @@ class Component extends DCLogic {
   menu(id){ return this.state.menus.find(m => m.id===id); }
   meal(date, mk, days){ const d = (days || this.state.days)[date]; return Object.assign(blankMeal(), (d && d.meals && d.meals[mk]) || {}); }
   serveOf(date, mk){ const m = this.meal(date, mk); return m.serve || (this.state.cfg.serve || {})[mk] || MEALS[mk].serve; }
+  pickName(p){ const who = (p && p.who) || []; return this.label(p) + (who.length ? " (" + who.join(", ") + ")" : ""); }
   peopleOf(m){ return m.people || this.state.cfg.people || 2; }
   label(sel){ if (!sel) return ""; const m = this.menu(sel.m); if (!m) return "เมนูที่ถูกลบไปแล้ว"; const ps = splitO(sel.o); if (!ps.length) return m.name;
     if (m.t && m.t.includes("{o}")) return m.t.replace("{o}", ps[0]) + ps.slice(1).map(x => " + "+x).join("");
@@ -977,7 +998,7 @@ class Component extends DCLogic {
   emo(sel){ const m = sel && this.menu(sel.m); return (m && m.emo) || "🍽️"; }
   bgc(sel){ const m = sel && this.menu(sel.m); return (m && CATS[m.cat] && CATS[m.cat].bg) || "#EEF2F8"; }
   catOf(sel){ const m = sel && this.menu(sel.m); return m && CATS[m.cat] ? CATS[m.cat].l : ""; }
-  picksText(m){ return m.picks.map(p => this.label(p)).join(" · "); }
+  picksText(m){ return m.picks.map(p => this.pickName(p)).join(" · "); }
   saveMeal(date, mk, patch){
     const now = Date.now();
     const body = {...this.meal(date, mk), ...patch, by: this.state.role, at: now}; const cur = this.state.days[date] || {};
@@ -1087,7 +1108,7 @@ class Component extends DCLogic {
     else if (m.options.length) { text = "แม่ครัวเสนอ " + m.options.length + " เมนู รอเลือก"; fg = "#B4284F"; }
     else { text = "ยังว่าง"; fg = "#8A99B8"; }
     const lines = !m.away && m.picks.length
-      ? [...m.picks.map(p => ({t:this.label(p), emo:this.emo(p), bgc:this.bgc(p), fg:"#1B2B5A"})), ...(m.drink ? [{t:this.label(m.drink), emo:this.emo(m.drink), bgc:"#DDF0FF", fg:"#4D5F8A"}] : [])]
+      ? [...m.picks.map(p => ({t:this.pickName(p), emo:this.emo(p), bgc:this.bgc(p), fg:"#1B2B5A"})), ...(m.drink ? [{t:this.label(m.drink), emo:this.emo(m.drink), bgc:"#DDF0FF", fg:"#4D5F8A"}] : [])]
       : [{t:text, emo, bgc, fg}];
     return {m, k, text, fg, emo, bgc, lines, dot: ST[k].dot};
   }
@@ -1118,7 +1139,7 @@ class Component extends DCLogic {
       pickOptHasPreview: true, pickOptPreview: "จะได้: " + this.label({m:om.id, o}),
       pickOptConfirm: () => { if (!ok) return; const pick = {m:om.id, o};
         if (Pk.edit) { const s = this.state, mm = this.meal(s.sel, s.meal), key = Pk.edit.kind==="option" ? "options" : "picks";
-          const arr = mm[key].map((x,j) => j===Pk.edit.i ? pick : x).filter((x,j,a) => a.findIndex(y => this.same(x,y))===j);
+          const arr = mm[key].map((x,j) => j===Pk.edit.i ? (x.who ? {...pick, who:x.who} : pick) : x).filter((x,j,a) => a.findIndex(y => this.same(x,y))===j);
           this.setState({pick:null}); this.saveMeal(s.sel, s.meal, {[key]: arr}); return; }
         this.picked(pick); }
     };
@@ -1143,7 +1164,13 @@ class Component extends DCLogic {
     const daySummary = MK.map(q => { const r = this.rowFor(s.sel, q), on = q===mk;
       return {l: MEALS[q].full + " " + this.serveOf(s.sel, q), emo: MEALS[q].e, text: r.text, dot: r.dot, bg: on ? "#FFF6D6" : "#F5F8FF", bd: on ? "#FFD966" : "transparent", onClick: () => this.setState({meal:q, suggest:null})}; });
 
-    const picks = m.picks.map((p,i) => ({edit: () => this.openChooser(p, {kind:"pick", i}), label:this.label(p), emo:this.emo(p), bgc:this.bgc(p), remove: () => { const picks = m.picks.filter((_,j) => j!==i); this.saveMeal(s.sel, mk, {picks, status: !picks.length && m.status==="chosen" ? "plan" : m.status}); }}));
+    const names = (s.cfg.names || []);
+    const setWho = (i, who) => this.saveMeal(s.sel, mk, {picks: m.picks.map((x,j) => j===i ? {...x, who} : x)});
+    const picks = m.picks.map((p,i) => { const who = p.who || []; return {edit: () => this.openChooser(p, {kind:"pick", i}),
+      hasWho: who.length>0 && !boss, whoText: who.join(", "), showWhoChips: boss && names.length>0,
+      whoChips: [{t:"ทุกคน", on: !who.length, onClick: () => setWho(i, [])}, ...names.map(n => ({t:n, on: who.includes(n), onClick: () => setWho(i, who.includes(n) ? who.filter(x => x!==n) : [...who, n])}))]
+        .map(c => ({...c, bg: c.on ? "#1B2B5A" : "#fff", fg: c.on ? "#fff" : "#1B2B5A", bd: c.on ? "#1B2B5A" : "#B9CCF0"})),
+      label:this.label(p), emo:this.emo(p), bgc:this.bgc(p), remove: () => { const picks = m.picks.filter((_,j) => j!==i); this.saveMeal(s.sel, mk, {picks, status: !picks.length && m.status==="chosen" ? "plan" : m.status}); }}; });
     const options = m.options.map((o,i) => {
       const on = m.picks.some(p => this.same(p, o));
       return {n:i+1, label:this.label(o), cat:this.catOf(o), emo:this.emo(o), bgc:this.bgc(o), bg: on ? "#FFF6D6" : "#fff", bd: on ? "#3A9BE0" : "#B9CCF0", anim: on ? POP : "none",
@@ -1199,7 +1226,7 @@ class Component extends DCLogic {
     const inShop = name => { const g = name.trim(); return shopTexts.some(st => st === g || st.startsWith(g + " ")); };
     for (const x of rangeDays) for (const q of MK) { const mm = this.meal(x, q); if (mm.away || !mm.picks.length) continue;
       const dishes = mm.picks.map(p => { const ing = this.ingOf(p); ing.forEach(g => { const k = ingNorm(g); const a = agg.get(k) || {t:g, n:0}; a.n++; agg.set(k, a); });
-        return {label:this.label(p), emo:this.emo(p), bgc:this.bgc(p), ing: ing.length ? ing.join(", ") : "ยังไม่มีข้อมูลวัตถุดิบ (แก้ไขเมนูเพื่อใส่ได้)", ingColor: ing.length ? "#4D5F8A" : "#B4284F"}; });
+        return {label:this.pickName(p), emo:this.emo(p), bgc:this.bgc(p), ing: ing.length ? ing.join(", ") : "ยังไม่มีข้อมูลวัตถุดิบ (แก้ไขเมนูเพื่อใส่ได้)", ingColor: ing.length ? "#4D5F8A" : "#B4284F"}; });
       ingDays.push({head: (x===t ? "วันนี้" : x===addDays(t,1) ? "พรุ่งนี้" : DAYS[parse(x).getDay()] + " " + fmtDate(x)) + " · " + MEALS[q].full + " เสิร์ฟ " + this.serveOf(x, q) + " น. · " + this.peopleOf(mm) + " ที่", dishes}); }
     const aggList = [...agg.values()];
     const ingChips = aggList.map(a => { const has = inShop(a.t); return {t: (has ? "✓ " : "+ ") + a.t + (a.n > 1 ? " ×" + a.n : ""), bg: has ? "#E3F7EC" : "#FFF6D6", bd: has ? "#2FB67C" : "#FFD966", fg: has ? "#136B43" : "#7A5600",
@@ -1256,6 +1283,9 @@ class Component extends DCLogic {
       roleBossAnim: boss ? POP : "none", roleCookAnim: !boss ? POP : "none", roleBossBg: boss ? "#FFC72C" : "#fff", roleBossFg: "#1B2B5A",
       roleCookBg: !boss ? "#FFC72C" : "#fff", roleCookFg: "#1B2B5A",
       soundIcon: s.sound !== false ? "🔔" : "🔕", soundLabel: s.sound !== false ? "เสียงเตือน: เปิด (แตะเพื่อปิด)" : "เสียงเตือน: ปิด (แตะเพื่อเปิด)", soundBg: s.sound !== false ? "#FFC72C" : "#C9D6F5",
+      nameDraft: s.nameDraft || "", onNameDraft: e => this.setState({nameDraft: e.target.value}), hasNames: names.length>0,
+      addName: () => { const v = (s.nameDraft||"").trim().replace(/[,()]/g, ""); if (!v || names.includes(v)) return this.setState({nameDraft:""}); const nm = [...names, v]; this.persist({cfg: {...s.cfg, names: nm}, nameDraft:""}); this.cloudSet("settings/main", {names: nm}, true); },
+      nameList: names.map(n => ({t:n, onDel: () => { const nm = names.filter(x => x!==n); this.persist({cfg: {...s.cfg, names: nm}}); this.cloudSet("settings/main", {names: nm}, true); }})),
       toggleSound: () => { const on = s.sound === false; this.setUi({sound: on}); if (on) { this.unlockAudio(); this.ding(); } },
       hasToast: !!(s.toasts && s.toasts.length), toastText: s.toasts && s.toasts.length ? s.toasts[s.toasts.length-1].text : "",
       toastMore: s.toasts && s.toasts.length > 1 ? "และอีก " + (s.toasts.length-1) + " รายการ: " + s.toasts.slice(0,-1).slice(-2).map(x => x.text).join(" · ") : "",
