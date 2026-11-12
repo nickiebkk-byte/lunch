@@ -86,7 +86,7 @@
     <article style="min-width:0;background:#fff;border-radius:30px;border:3px solid #B9CCF0;box-shadow:0 8px 0 #B9CCF0,0 24px 32px -16px rgba(27,43,90,.28);overflow:hidden">
       <div style="position:relative;padding:16px 0 0 18px;display:grid;grid-template-columns:minmax(0,1fr) 132px;align-items:end;background:radial-gradient(circle at 82% 78%,#FFC72C 0 62px,transparent 63px),radial-gradient(circle at 82% 78%,rgba(255,199,44,.28) 0 96px,transparent 97px),radial-gradient(circle at 82% 78%,rgba(255,255,255,.08) 0 132px,transparent 133px),radial-gradient(rgba(255,255,255,.09) 2px,transparent 2.6px) 0 0/22px 22px,linear-gradient(160deg,#2C4FA8,#1B2B5A 70%);border-bottom:4px solid #FFC72C">
         <div style="min-width:0;display:grid;gap:6px;padding-bottom:16px">
-          <div style="font-size:17px;font-weight:600;color:#C9D6F5">{{ mealEmo }} {{ mealFull }} · ปิดรับ {{ cutoffText }} น.</div>
+          <div style="font-size:17px;font-weight:600;color:#C9D6F5">{{ mealEmo }} {{ mealFull }} · <b style="color:#FFC72C">🍽️ เสิร์ฟ {{ serveText }} น.</b> · ปิดรับ {{ cutoffText }} น.</div>
           <h2 style="margin:0;font-weight:800;font-size:clamp(38px,11vw,54px);line-height:1.1;color:#FFC72C;text-shadow:0 3px 0 #0F1A3A,2px 0 0 #0F1A3A,-2px 0 0 #0F1A3A,0 -2px 0 #0F1A3A,0 9px 18px rgba(0,0,0,.4)">{{ dayName }}</h2>
           <div style="font-size:21px;font-weight:700;color:#fff">{{ dateText }}</div>
           <span style="justify-self:start;margin-top:4px;display:inline-flex;align-items:center;gap:8px;padding:7px 16px;border-radius:999px;font-weight:800;font-size:18px;background:{{ pillBg }};color:{{ pillFg }};border:3px solid #fff"><span style="width:10px;height:10px;border-radius:50%;background:currentColor"></span>{{ pillText }}</span>
@@ -150,6 +150,12 @@
                 <b style="font-size:24px;min-width:24px;text-align:center">{{ people }}</b>
                 <button onClick="{{ peopleUp }}" aria-label="เพิ่ม" style="width:36px;height:36px;border-radius:50%;border:2px solid #B9CCF0;background:#fff;font-size:24px;font-weight:700;padding:0">+</button>
                 <span style="font-size:16px;color:#4D5F8A">มีแขกกดเพิ่มได้</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap">
+                <span style="font-size:18px;font-weight:700">⏰ เวลาเสิร์ฟ</span>
+                <input type="time" value="{{ serveText }}" onChange="{{ onServe }}" aria-label="เวลาเสิร์ฟ" style="width:auto;background:#FFF6D6;border:2.5px solid #FFC72C;border-radius:14px;padding:6px 10px;font-size:20px;font-weight:700;color:#1B2B5A">
+                <sc-if value="{{ serveCustom }}"><button onClick="{{ serveReset }}" style="border:2px solid #B9CCF0;background:#fff;border-radius:999px;padding:4px 12px;font-size:15px;font-weight:700;color:#4D5F8A">ใช้เวลาปกติ ({{ serveDefault }})</button></sc-if>
+                <sc-if value="{{ serveNotCustom }}"><span style="font-size:16px;color:#4D5F8A">เวลาปกติของมื้อนี้</span></sc-if>
               </div>
             </sc-if>
           </section>
@@ -309,6 +315,18 @@
           </div>
           <p style="margin:0;font-size:16px;color:#4D5F8A">กดอีกครั้งเพื่อยกเลิก</p>
         </div>
+        <div style="background:#fff;border-radius:30px;border:3px solid #B9CCF0;box-shadow:0 6px 0 #B9CCF0,0 18px 24px -12px rgba(27,43,90,.28);padding:18px 20px;display:grid;gap:10px">
+          <h3 style="margin:0;font-size:26px;font-weight:800">⏰ เวลาเสิร์ฟประจำ</h3>
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">
+            <sc-for list="{{ serveRows }}" as="sr" hint-placeholder-count="4">
+              <label style="display:grid;gap:2px;font-size:16px;font-weight:600;color:#4D5F8A">{{ sr.l }}
+                <input type="time" value="{{ sr.v }}" onChange="{{ sr.onChange }}" style="background:#FFF6D6;border:2px solid #FFD966;border-radius:14px;padding:8px 10px;font-size:19px;color:#1B2B5A">
+              </label>
+            </sc-for>
+          </div>
+          <button onClick="{{ saveServe }}" style="justify-self:start;border:0;background:#FFC72C;color:#1B2B5A;border-radius:999px;padding:10px 20px;font-weight:800;box-shadow:0 4px 0 #C98F00">บันทึกเวลาเสิร์ฟ</button>
+          <p style="margin:0;font-size:16px;color:#4D5F8A">ใช้ทุกวัน · ถ้าวันไหนต้องการเวลาอื่น เปลี่ยนที่ "เวลาเสิร์ฟ" ในมื้อนั้นได้</p>
+        </div>
       </sc-if>
       <sc-if value="{{ isCook }}">
         <div style="background:#fff;border-radius:30px;border:3px solid #B9CCF0;box-shadow:0 6px 0 #B9CCF0,0 18px 24px -12px rgba(27,43,90,.28);padding:18px 20px;display:grid;gap:10px">
@@ -357,7 +375,7 @@
         </div>
         <sc-for list="{{ w.rows }}" as="r">
           <button onClick="{{ r.onClick }}" style="display:flex;align-items:flex-start;gap:8px;text-align:left;border:0;background:#F5F8FF;border-radius:14px;padding:7px 10px;min-width:0">
-            <span style="flex:none;width:58px;padding-top:4px;font-size:16px;font-weight:700;color:#4D5F8A">{{ r.l }}</span>
+            <span style="flex:none;width:58px;padding-top:4px;font-size:16px;font-weight:700;color:#4D5F8A;line-height:1.2">{{ r.l }}<span style="display:block;font-size:13px;font-weight:600;color:#C98F00">{{ r.time }}</span></span>
             <span style="flex:1;min-width:0;display:grid;gap:4px">
               <sc-for list="{{ r.lines }}" as="ln">
                 <span style="display:flex;align-items:center;gap:8px;min-width:0">
@@ -724,10 +742,10 @@ const loadScript = src => new Promise((res, rej) => { const el = document.create
 
 const MK = ["b","l","s","d"];
 const MEALS = {
-  b:{tag:"เช้า", l:"เช้า", full:"มื้อเช้า", e:"🌅", cut:"06:30"},
-  l:{tag:"เที่ยง", l:"กลางวัน", full:"มื้อกลางวัน", e:"☀️", cut:"10:00"},
-  s:{tag:"ว่าง", l:"ว่าง", full:"อาหารว่าง", e:"🍰", cut:"13:30"},
-  d:{tag:"เย็น", l:"เย็น", full:"มื้อเย็น", e:"🌙", cut:"15:30"}
+  b:{tag:"เช้า", l:"เช้า", full:"มื้อเช้า", e:"🌅", cut:"06:30", serve:"07:00"},
+  l:{tag:"เที่ยง", l:"กลางวัน", full:"มื้อกลางวัน", e:"☀️", cut:"10:00", serve:"12:00"},
+  s:{tag:"ว่าง", l:"ว่าง", full:"อาหารว่าง", e:"🍰", cut:"13:30", serve:"15:00"},
+  d:{tag:"เย็น", l:"เย็น", full:"มื้อเย็น", e:"🌙", cut:"15:30", serve:"18:30"}
 };
 const GROUPS = {
   bk:"อาหารเช้า", one:"จานเดียว / ตามสั่ง", spec:"ข้าวราดเฉพาะทาง", nood:"เส้น & ก๋วยเตี๋ยว", soup:"ต้ม ซุป & แกง",
@@ -815,8 +833,8 @@ const mondayOf = s => { const d = parse(s); d.setDate(d.getDate()-((d.getDay()+6
 const weekOf = s => { const m = mondayOf(s); return [0,1,2,3,4,5,6].map(i => addDays(m,i)); };
 const todayStr = () => ymd(new Date());
 const fmtDate = s => { const d = parse(s); return d.getDate()+" "+MON[d.getMonth()]; };
-const blankMeal = () => ({options:[], picks:[], drink:null, x:[], bossNote:"", cookNote:"", changeReq:false, status:"plan", away:"", people:0});
-const defCfg = () => ({cut:{b:MEALS.b.cut, l:MEALS.l.cut, s:MEALS.s.cut, d:MEALS.d.cut}, people:2});
+const blankMeal = () => ({options:[], picks:[], drink:null, x:[], bossNote:"", cookNote:"", changeReq:false, status:"plan", away:"", people:0, serve:""});
+const defCfg = () => ({cut:{b:MEALS.b.cut, l:MEALS.l.cut, s:MEALS.s.cut, d:MEALS.d.cut}, serve:{b:MEALS.b.serve, l:MEALS.l.serve, s:MEALS.s.serve, d:MEALS.d.serve}, people:2});
 const POP = "pop .5s cubic-bezier(.3,1.5,.5,1)";
 const ON = {bg:"#1B2B5A", fg:"#fff", bd:"#1B2B5A", anim:POP}, OFF = {bg:"#fff", fg:"#1B2B5A", bd:"#B9CCF0", anim:"none"};
 const nowMin = () => { const n = new Date(); return n.getHours()*60+n.getMinutes(); };
@@ -864,7 +882,7 @@ class Component extends DCLogic {
         fs.collection(P+"days").onSnapshot(snap => { const days = {}; snap.docs.forEach(d => { days[d.id] = d.data(); });
           if (this._daysLoaded) this.notify(this.diffAlerts(this.state.days, days)); this._daysLoaded = true;
           gotD = true; this.persist({days}); done(); }, fail),
-        fs.doc(P+"settings/main").onSnapshot(d => { if (d.exists) { const cfg = Object.assign(defCfg(), d.data()); cfg.cut = Object.assign(defCfg().cut, cfg.cut||{}); this.persist({cfg, cfgDraft:clean(cfg)}); } }, () => {}),
+        fs.doc(P+"settings/main").onSnapshot(d => { if (d.exists) { const cfg = Object.assign(defCfg(), d.data()); cfg.cut = Object.assign(defCfg().cut, cfg.cut||{}); cfg.serve = Object.assign(defCfg().serve, cfg.serve||{}); this.persist({cfg, cfgDraft:clean(cfg)}); } }, () => {}),
         fs.doc(P+"settings/shop").onSnapshot(d => { if (d.exists) this.persist({shop: d.data().items || []}); }, () => {})
       ];
     } catch (e) { fail(e); }
@@ -893,6 +911,7 @@ class Component extends DCLogic {
           if (c.away && c.away !== prev.away) push("BOSS แจ้ง " + AWAY[c.away] + " · " + when);
           if (!c.away && prev.away) push("BOSS ทาน" + when + " ที่บ้านตามปกติ");
           if ((c.people||0) !== (prev.people||0) && c.people) push("BOSS เปลี่ยนเป็น " + c.people + " ที่ · " + when);
+          if ((c.serve||"") !== (prev.serve||"")) push("BOSS ขอเสิร์ฟ" + when + " เวลา " + (c.serve || (this.state.cfg.serve||{})[mk] || MEALS[mk].serve) + " น.");
           if (c.bossNote && c.bossNote !== prev.bossNote) push("BOSS ฝากบอก (" + MEALS[mk].full + "): " + c.bossNote);
         } else {
           const no = added(c.options, prev.options);
@@ -928,6 +947,7 @@ class Component extends DCLogic {
 
   menu(id){ return this.state.menus.find(m => m.id===id); }
   meal(date, mk, days){ const d = (days || this.state.days)[date]; return Object.assign(blankMeal(), (d && d.meals && d.meals[mk]) || {}); }
+  serveOf(date, mk){ const m = this.meal(date, mk); return m.serve || (this.state.cfg.serve || {})[mk] || MEALS[mk].serve; }
   peopleOf(m){ return m.people || this.state.cfg.people || 2; }
   label(sel){ if (!sel) return ""; const m = this.menu(sel.m); if (!m) return "เมนูที่ถูกลบไปแล้ว"; const ps = splitO(sel.o); if (!ps.length) return m.name;
     if (m.t && m.t.includes("{o}")) return m.t.replace("{o}", ps[0]) + ps.slice(1).map(x => " + "+x).join("");
@@ -1099,7 +1119,7 @@ class Component extends DCLogic {
     const mealTabs = MK.map(q => { const r = this.rowFor(s.sel, q), on = q===mk;
       return {l: MEALS[q].l, emo: MEALS[q].e, dot: r.dot, bg: on ? "#1B2B5A" : "transparent", fg: on ? "#fff" : "#1B2B5A", anim: on ? POP : "none", onClick: () => this.setState({meal:q, suggest:null})}; });
     const daySummary = MK.map(q => { const r = this.rowFor(s.sel, q), on = q===mk;
-      return {l: MEALS[q].full, emo: MEALS[q].e, text: r.text, dot: r.dot, bg: on ? "#FFF6D6" : "#F5F8FF", bd: on ? "#FFD966" : "transparent", onClick: () => this.setState({meal:q, suggest:null})}; });
+      return {l: MEALS[q].full + " " + this.serveOf(s.sel, q), emo: MEALS[q].e, text: r.text, dot: r.dot, bg: on ? "#FFF6D6" : "#F5F8FF", bd: on ? "#FFD966" : "transparent", onClick: () => this.setState({meal:q, suggest:null})}; });
 
     const picks = m.picks.map((p,i) => ({edit: () => this.openChooser(p, {kind:"pick", i}), label:this.label(p), emo:this.emo(p), bgc:this.bgc(p), remove: () => { const picks = m.picks.filter((_,j) => j!==i); this.saveMeal(s.sel, mk, {picks, status: !picks.length && m.status==="chosen" ? "plan" : m.status}); }}));
     const options = m.options.map((o,i) => {
@@ -1120,7 +1140,7 @@ class Component extends DCLogic {
 
     // week
     const weekCards = wk.map(x => ({dayName: DAYF[parse(x).getDay()] + (x===t ? " · วันนี้" : ""), date: fmtDate(x), bd: x===t ? "#FFC72C" : "#B9CCF0",
-      rows: MK.map(q => { const r = this.rowFor(x, q); return {l: MEALS[q].l, emo: r.emo, bgc: r.bgc, text: r.text, fg: r.fg, dot: r.dot, lines: r.lines, onClick: () => this.setState({sel:x, meal:q, suggest:null}, () => this.setUi({view:"day"}))}; })}));
+      rows: MK.map(q => { const r = this.rowFor(x, q); return {l: MEALS[q].l, time: r.m.away ? "" : this.serveOf(x, q), emo: r.emo, bgc: r.bgc, text: r.text, fg: r.fg, dot: r.dot, lines: r.lines, onClick: () => this.setState({sel:x, meal:q, suggest:null}, () => this.setUi({view:"day"}))}; })}));
 
     // menu
     const byMenu = new Map(), byLabel = new Map();
@@ -1158,7 +1178,7 @@ class Component extends DCLogic {
     for (const x of rangeDays) for (const q of MK) { const mm = this.meal(x, q); if (mm.away || !mm.picks.length) continue;
       const dishes = mm.picks.map(p => { const ing = this.ingOf(p); ing.forEach(g => { const k = ingNorm(g); const a = agg.get(k) || {t:g, n:0}; a.n++; agg.set(k, a); });
         return {label:this.label(p), emo:this.emo(p), bgc:this.bgc(p), ing: ing.length ? ing.join(", ") : "ยังไม่มีข้อมูลวัตถุดิบ (แก้ไขเมนูเพื่อใส่ได้)", ingColor: ing.length ? "#4D5F8A" : "#B4284F"}; });
-      ingDays.push({head: (x===t ? "วันนี้" : x===addDays(t,1) ? "พรุ่งนี้" : DAYS[parse(x).getDay()] + " " + fmtDate(x)) + " · " + MEALS[q].full + " · " + this.peopleOf(mm) + " ที่", dishes}); }
+      ingDays.push({head: (x===t ? "วันนี้" : x===addDays(t,1) ? "พรุ่งนี้" : DAYS[parse(x).getDay()] + " " + fmtDate(x)) + " · " + MEALS[q].full + " เสิร์ฟ " + this.serveOf(x, q) + " น. · " + this.peopleOf(mm) + " ที่", dishes}); }
     const aggList = [...agg.values()];
     const ingChips = aggList.map(a => { const has = inShop(a.t); return {t: (has ? "✓ " : "+ ") + a.t + (a.n > 1 ? " ×" + a.n : ""), bg: has ? "#E3F7EC" : "#FFF6D6", bd: has ? "#2FB67C" : "#FFD966", fg: has ? "#136B43" : "#7A5600",
       onClick: () => { if (!has) addShopItem(a.t); }}; });
@@ -1223,6 +1243,12 @@ class Component extends DCLogic {
       tabs, isDay: s.view==="day", isWeek: s.view==="week", isMenu: s.view==="menu", isShop: s.view==="shop",
       strip, prevWeek: shift(-7), nextWeek: shift(7), mealTabs, daySummary,
       mealEmo: M.e, mealFull: M.full, cutoffText: s.cfg.cut[mk],
+      serveText: this.serveOf(s.sel, mk), serveDefault: (s.cfg.serve || {})[mk] || M.serve, serveCustom: !!m.serve, serveNotCustom: !m.serve,
+      onServe: e => { const v = e.target.value; if (v) this.saveMeal(s.sel, mk, {serve: v === ((s.cfg.serve || {})[mk] || M.serve) ? "" : v}); },
+      serveReset: () => this.saveMeal(s.sel, mk, {serve: ""}),
+      serveRows: MK.map(q => ({l: MEALS[q].e + " " + MEALS[q].full, v: ((s.cfgDraft || s.cfg).serve || {})[q] || MEALS[q].serve,
+        onChange: e => { const cd0 = s.cfgDraft || s.cfg; this.setState({cfgDraft: {...cd0, serve: {...(cd0.serve || {}), [q]: e.target.value}}}); }})),
+      saveServe: () => { const serve = {...defCfg().serve, ...((s.cfgDraft || s.cfg).serve || {})}; const cfg = {...s.cfg, serve}; this.persist({cfg, cfgDraft: {...(s.cfgDraft || s.cfg), serve}}); this.cloudSet("settings/main", {serve}, true); },
       dayName: DAYF[dt.getDay()], dateText: fmtDate(s.sel)+" "+(dt.getFullYear()+543)+(s.sel===t ? " · วันนี้" : ""),
       pillText: m.away ? AWAY[m.away] : stv.t, pillBg: stv.bg, pillFg: stv.fg,
       isAway: !!m.away, notAway: !m.away, awayText: AWAY[m.away] || "", awayEmo: AWAY_E[m.away] || "",
@@ -1275,7 +1301,7 @@ class Component extends DCLogic {
       awayChips: Object.entries(AWAY).map(([key,l]) => mkChip(m.away===key, () => this.saveMeal(s.sel, mk, {away: m.away===key ? "" : key}), AWAY_E[key]+" "+l)),
       cutRows: MK.map(q => ({l: MEALS[q].e+" "+MEALS[q].full, v: cd.cut[q], onChange: e => this.setState({cfgDraft: {...cd, cut:{...cd.cut, [q]: e.target.value}}})})),
       defPeople: cd.people, defPeopleDown: () => this.setState({cfgDraft:{...cd, people: Math.max(1, cd.people-1)}}), defPeopleUp: () => this.setState({cfgDraft:{...cd, people: Math.min(30, cd.people+1)}}),
-      saveCfg: () => { const cfg = clean(cd); this.persist({cfg}); this.cloudSet("settings/main", cfg, true); },
+      saveCfg: () => { const cfg = {...s.cfg, cut: clean(cd.cut), people: cd.people}; this.persist({cfg}); this.cloudSet("settings/main", {cut: cfg.cut, people: cfg.people}, true); },
       weekRange: fmtDate(wk[0])+" – "+fmtDate(wk[6]), weekCards,
       fillWeek: () => { const days = {...s.days}; for (const x of wk) { const cur = days[x] || {date:x, meals:{}}; const meals = {...(cur.meals||{})}; let changed = false;
           for (const q of MK) { const mm = this.meal(x, q, days); if (!mm.away && !mm.picks.length && mm.options.length<MAXO) { meals[q] = {...mm, options: this.fill(x, q, mm.options)}; changed = true; } }
