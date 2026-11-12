@@ -13,8 +13,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#FFC72C">
 <script src="firebase-config.js?v=5"></script>
-<script src="menu-data.js?v=5"></script>
-<script src="ingredients.js?v=1"></script>
+<script src="menu-data.js?v=6"></script>
+<script src="ingredients.js?v=2"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -673,6 +673,18 @@
                   <button onClick="{{ po.onClick }}" style="animation:{{ po.anim }};display:flex;align-items:center;gap:6px;border:3px solid {{ po.bd }};background:{{ po.bg }};color:{{ po.fg }};border-radius:999px;padding:7px 16px;font-weight:700;font-size:18px;box-shadow:0 3px 0 {{ po.bd }}"><span style="width:22px;height:22px;flex:none;border-radius:50%;border:2.5px solid {{ po.fg }};display:grid;place-items:center;font-size:14px;line-height:1">{{ po.mark }}</span>{{ po.t }}</button>
                 </sc-for>
               </div>
+              <sc-if value="{{ pickIsNoodle }}">
+                <div style="font-size:15px;font-weight:800;color:#7A5600;margin-top:2px">🍜 เลือกเส้น</div>
+                <div style="display:flex;flex-wrap:wrap;gap:8px">
+                  <sc-for list="{{ pickNoodleOpts }}" as="pn"><button onClick="{{ pn.onClick }}" style="animation:{{ pn.anim }};display:flex;align-items:center;gap:6px;border:3px solid {{ pn.bd }};background:{{ pn.bg }};color:{{ pn.fg }};border-radius:999px;padding:6px 14px;font-weight:700;font-size:17px;box-shadow:0 3px 0 {{ pn.bd }}"><span style="width:20px;height:20px;flex:none;border-radius:50%;border:2.5px solid {{ pn.fg }};display:grid;place-items:center;font-size:13px;line-height:1">{{ pn.mark }}</span>{{ pn.t }}</button></sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{ pickIsSoupNoodle }}">
+                <div style="font-size:15px;font-weight:800;color:#7A5600;margin-top:2px">🥣 แบบน้ำ</div>
+                <div style="display:flex;flex-wrap:wrap;gap:8px">
+                  <sc-for list="{{ pickSoupOpts }}" as="ps"><button onClick="{{ ps.onClick }}" style="animation:{{ ps.anim }};display:flex;align-items:center;gap:6px;border:3px solid {{ ps.bd }};background:{{ ps.bg }};color:{{ ps.fg }};border-radius:999px;padding:6px 14px;font-weight:700;font-size:17px;box-shadow:0 3px 0 {{ ps.bd }}"><span style="width:20px;height:20px;flex:none;border-radius:50%;border:2.5px solid {{ ps.fg }};display:grid;place-items:center;font-size:13px;line-height:1">{{ ps.mark }}</span>{{ ps.t }}</button></sc-for>
+                </div>
+              </sc-if>
               <sc-if value="{{ pickIsFood }}">
                 <div style="font-size:15px;font-weight:800;color:#7A5600;margin-top:2px">🥩 เนื้อสัตว์</div>
                 <div style="display:flex;flex-wrap:wrap;gap:8px">
@@ -803,9 +815,13 @@ const REC = {
 };
 const hashStr = str => { let h = 2166136261; for (let i=0;i<str.length;i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
 const rng = seed => () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+const NOODLES = ["เส้นเล็ก","เส้นใหญ่","เส้นหมี่","บะหมี่","เกี๊ยมอี๋","วุ้นเส้น","มาม่า"];
+const SOUPS = ["น้ำใส","น้ำตก","ต้มยำ","แห้ง","เย็นตาโฟ"];
+const NOODLE_CATS = ["noodlesoup","noodlefry"];
+const isNoodle = m => !!m && NOODLE_CATS.includes(m.cat) && !/^(ผัดมักกะโรนี|สุกี้|ก๋วยเตี๋ยวหลอด)/.test(m.name);
 const MEATS = ["หมูสับ","หมูชิ้น","หมูกรอบ","ไก่","เนื้อ","กุ้ง","ปลาหมึก","ปลา","รวมทะเล","เต้าหู้"];
 const ADDONS = ["ไข่ดาว","ไข่เจียว","ไข่ต้ม","พิเศษ","ไม่ใส่ผัก","เจ"];
-const OPT_ING = [["หัวหอมฝรั่งเศส","หอมใหญ่"],["เห็ดทรัฟเฟิล","เห็ด"],["ลูกชิ้นปลากราย","ลูกชิ้นปลากราย"],["ซี่โครงหมู","ซี่โครงหมู"],["หมูสับ","หมูสับ"],["หมูชิ้น","หมูชิ้น"],["หมูกรอบ","หมูกรอบ"],["หมูหมัก","หมูชิ้น"],["หมูแดง","หมูแดง"],["หมูหยอง","หมูหยอง"],["หมูยอ","หมูยอ"],["หมูปิ้ง","หมูปิ้ง"],["หมูทอด","หมูชิ้น"],["หมู","หมู"],
+const OPT_ING = [["เกี๊ยมอี๋","เส้นเกี๊ยมอี๋"],["เส้นเล็ก","เส้นเล็ก"],["เส้นใหญ่","เส้นใหญ่"],["เส้นหมี่","เส้นหมี่"],["บะหมี่","บะหมี่"],["เย็นตาโฟ","ซอสเย็นตาโฟ"],["น้ำตก","เลือดหมู"],["หัวหอมฝรั่งเศส","หอมใหญ่"],["เห็ดทรัฟเฟิล","เห็ด"],["ลูกชิ้นปลากราย","ลูกชิ้นปลากราย"],["ลูกชิ้นปลา","ลูกชิ้นปลา"],["ลูกชิ้นหมู","ลูกชิ้นหมู"],["ลูกชิ้นเนื้อ","ลูกชิ้นเนื้อ"],["ลูกชิ้นรวม","ลูกชิ้นรวม"],["ลูกชิ้นกุ้ง","ลูกชิ้นกุ้ง"],["ซี่โครงหมู","ซี่โครงหมู"],["หมูสับ","หมูสับ"],["หมูชิ้น","หมูชิ้น"],["หมูกรอบ","หมูกรอบ"],["หมูหมัก","หมูชิ้น"],["หมูแดง","หมูแดง"],["หมูหยอง","หมูหยอง"],["หมูยอ","หมูยอ"],["หมูปิ้ง","หมูปิ้ง"],["หมูทอด","หมูชิ้น"],["หมู","หมู"],
   ["อกไก่","อกไก่"],["ตีนไก่","ตีนไก่"],["ข้อไก่","ข้อไก่"],["ไก่","ไก่"],["เนื้อสับ","เนื้อวัวสับ"],["เนื้อชิ้น","เนื้อวัว"],["เนื้อปู","เนื้อปู"],["เนื้อ","เนื้อวัว"],["ตับ","ตับหมู"],["เป็ด","เป็ดย่าง"],
   ["ไข่กุ้ง","ไข่กุ้ง"],["กุ้ง","กุ้ง"],["ปลาหมึก","ปลาหมึก"],["หมึก","ปลาหมึก"],["รวมทะเล","กุ้ง|ปลาหมึก"],["ทะเล","กุ้ง|ปลาหมึก"],["หอยลาย","หอยลาย"],["หอยนางรม","หอยนางรม"],["หอยแมลงภู่","หอยแมลงภู่"],["ปู","ปู"],
   ["ลูกชิ้น","ลูกชิ้น"],["ปลาช่อน","ปลาช่อน"],["ปลาทู","ปลาทู"],["ปลาดุก","ปลาดุก"],["ปลากะพง","ปลากะพง"],["กะพง","ปลากะพง"],["ทับทิม","ปลาทับทิม"],["หัวปลา","หัวปลา"],["ปลาเค็ม","ปลาเค็ม"],["แซลมอน","แซลมอน"],["ทูน่า","ทูน่า"],["ทู","ปลาทู"],["หัวโต","ปลาหัวโต"],["ปลา","ปลา"],
@@ -952,7 +968,7 @@ class Component extends DCLogic {
   label(sel){ if (!sel) return ""; const m = this.menu(sel.m); if (!m) return "เมนูที่ถูกลบไปแล้ว"; const ps = splitO(sel.o); if (!ps.length) return m.name;
     if (m.t && m.t.includes("{o}")) return m.t.replace("{o}", ps[0]) + ps.slice(1).map(x => " + "+x).join("");
     return m.name + ps.map(x => " + "+x).join(""); }
-  joinO(m, sel){ const base = (m && m.opts) || [], order = [...base, ...MEATS, ...ADDONS], idx = x => { const i = order.indexOf(x); return i<0 ? 999 : i; };
+  joinO(m, sel){ const base = (m && m.opts) || [], order = [...base, ...NOODLES, ...SOUPS, ...MEATS, ...ADDONS], idx = x => { const i = order.indexOf(x); return i<0 ? 999 : i; };
     return [...new Set(sel)].map((x,k) => [x,k]).sort((a,b) => idx(a[0])-idx(b[0]) || a[1]-b[1]).map(a => a[0]).join("+"); }
   openChooser(sel, edit){ this.setState({suggest:null, pick:{mode: edit.kind==="option" ? "option" : "choice", kind:"food", q:"", cat:"", open: sel.m, sel: splitO(sel.o), other:"", edit}}); }
   emo(sel){ const m = sel && this.menu(sel.m); return (m && m.emo) || "🍽️"; }
@@ -987,7 +1003,8 @@ class Component extends DCLogic {
   }
   baseIng(m){ return (m && (m.ing || (window.HOME_ING || {})[m.id])) || []; }
   ingOf(sel){ const m = sel && this.menu(sel.m); if (!m) return [];
-    const out = [...optIng(splitO(sel.o).join(" ")), ...this.baseIng(m)]; const seen = new Set();
+    const oi = optIng(splitO(sel.o).join(" ")), hasNoodle = oi.some(x => /^(เส้น|บะหมี่|วุ้นเส้น)/.test(x));
+    const out = [...oi, ...this.baseIng(m).filter(x => !(hasNoodle && /^(เส้นก๋วยเตี๋ยว|บะหมี่$|เส้นจันท์)/.test(x)))]; const seen = new Set();
     return out.filter(x => { const k = ingNorm(x); if (!k || seen.has(k)) return false; seen.add(k); return true; }); }
   resetForm(extra){ this.setState({fName:"", fOpts:"", fEmo:"", fIng:"", fEdit:null, fErr:"", ...(extra||{})}); }
   editMenu(m){
@@ -1078,7 +1095,8 @@ class Component extends DCLogic {
     const setSel = v => this.setState({pick:{...this.state.pick, sel:v}});
     const chip = o => { const on = sel.includes(o); return {t:o, mark: on ? "✓" : "", bg: on ? "#FFC72C" : "#fff", fg:"#1B2B5A", bd: on ? "#C98F00" : "#B9CCF0", anim: on ? POP : "none",
       onClick: () => setSel(on ? sel.filter(x => x!==o) : [...sel, o])}; };
-    const known = new Set([...base, ...(food ? [...MEATS, ...ADDONS] : [])]);
+    const noodle = isNoodle(om), soupNoodle = noodle && om.cat==="noodlesoup";
+    const known = new Set([...base, ...(noodle ? NOODLES : []), ...(soupNoodle ? SOUPS : []), ...(food ? [...MEATS, ...ADDONS] : [])]);
     const customs = sel.filter(x => !known.has(x));
     const needOne = base.length>0 && !Pk.edit;
     const ok = sel.length>0 || !needOne;
@@ -1087,7 +1105,8 @@ class Component extends DCLogic {
       this.setState({pick:{...this.state.pick, other:"", sel:[...new Set([...sel, ...v])]}}); };
     return {
       pickOptHint: base.length ? "แตะเลือกได้มากกว่า 1 อย่าง" : "เมนูนี้ไม่มีแบบให้เลือก เพิ่มเนื้อสัตว์หรืออื่นๆ ได้ (ไม่เลือกก็ได้)",
-      pickHasBase: base.length>0, pickIsFood: food,
+      pickHasBase: base.length>0, pickIsFood: food, pickIsNoodle: noodle, pickIsSoupNoodle: soupNoodle,
+      pickNoodleOpts: noodle ? NOODLES.filter(x => !base.includes(x)).map(chip) : [], pickSoupOpts: soupNoodle ? SOUPS.filter(x => !base.includes(x) && !om.name.includes(x)).map(chip) : [],
       pickOpenOpts: base.map(chip), pickMeatOpts: food ? MEATS.filter(x => !base.includes(x)).map(chip) : [], pickAddOpts: food ? ADDONS.filter(x => !base.includes(x)).map(chip) : [],
       pickHasCustom: customs.length>0, pickCustomOpts: customs.map(chip),
       pickOther: Pk.other || "", onPickOther: e => this.setState({pick:{...this.state.pick, other:e.target.value}}), addPickOther: addOther,
@@ -1199,7 +1218,7 @@ class Component extends DCLogic {
         pickCats: [...first, ...cats.map(([k,c]) => [k,c.l])].map(([v,l]) => ({t:l, ...(Pk.cat===v ? ON : OFF), onClick: () => this.setState({pick:{...Pk, cat:v, open:null}})})),
         pickItems: items.map(m => ({name:m.name, emo:m.emo||"🍽️", bgc: (CATS[m.cat]||{}).bg || "#EEF2F8", fav:!!m.fav, bd: Pk.open===m.id ? "#FFC72C" : "#B9CCF0", anim: Pk.open===m.id ? POP : "none",
           sub: (CATS[m.cat] ? CATS[m.cat].l : "") + (m.opts && m.opts.length ? " · "+m.opts.length+" แบบ" : ""),
-          onClick: () => (m.opts && m.opts.length) ? this.setState({pick:{...Pk, open: Pk.open===m.id ? null : m.id, sel:[], other:"", edit:null}}) : this.picked({m:m.id, o:""})})),
+          onClick: () => ((m.opts && m.opts.length) || isNoodle(m)) ? this.setState({pick:{...Pk, open: Pk.open===m.id ? null : m.id, sel:[], other:"", edit:null}}) : this.picked({m:m.id, o:""})})),
         pickEmpty: !items.length, pickHasOpen: !!om, pickOpenName: om ? om.name : "", pickOpenEmo: om ? (om.emo||"🍽️") : "", pickOpenBg: om ? ((CATS[om.cat]||{}).bg || "#EEF2F8") : "#fff",
         ...this.chooserVals(Pk, om),
         pickBack: () => this.setState({pick: Pk.edit ? null : {...Pk, open:null, sel:[], other:""}}),
