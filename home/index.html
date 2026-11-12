@@ -46,6 +46,12 @@
       <button onClick="{{ setBoss }}" style="animation:{{ roleBossAnim }};display:flex;align-items:center;gap:10px;border:3px solid {{ roleBossBd }};border-radius:20px;padding:4px 12px 4px 4px;background:{{ roleBossBg }};color:{{ roleBossFg }};font-weight:800;font-size:20px;height:60px;min-width:0;box-shadow:0 4px 0 {{ roleBossBd }}"><span style="width:48px;height:48px;flex:none;border-radius:15px;background:#DCE6FF url(assets/chibi/boss/01-wave.png) 50% 4%/190% auto no-repeat;border:2px solid #fff"></span><span style="white-space:nowrap">BOSS</span></button>
       <button onClick="{{ setCook }}" style="animation:{{ roleCookAnim }};display:flex;align-items:center;gap:10px;border:3px solid {{ roleCookBd }};border-radius:20px;padding:4px 12px 4px 4px;background:{{ roleCookBg }};color:{{ roleCookFg }};font-weight:800;font-size:20px;height:60px;min-width:0;box-shadow:0 4px 0 {{ roleCookBd }}"><span style="width:48px;height:48px;flex:none;border-radius:15px;background:#DCE6FF url(assets/chibi/chef/soup-pot.png) 50% 34%/210% auto no-repeat;border:2px solid #fff"></span><span style="white-space:nowrap">แม่ครัว</span></button>
     </div>
+    <sc-if value="{{ showOrderer }}">
+      <div style="display:flex;align-items:center;gap:6px;overflow-x:auto;padding-bottom:2px">
+        <span style="flex:none;font-size:16px;font-weight:800;color:#FFC72C;white-space:nowrap">👤 ใครสั่ง</span>
+        <sc-for list="{{ ordererChips }}" as="oc"><button onClick="{{ oc.onClick }}" style="animation:{{ oc.anim }};flex:none;white-space:nowrap;border:2.5px solid {{ oc.bd }};background:{{ oc.bg }};color:{{ oc.fg }};border-radius:999px;padding:4px 14px;font-size:16px;font-weight:800">{{ oc.t }}</button></sc-for>
+      </div>
+    </sc-if>
   </div>
 </header>
 
@@ -335,7 +341,7 @@
         </div>
         <div style="background:#fff;border-radius:30px;border:3px solid #B9CCF0;box-shadow:0 6px 0 #B9CCF0,0 18px 24px -12px rgba(27,43,90,.28);padding:18px 20px;display:grid;grid-template-columns:minmax(0,1fr);gap:10px">
           <h3 style="margin:0;font-size:26px;font-weight:800">👥 รายชื่อคนทาน</h3>
-          <p style="margin:0;font-size:16px;color:#4D5F8A">เพิ่มชื่อคนในบ้าน แล้วแตะชื่อใต้เมนูที่เลือก เพื่อบอกแม่ครัวว่าจานนี้ของใคร</p>
+          <p style="margin:0;font-size:16px;color:#4D5F8A">เพิ่มชื่อคนในบ้าน แล้วแตะชื่อที่แถบ "👤 ใครสั่ง" ด้านบนก่อนเลือกเมนู จานที่เลือกจะติดชื่อคนนั้น</p>
           <div style="display:flex;gap:8px">
             <input type="text" value="{{ nameDraft }}" onChange="{{ onNameDraft }}" placeholder="เช่น คุณแม่, น้องเอ" style="flex:1;min-width:0;background:#F5F8FF;border:2px solid #B9CCF0;border-radius:16px;padding:9px 14px;font-size:18px;outline:none" style-focus="border-color:#1E3A8A">
             <button onClick="{{ addName }}" style="flex:none;border:0;background:#FFC72C;color:#1B2B5A;border-radius:16px;padding:0 16px;font-weight:800;box-shadow:0 3px 0 #C98F00">เพิ่ม</button>
@@ -892,7 +898,7 @@ class Component extends DCLogic {
     if (saved && saved.menus && (saved.seed||1) < dataVer()) menus = mergeSeed(menus, saved.seed||1).list;
     const cfg = Object.assign(defCfg(), (saved && saved.cfg) || {});
     this.setState({ready: !CLOUD || !!saved, syncErr:"", online:false, menus, days:(saved && saved.days) || {}, cfg, cfgDraft:clean(cfg), shop:(saved && saved.shop) || [],
-      role: ui.role==="cook" ? "cook" : "boss", sound: ui.sound !== false, toasts: [], view: ["day","week","menu","shop"].includes(ui.view) ? ui.view : "day",
+      role: ui.role==="cook" ? "cook" : "boss", sound: ui.sound !== false, toasts: [], orderer: ui.orderer || "", view: ["day","week","menu","shop"].includes(ui.view) ? ui.view : "day",
       sel: todayStr(), meal: currentMeal(cfg), pick:null, suggest:null, spin:null, drafts:{}, confirmDel:null,
       fName:"", fCat:"kabfry", fOpts:"", fEmo:"", fMeals:"ld", fEdit:null, fErr:"", mq:"", mg:"", shopDraft:""}, () => { if (saved && (saved.seed||1) < dataVer()) this.persist({}); });
     if (CLOUD) this.connect();
@@ -982,7 +988,7 @@ class Component extends DCLogic {
     } catch(e) {}
   }
   clearToasts(){ this.setState({toasts: []}); document.title = "วันนี้กินอะไรดี"; try { navigator.clearAppBadge && navigator.clearAppBadge(); } catch(e) {} }
-  setUi(patch){ this.setState(patch, () => { try { localStorage.setItem(KEY+"-ui", JSON.stringify({role:this.state.role, view:this.state.view, sound:this.state.sound})); } catch(e) {} }); }
+  setUi(patch){ this.setState(patch, () => { try { localStorage.setItem(KEY+"-ui", JSON.stringify({role:this.state.role, view:this.state.view, sound:this.state.sound, orderer:this.state.orderer||""})); } catch(e) {} }); }
 
   menu(id){ return this.state.menus.find(m => m.id===id); }
   meal(date, mk, days){ const d = (days || this.state.days)[date]; return Object.assign(blankMeal(), (d && d.meals && d.meals[mk]) || {}); }
@@ -1085,14 +1091,28 @@ class Component extends DCLogic {
   pastCutoff(date, mk){ const t = todayStr(); if (date !== t) return date < t; return nowMin() >= toMin(this.state.cfg.cut[mk]); }
   openPick(mode){ this.setState({pick:{mode, kind: mode==="drink" ? "drink" : "food", q:"", cat: mode==="drink" ? "" : "meal", open:null}}); }
   same(a, b){ return a.m===b.m && (a.o||"")===(b.o||""); }
+  orderer(){ const o = this.state.orderer; return o && (this.state.cfg.names || []).includes(o) ? o : ""; }
+  // เพิ่มจานให้ "คนที่กำลังสั่ง" (แถบ 👤 ใครสั่ง ด้านบน) ถ้าจานนี้มีอยู่แล้ว จะเติมชื่อคนสั่งเข้าไป
+  mergePicks(picks, sels){
+    const who = this.orderer(); const out = picks.map(p => ({...p}));
+    for (const sel of sels) { const i = out.findIndex(p => this.same(p, sel));
+      if (i >= 0) { if (who && !(out[i].who||[]).includes(who)) out[i] = {...out[i], who:[...(out[i].who||[]), who]}; }
+      else out.push({m:sel.m, o:sel.o||"", ...(who ? {who:[who]} : {})}); }
+    return out.slice(-MAXP);
+  }
   addPick(sel){
-    const s = this.state, m = this.meal(s.sel, s.meal); if (m.picks.some(p => this.same(p, sel))) return;
-    this.saveMeal(s.sel, s.meal, {picks:[...m.picks, {m:sel.m, o:sel.o||""}].slice(-MAXP), status: m.status==="plan" ? "chosen" : m.status, changeReq:false, away:""});
+    const s = this.state, m = this.meal(s.sel, s.meal);
+    this.saveMeal(s.sel, s.meal, {picks: this.mergePicks(m.picks, [sel]), status: m.status==="plan" ? "chosen" : m.status, changeReq:false, away:""});
   }
   togglePick(sel){
-    const s = this.state, m = this.meal(s.sel, s.meal);
-    if (m.picks.some(p => this.same(p, sel))) { const picks = m.picks.filter(p => !this.same(p, sel)); this.saveMeal(s.sel, s.meal, {picks, status: !picks.length && m.status==="chosen" ? "plan" : m.status}); }
-    else this.addPick(sel);
+    const s = this.state, m = this.meal(s.sel, s.meal), who = this.orderer(), i = m.picks.findIndex(p => this.same(p, sel));
+    if (i < 0) return this.addPick(sel);
+    const cur = m.picks[i], names = cur.who || [];
+    let picks;
+    if (who && !names.includes(who)) picks = m.picks.map((p,j) => j===i ? {...p, who:[...names, who]} : p);
+    else if (who && names.length > 1) picks = m.picks.map((p,j) => j===i ? {...p, who:names.filter(x => x!==who)} : p);
+    else picks = m.picks.filter((_,j) => j!==i);
+    this.saveMeal(s.sel, s.meal, {picks, status: !picks.length && m.status==="chosen" ? "plan" : m.status});
   }
   picked(sel){
     const Pk = this.state.pick, s = this.state, m = this.meal(s.sel, s.meal); this.setState({pick:null});
@@ -1167,7 +1187,7 @@ class Component extends DCLogic {
     const names = (s.cfg.names || []);
     const setWho = (i, who) => this.saveMeal(s.sel, mk, {picks: m.picks.map((x,j) => j===i ? {...x, who} : x)});
     const picks = m.picks.map((p,i) => { const who = p.who || []; return {edit: () => this.openChooser(p, {kind:"pick", i}),
-      hasWho: who.length>0 && !boss, whoText: who.join(", "), showWhoChips: boss && names.length>0,
+      hasWho: who.length>0, whoText: who.join(", "), showWhoChips: false,
       whoChips: [{t:"ทุกคน", on: !who.length, onClick: () => setWho(i, [])}, ...names.map(n => ({t:n, on: who.includes(n), onClick: () => setWho(i, who.includes(n) ? who.filter(x => x!==n) : [...who, n])}))]
         .map(c => ({...c, bg: c.on ? "#1B2B5A" : "#fff", fg: c.on ? "#fff" : "#1B2B5A", bd: c.on ? "#1B2B5A" : "#B9CCF0"})),
       label:this.label(p), emo:this.emo(p), bgc:this.bgc(p), remove: () => { const picks = m.picks.filter((_,j) => j!==i); this.saveMeal(s.sel, mk, {picks, status: !picks.length && m.status==="chosen" ? "plan" : m.status}); }}; });
@@ -1175,7 +1195,8 @@ class Component extends DCLogic {
       const on = m.picks.some(p => this.same(p, o));
       return {n:i+1, label:this.label(o), cat:this.catOf(o), emo:this.emo(o), bgc:this.bgc(o), bg: on ? "#FFF6D6" : "#fff", bd: on ? "#3A9BE0" : "#B9CCF0", anim: on ? POP : "none",
         cursor: boss ? "pointer" : "default", onClick: boss ? () => this.togglePick(o) : undefined,
-        actText: boss ? (on ? "✓ เลือกแล้ว" : "แตะเพื่อเลือก") : (on ? "BOSS เลือกอันนี้" : ""), actColor: on ? "#1D4E89" : "#2456D6",
+        actText: (() => { const pk = m.picks.find(p => this.same(p, o)), w = pk && pk.who && pk.who.length ? " · " + pk.who.join(", ") : "";
+          return boss ? (on ? "✓ เลือกแล้ว" + w : "แตะเพื่อเลือก") : (on ? "BOSS เลือกอันนี้" + w : ""); })(), actColor: on ? "#1D4E89" : "#2456D6",
         remove: e => { e.stopPropagation(); this.saveMeal(s.sel, mk, {options: m.options.filter((_,j) => j!==i)}); },
         edit: e => { e.stopPropagation(); this.openChooser(o, {kind:"option", i}); }};
     });
@@ -1286,6 +1307,9 @@ class Component extends DCLogic {
       nameDraft: s.nameDraft || "", onNameDraft: e => this.setState({nameDraft: e.target.value}), hasNames: names.length>0,
       addName: () => { const v = (s.nameDraft||"").trim().replace(/[,()]/g, ""); if (!v || names.includes(v)) return this.setState({nameDraft:""}); const nm = [...names, v]; this.persist({cfg: {...s.cfg, names: nm}, nameDraft:""}); this.cloudSet("settings/main", {names: nm}, true); },
       nameList: names.map(n => ({t:n, onDel: () => { const nm = names.filter(x => x!==n); this.persist({cfg: {...s.cfg, names: nm}}); this.cloudSet("settings/main", {names: nm}, true); }})),
+      showOrderer: boss && names.length>0,
+      ordererChips: [["", "ทุกคน"], ...names.map(n => [n, n])].map(([v,l]) => { const on = (this.orderer() || "") === v;
+        return {t:l, bg: on ? "#FFC72C" : "rgba(255,255,255,.12)", fg: on ? "#1B2B5A" : "#fff", bd: on ? "#FFC72C" : "rgba(255,255,255,.45)", anim: on ? POP : "none", onClick: () => this.setUi({orderer: v})}; }),
       toggleSound: () => { const on = s.sound === false; this.setUi({sound: on}); if (on) { this.unlockAudio(); this.ding(); } },
       hasToast: !!(s.toasts && s.toasts.length), toastText: s.toasts && s.toasts.length ? s.toasts[s.toasts.length-1].text : "",
       toastMore: s.toasts && s.toasts.length > 1 ? "และอีก " + (s.toasts.length-1) + " รายการ: " + s.toasts.slice(0,-1).slice(-2).map(x => x.text).join(" · ") : "",
@@ -1325,8 +1349,8 @@ class Component extends DCLogic {
                 else if (mm.options.length < MAXO) this.saveMeal(s.sel, mk, {options:[...mm.options, x.sel]}); }}; }),
           recAllText: boss ? (big ? "✅ เอาจานนี้" : "✅ เลือกทั้ง " + rec.length + " อย่าง") : (big ? "+ เสนอเมนูนี้" : "+ เสนอทั้ง " + rec.length + " อย่าง"),
           recUseAll: () => { const mm = this.meal(s.sel, mk);
-            if (boss) { const add = rec.map(x => x.sel).filter(x => !mm.picks.some(y => this.same(y, x)));
-              this.saveMeal(s.sel, mk, {picks:[...mm.picks, ...add].slice(-MAXP), status: mm.status==="plan" ? "chosen" : mm.status, changeReq:false, away:""}); }
+            if (boss) {
+              this.saveMeal(s.sel, mk, {picks: this.mergePicks(mm.picks, rec.map(x => x.sel)), status: mm.status==="plan" ? "chosen" : mm.status, changeReq:false, away:""}); }
             else { const add = rec.map(x => x.sel).filter(x => !mm.options.some(y => this.same(y, x)));
               this.saveMeal(s.sel, mk, {options:[...mm.options, ...add].slice(0, MAXO)}); } },
           recReroll: () => this.saveMeal(s.sel, mk, {rec: (m.rec||0) + 1})
