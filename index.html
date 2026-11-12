@@ -26,21 +26,51 @@
 @keyframes chibiPop{0%{transform:scale(1)}30%{transform:scale(1.14,.88)}55%{transform:scale(.94,1.08) translateY(-4px)}75%{transform:scale(1.04,.97)}100%{transform:scale(1)}}
 @keyframes chibiJump{0%,100%{transform:translateY(0) scale(1,1) rotate(0)}15%{transform:translateY(0) scale(1.08,.92)}40%{transform:translateY(-14px) scale(.95,1.06) rotate(-5deg)}60%{transform:translateY(-14px) scale(.97,1.03) rotate(5deg)}82%{transform:translateY(0) scale(1.06,.94)}}
 @keyframes chibiBob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-8px) rotate(3deg)}}
-@keyframes chibiWiggle{0%,100%{transform:rotate(-10deg) scale(.95)}50%{transform:rotate(10deg) scale(1.08)}}</style>
+@keyframes chibiWiggle{0%,100%{transform:rotate(-10deg) scale(.95)}50%{transform:rotate(10deg) scale(1.08)}}
+@keyframes landIn{from{opacity:0;transform:translateY(18px) scale(.96)}to{opacity:1;transform:none}}
+button[data-tap]{transition:transform .12s ease,box-shadow .12s ease}
+button[data-tap]:active{transform:translateY(5px) scale(.98)}
+button[data-tap]:focus-visible{outline:4px solid #FFC93C;outline-offset:3px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}</style>
 </helmet>
-<div style="height:100dvh;display:flex;justify-content:center;background:#1F6FD1">
-<div data-screen-label="App" style="position:relative;width:100%;max-width:520px;height:100%;flex:none;overflow:hidden;display:flex;flex-direction:column;background:#2F8CF0;padding-top:env(safe-area-inset-top,0px)">
-<div style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;background:#2F8CF0 radial-gradient(#4A9DF4 2.5px,transparent 3px) 0 0/34px 34px">
+<div style="height:100dvh;display:flex;justify-content:center;background:{{ thOuter }}">
+<div data-screen-label="App" style="position:relative;width:100%;max-width:520px;height:100%;flex:none;overflow:hidden;display:flex;flex-direction:column;background:{{ thBg }};padding-top:env(safe-area-inset-top,0px)">
+<div data-scroll style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;background:{{ thBg }} radial-gradient({{ thDot }} 2.5px,transparent 3px) 0 0/34px 34px">
 
-<header style="position:sticky;top:0;z-index:5;background:#2F8CF0;padding:12px 16px 10px;display:flex;align-items:center;gap:10px">
-  <img src="assets/app-icon-180.png" alt="" style="width:50px;height:50px;border-radius:15px;border:3px solid #fff;box-shadow:0 4px 0 #1A63C4;flex:none">
-  <div style="flex:1;min-width:0">
-    <div style="font-family:Mitr,Prompt,sans-serif;font-weight:700;font-size:23px;line-height:1.1;color:#fff;text-shadow:0 3px 0 #1A63C4;white-space:nowrap">เที่ยงนี้กินไรดี</div>
-    <div style="display:inline-flex;align-items:center;gap:5px;margin-top:3px;background:#fff;border-radius:999px;padding:1px 10px;font-size:12px;font-weight:600;color:#1E2A55"><span style="width:8px;height:8px;border-radius:50%;background:{{ syncColor }}"></span>{{ syncText }}</div>
+<sc-if value="{{ showLanding }}">
+<section style="min-height:100%;display:flex;flex-direction:column;background:#FFF4E4 radial-gradient(#FFE3C2 2.5px,transparent 3px) 0 0/30px 30px">
+  <div style="position:relative;padding:26px 18px 58px;text-align:center;background:linear-gradient(180deg,#2F8CF0,#1F6FD1);border-radius:0 0 50% 50% / 0 0 44px 44px;box-shadow:0 8px 0 #FF6B1A">
+    <img src="assets/food/15.png" alt="" style="position:absolute;left:10px;top:18px;width:58px;animation:chibiBob 2.6s ease-in-out infinite">
+    <img src="assets/drink/24.png" alt="" style="position:absolute;right:12px;top:30px;width:52px;animation:chibiBob 2.2s ease-in-out infinite .4s">
+    <img src="assets/app-icon-180.png" alt="" style="width:108px;height:108px;border-radius:30px;border:5px solid #fff;box-shadow:0 6px 0 #1A63C4;animation:chibiBob 2.4s ease-in-out infinite">
+    <div style="margin-top:10px;font-family:Mitr,Prompt,sans-serif;font-weight:700;font-size:36px;line-height:1.15;color:#fff;text-shadow:0 4px 0 #1A63C4">เที่ยงนี้กินไรดี</div>
+    <div style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;background:#fff;color:#1E2A55;border-radius:999px;padding:6px 16px;font-size:16px;font-weight:700;box-shadow:0 4px 0 #1A63C4">วันนี้ใครเข้าใช้งานเอ่ย?</div>
   </div>
-  <div style="display:flex;gap:3px;background:#fff;border-radius:999px;padding:4px;box-shadow:0 4px 0 #1A63C4">
-    <button onClick="{{ setBoss }}" style="animation:{{ roleBossAnim }};border:0;border-radius:999px;padding:7px 12px;font-weight:700;font-size:13px;background:{{ roleBossBg }};color:{{ roleBossFg }}">BOSS</button>
-    <button onClick="{{ setSec }}" style="animation:{{ roleSecAnim }};border:0;border-radius:999px;padding:7px 12px;font-weight:700;font-size:13px;background:{{ roleSecBg }};color:{{ roleSecFg }}">STAFF</button>
+  <div style="padding:20px 18px 0;text-align:center;font-size:15px;font-weight:600;color:#8A5A2B">{{ landDate }}</div>
+  <div style="display:grid;gap:26px;padding:22px 18px 8px">
+    <sc-for list="{{ landCards }}" as="lc" hint-placeholder-count="2">
+      <button data-tap onClick="{{ lc.onClick }}" style="position:relative;display:flex;align-items:center;gap:10px;text-align:left;border:4px solid #fff;border-radius:32px;background:{{ lc.bg }};color:#fff;padding:16px 14px 16px 132px;min-height:128px;box-shadow:0 8px 0 {{ lc.sh }},0 18px 26px -14px rgba(30,42,85,.45);animation:landIn .45s ease-out both {{ lc.delay }}">
+        <span style="position:absolute;left:12px;bottom:10px;width:108px;height:108px;border-radius:50%;background:#fff;box-shadow:inset 0 -8px 0 {{ lc.ring }}"></span>
+        <img src="{{ lc.img }}" alt="" style="position:absolute;left:6px;bottom:12px;width:120px;height:128px;object-fit:contain;object-position:bottom;animation:chibiBob 2.3s ease-in-out infinite {{ lc.delay }};filter:drop-shadow(0 5px 4px rgba(0,0,0,.18))">
+        <span style="display:grid;gap:6px;min-width:0;flex:1">
+          <span style="font-family:Mitr,Prompt,sans-serif;font-weight:700;font-size:34px;line-height:1.05;text-shadow:0 3px 0 {{ lc.sh }}">{{ lc.name }}</span>
+          <span style="justify-self:start;max-width:100%;background:#fff;color:{{ lc.sh }};border-radius:999px;padding:3px 12px;font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ lc.role }}</span>
+          <span style="font-size:13px;font-weight:600;line-height:1.35;opacity:.95">{{ lc.hint }}</span>
+        </span>
+        <span style="flex:none;width:38px;height:38px;border-radius:50%;background:#fff;color:{{ lc.sh }};display:grid;place-items:center;font-size:26px;font-weight:700;line-height:1">›</span>
+      </button>
+    </sc-for>
+  </div>
+  <p style="margin:auto 0 0;padding:18px 18px calc(22px + env(safe-area-inset-bottom,0px));text-align:center;font-size:14px;font-weight:600;color:#8A5A2B">แตะปุ่มเพื่อเข้าหน้าของตัวเอง · กด 🏠 เพื่อกลับมาหน้านี้</p>
+</section>
+</sc-if>
+<sc-if value="{{ inApp }}">
+<header style="position:sticky;top:0;z-index:5;background:{{ thBg }};padding:12px 16px 10px;display:flex;align-items:center;gap:10px">
+  <button data-tap onClick="{{ goHome }}" aria-label="กลับหน้าแรก" style="flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;width:56px;height:56px;border-radius:18px;border:3px solid #fff;background:#FFF8EC;color:{{ thSh }};padding:0;box-shadow:0 4px 0 {{ thSh }};font-weight:700;line-height:1.1"><span style="font-size:23px">🏠</span><span style="font-size:11px">หน้าแรก</span></button>
+  <img src="{{ meImg }}" alt="" style="width:58px;height:58px;object-fit:contain;flex:none;margin:-8px -4px -8px -2px;filter:drop-shadow(0 4px 0 {{ thSh }})">
+  <div style="flex:1;min-width:0">
+    <div style="font-family:Mitr,Prompt,sans-serif;font-weight:700;font-size:26px;line-height:1.05;color:#fff;text-shadow:0 3px 0 {{ thSh }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">หน้า {{ meName }}</div>
+    <div style="display:inline-flex;align-items:center;gap:5px;margin-top:4px;background:#fff;border-radius:999px;padding:1px 10px;font-size:12px;font-weight:600;color:#1E2A55;white-space:nowrap"><span style="width:8px;height:8px;border-radius:50%;background:{{ syncColor }}"></span>{{ syncText }} · เที่ยงนี้กินไรดี</div>
   </div>
 </header>
 
@@ -52,7 +82,7 @@
 
 <sc-if value="{{ isDay }}" hint-placeholder-val="{{ true }}">
   <div style="display:flex;align-items:center;gap:6px;margin-bottom:16px">
-    <button onClick="{{ prevWeek }}" aria-label="สัปดาห์ก่อน" style="flex:none;width:30px;height:58px;border-radius:14px;border:0;background:#1A63C4;color:#fff;font-size:22px;font-weight:700">‹</button>
+    <button onClick="{{ prevWeek }}" aria-label="สัปดาห์ก่อน" style="flex:none;width:30px;height:58px;border-radius:14px;border:0;background:{{ thSh }};color:#fff;font-size:22px;font-weight:700">‹</button>
     <div style="flex:1;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px">
       <sc-for list="{{ strip }}" as="c" hint-placeholder-count="5">
         <button onClick="{{ c.onClick }}" style="animation:{{ c.anim }};position:relative;border:3px solid #fff;background:{{ c.bg }};color:{{ c.fg }};border-radius:18px;padding:7px 2px;line-height:1.15;box-shadow:0 4px 0 {{ c.sh }}">
@@ -63,18 +93,18 @@
         </button>
       </sc-for>
     </div>
-    <button onClick="{{ nextWeek }}" aria-label="สัปดาห์หน้า" style="flex:none;width:30px;height:58px;border-radius:14px;border:0;background:#1A63C4;color:#fff;font-size:22px;font-weight:700">›</button>
+    <button onClick="{{ nextWeek }}" aria-label="สัปดาห์หน้า" style="flex:none;width:30px;height:58px;border-radius:14px;border:0;background:{{ thSh }};color:#fff;font-size:22px;font-weight:700">›</button>
   </div>
 
   <div style="display:flex;align-items:flex-end;gap:4px;margin-bottom:-6px;position:relative;z-index:1">
     <img src="{{ hintImg }}" alt="" style="width:104px;height:104px;object-fit:contain;flex:none;animation:chibiBob 2.4s ease-in-out infinite">
-    <div style="position:relative;flex:1;min-width:0;margin-bottom:22px;background:#fff;border-radius:22px;padding:12px 16px;box-shadow:0 4px 0 #1A63C4">
+    <div style="position:relative;flex:1;min-width:0;margin-bottom:22px;background:#fff;border-radius:22px;padding:12px 16px;box-shadow:0 4px 0 {{ thSh }}">
       <span style="position:absolute;left:-9px;bottom:16px;width:20px;height:20px;background:#fff;transform:rotate(45deg);border-radius:4px"></span>
       <div style="position:relative;font-size:16px;font-weight:700;line-height:1.35;text-wrap:pretty">{{ hint }}</div>
     </div>
   </div>
 
-  <article style="background:#FFF8EC;border-radius:30px;border:4px solid #fff;box-shadow:0 7px 0 #1A63C4;overflow:hidden;margin-bottom:18px">
+  <article style="background:#FFF8EC;border-radius:30px;border:4px solid #fff;box-shadow:0 7px 0 {{ thSh }};overflow:hidden;margin-bottom:18px">
     <div style="padding:16px 18px 12px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;border-bottom:3px dashed #FFDDB5">
       <div style="flex:1 1 auto;min-width:0">
         <h2 style="margin:0;font-family:Mitr,Prompt,sans-serif;font-weight:700;font-size:38px;line-height:1.3;color:#FF6B1A">{{ dayName }}</h2>
@@ -118,7 +148,7 @@
         <section>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
             <h3 style="margin:0;font-family:Mitr,Prompt,sans-serif;font-size:21px;font-weight:600">{{ optTitle }}</h3>
-            <span style="font-weight:700;color:#fff;background:#2F8CF0;border-radius:999px;padding:1px 11px;font-size:14px">{{ optCount }}/3</span>
+            <span style="font-weight:700;color:#fff;background:{{ thBg }};border-radius:999px;padding:1px 11px;font-size:14px">{{ optCount }}/3</span>
           </div>
           <sc-if value="{{ showReqMsg }}">
             <div style="padding:12px 16px;border-radius:20px;background:#FFE3E3;border:3px solid #FFB4B4;margin-bottom:12px">
@@ -151,36 +181,36 @@
           <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px">
             <sc-if value="{{ isBoss }}">
               <button onClick="{{ doRandom }}" style="grid-column:1 / -1;display:flex;align-items:center;justify-content:center;gap:8px;border:3px solid #fff;background:#FF6B1A;color:#fff;border-radius:999px;padding:12px 20px;font-family:Mitr,Prompt,sans-serif;font-weight:600;font-size:19px;box-shadow:0 5px 0 #D9480F" style-active="transform:translateY(4px);box-shadow:0 1px 0 #D9480F">🎲 สุ่มให้หน่อย</button>
-              <button onClick="{{ openChoice }}" style="border:3px solid #fff;background:#2F8CF0;color:#fff;border-radius:999px;padding:10px 12px;font-weight:700;font-size:15px;box-shadow:0 4px 0 #1A63C4" style-active="transform:translateY(3px);box-shadow:0 1px 0 #1A63C4">ดูเมนูทั้งหมด</button>
-              <button onClick="{{ openDrink }}" style="border:3px solid #fff;background:#2F8CF0;color:#fff;border-radius:999px;padding:10px 12px;font-weight:700;font-size:15px;box-shadow:0 4px 0 #1A63C4" style-active="transform:translateY(3px);box-shadow:0 1px 0 #1A63C4">{{ drinkBtnText }}</button>
+              <button onClick="{{ openChoice }}" style="border:3px solid #fff;background:{{ thBg }};color:#fff;border-radius:999px;padding:10px 12px;font-weight:700;font-size:15px;box-shadow:0 4px 0 {{ thSh }}" style-active="transform:translateY(3px);box-shadow:0 1px 0 {{ thSh }}">ดูเมนูทั้งหมด</button>
+              <button onClick="{{ openDrink }}" style="border:3px solid #fff;background:{{ thBg }};color:#fff;border-radius:999px;padding:10px 12px;font-weight:700;font-size:15px;box-shadow:0 4px 0 {{ thSh }}" style-active="transform:translateY(3px);box-shadow:0 1px 0 {{ thSh }}">{{ drinkBtnText }}</button>
             </sc-if>
             <sc-if value="{{ isSec }}">
               <button onClick="{{ openOption }}" disabled="{{ optsFull }}" style="border:3px solid #fff;background:#FF6B1A;color:#fff;border-radius:999px;padding:12px 12px;font-weight:700;font-size:16px;box-shadow:0 5px 0 #D9480F;opacity:{{ fullOpacity }}">+ เพิ่มเมนู</button>
-              <button onClick="{{ fillDay }}" disabled="{{ optsFull }}" style="border:3px solid #fff;background:#2F8CF0;color:#fff;border-radius:999px;padding:12px 12px;font-weight:700;font-size:16px;box-shadow:0 5px 0 #1A63C4;opacity:{{ fullOpacity }}">🎲 สุ่มให้ครบ</button>
+              <button onClick="{{ fillDay }}" disabled="{{ optsFull }}" style="border:3px solid #fff;background:{{ thBg }};color:#fff;border-radius:999px;padding:12px 12px;font-weight:700;font-size:16px;box-shadow:0 5px 0 {{ thSh }};opacity:{{ fullOpacity }}">🎲 สุ่มให้ครบ</button>
             </sc-if>
           </div>
 
           <sc-if value="{{ spinning }}">
             <div style="margin-top:14px;display:flex;align-items:center;justify-content:center;gap:14px;padding:14px;border-radius:24px;background:#EAF4FF;border:3px dashed #8CC2F7">
               <div style="width:100px;height:100px;display:grid;place-items:center">{{ spinEl }}</div>
-              <div style="font-family:Mitr,Prompt,sans-serif;font-size:24px;font-weight:600;color:#1A63C4">กำลังสุ่ม…</div>
+              <div style="font-family:Mitr,Prompt,sans-serif;font-size:24px;font-weight:600;color:{{ thSh }}">กำลังสุ่ม…</div>
             </div>
           </sc-if>
           <sc-if value="{{ hasSuggest }}">
             <div style="margin-top:14px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:16px;border-radius:24px;background:#EAF4FF;border:3px dashed #8CC2F7">
-              <div style="font-size:14px;font-weight:700;color:#1A63C4">ลองอันนี้ไหม?</div>
+              <div style="font-size:14px;font-weight:700;color:{{ thSh }}">ลองอันนี้ไหม?</div>
               <img src="{{ suggestImg }}" alt="" style="width:110px;height:110px;object-fit:contain;animation:chibiJump 1.6s ease-in-out infinite">
               <div style="font-family:Mitr,Prompt,sans-serif;font-size:24px;font-weight:600">{{ suggestLabel }}</div>
               <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px">
                 <button onClick="{{ takeSuggest }}" style="border:3px solid #fff;background:#FF6B1A;color:#fff;border-radius:999px;padding:8px 20px;font-weight:700;box-shadow:0 4px 0 #D9480F">เอาอันนี้!</button>
-                <button onClick="{{ doRandom }}" style="border:3px solid #fff;background:#2F8CF0;color:#fff;border-radius:999px;padding:8px 18px;font-weight:700;box-shadow:0 4px 0 #1A63C4">สุ่มใหม่</button>
+                <button onClick="{{ doRandom }}" style="border:3px solid #fff;background:{{ thBg }};color:#fff;border-radius:999px;padding:8px 18px;font-weight:700;box-shadow:0 4px 0 {{ thSh }}">สุ่มใหม่</button>
                 <button onClick="{{ dropSuggest }}" style="border:0;background:none;padding:8px 10px;font-weight:600;color:#5A6385">ไม่เอา</button>
               </div>
             </div>
           </sc-if>
           <sc-if value="{{ showLateMsg }}">
             <div style="margin-top:14px;padding:12px 16px;border-radius:20px;background:#EAF4FF;border:3px solid #8CC2F7">
-              <div style="font-weight:700;color:#1A63C4">เลยเวลา {{ cutoffText }} น. แล้ว BOSS ยังไม่เลือก</div>
+              <div style="font-weight:700;color:{{ thSh }}">เลยเวลา {{ cutoffText }} น. แล้ว BOSS ยังไม่เลือก</div>
               <button onClick="{{ useFirst }}" style="margin-top:8px;border:0;background:#fff;border-radius:999px;padding:6px 16px;font-weight:700">ใช้เมนูที่ 1</button>
             </div>
           </sc-if>
@@ -204,12 +234,12 @@
 
   <div style="display:grid;gap:14px">
     <sc-if value="{{ hasOtherNote }}">
-      <div style="display:flex;gap:10px;align-items:flex-start;padding:14px 16px;border-radius:24px;background:#FFF6CC;border:3px solid #fff;box-shadow:0 5px 0 #1A63C4">
+      <div style="display:flex;gap:10px;align-items:flex-start;padding:14px 16px;border-radius:24px;background:#FFF6CC;border:3px solid #fff;box-shadow:0 5px 0 {{ thSh }}">
         <span style="font-size:24px;line-height:1">💬</span>
         <div><div style="font-size:13px;font-weight:700;color:#8A6100">{{ otherNoteTitle }}</div><div style="font-size:16px;font-weight:500">{{ otherNote }}</div></div>
       </div>
     </sc-if>
-    <div style="background:#fff;border-radius:26px;box-shadow:0 5px 0 #1A63C4;padding:16px 18px;display:grid;gap:10px">
+    <div style="background:#fff;border-radius:26px;box-shadow:0 5px 0 {{ thSh }};padding:16px 18px;display:grid;gap:10px">
       <div style="display:flex;align-items:center;gap:8px">
         <img src="assets/icon/13.png" alt="" style="width:44px">
         <h3 style="margin:0;font-family:Mitr,Prompt,sans-serif;font-size:20px;font-weight:600">{{ noteTitle }}</h3>
@@ -221,7 +251,7 @@
       </div>
     </div>
     <sc-if value="{{ isBoss }}">
-      <div style="background:#fff;border-radius:26px;box-shadow:0 5px 0 #1A63C4;padding:16px 18px;display:grid;gap:10px">
+      <div style="background:#fff;border-radius:26px;box-shadow:0 5px 0 {{ thSh }};padding:16px 18px;display:grid;gap:10px">
         <div style="display:flex;align-items:center;gap:8px">
           <img src="assets/icon/16.png" alt="" style="width:46px">
           <h3 style="margin:0;font-family:Mitr,Prompt,sans-serif;font-size:20px;font-weight:600">วันนี้ไม่อยู่?</h3>
@@ -234,11 +264,11 @@
       </div>
     </sc-if>
     <sc-if value="{{ isSec }}">
-      <div style="background:#fff;border-radius:26px;box-shadow:0 5px 0 #1A63C4;padding:16px 18px;display:flex;flex-wrap:wrap;align-items:center;gap:10px">
+      <div style="background:#fff;border-radius:26px;box-shadow:0 5px 0 {{ thSh }};padding:16px 18px;display:flex;flex-wrap:wrap;align-items:center;gap:10px">
         <img src="assets/icon/15.png" alt="" style="width:44px">
         <div style="flex:1 1 140px;font-family:Mitr,Prompt,sans-serif;font-size:18px;font-weight:600">ปิดรับเลือกเมนู</div>
         <input type="time" value="{{ cutoffDraft }}" onChange="{{ onCutoff }}" style="background:#FFF8EC;border:3px solid #FFDDB5;border-radius:14px;padding:6px 10px;font-size:16px">
-        <button onClick="{{ saveCutoff }}" style="border:0;background:#2F8CF0;color:#fff;border-radius:999px;padding:8px 16px;font-weight:700;box-shadow:0 4px 0 #1A63C4">บันทึก</button>
+        <button onClick="{{ saveCutoff }}" style="border:0;background:{{ thBg }};color:#fff;border-radius:999px;padding:8px 16px;font-weight:700;box-shadow:0 4px 0 {{ thSh }}">บันทึก</button>
       </div>
     </sc-if>
   </div>
@@ -246,14 +276,14 @@
 
 <sc-if value="{{ isWeek }}">
   <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px">
-    <button onClick="{{ prevWeek }}" aria-label="สัปดาห์ก่อน" style="width:42px;height:42px;border-radius:50%;border:3px solid #fff;background:#1A63C4;color:#fff;font-size:20px;font-weight:700">‹</button>
-    <h2 style="margin:0;font-family:Mitr,Prompt,sans-serif;font-size:24px;font-weight:600;color:#fff;text-shadow:0 3px 0 #1A63C4">{{ weekRange }}</h2>
-    <button onClick="{{ nextWeek }}" aria-label="สัปดาห์หน้า" style="width:42px;height:42px;border-radius:50%;border:3px solid #fff;background:#1A63C4;color:#fff;font-size:20px;font-weight:700">›</button>
+    <button onClick="{{ prevWeek }}" aria-label="สัปดาห์ก่อน" style="width:42px;height:42px;border-radius:50%;border:3px solid #fff;background:{{ thSh }};color:#fff;font-size:20px;font-weight:700">‹</button>
+    <h2 style="margin:0;font-family:Mitr,Prompt,sans-serif;font-size:24px;font-weight:600;color:#fff;text-shadow:0 3px 0 {{ thSh }}">{{ weekRange }}</h2>
+    <button onClick="{{ nextWeek }}" aria-label="สัปดาห์หน้า" style="width:42px;height:42px;border-radius:50%;border:3px solid #fff;background:{{ thSh }};color:#fff;font-size:20px;font-weight:700">›</button>
   </div>
   <sc-if value="{{ isSec }}"><button onClick="{{ fillWeek }}" style="width:100%;margin-bottom:14px;border:3px solid #fff;background:#FF6B1A;color:#fff;border-radius:999px;padding:11px 20px;font-weight:700;font-size:16px;box-shadow:0 5px 0 #D9480F">🎲 สุ่มเมนูให้วันที่ยังว่าง</button></sc-if>
   <div style="display:grid;gap:10px">
     <sc-for list="{{ weekCards }}" as="w" hint-placeholder-count="5">
-      <button onClick="{{ w.onClick }}" style="text-align:left;display:flex;align-items:center;gap:12px;background:#FFF8EC;border-radius:24px;border:3px solid {{ w.bd }};box-shadow:0 5px 0 #1A63C4;padding:10px 14px;min-width:0" style-hover="transform:translateY(-2px)">
+      <button onClick="{{ w.onClick }}" style="text-align:left;display:flex;align-items:center;gap:12px;background:#FFF8EC;border-radius:24px;border:3px solid {{ w.bd }};box-shadow:0 5px 0 {{ thSh }};padding:10px 14px;min-width:0" style-hover="transform:translateY(-2px)">
         <div style="flex:none;width:64px;height:64px;border-radius:18px;background:#fff;display:grid;place-items:center">
           <sc-if value="{{ w.hasChoice }}"><img src="{{ w.img }}" alt="" style="width:56px;height:56px;object-fit:contain"></sc-if>
           <sc-if value="{{ w.noImg }}"><span style="font-family:Mitr,Prompt,sans-serif;font-size:22px;font-weight:600;color:#FF6B1A">{{ w.short }}</span></sc-if>
@@ -269,7 +299,7 @@
 </sc-if>
 
 <sc-if value="{{ isMenu }}">
-  <div style="background:#fff;border-radius:26px;box-shadow:0 5px 0 #1A63C4;padding:16px 18px;display:grid;gap:10px;margin-bottom:14px">
+  <div style="background:#fff;border-radius:26px;box-shadow:0 5px 0 {{ thSh }};padding:16px 18px;display:grid;gap:10px;margin-bottom:14px">
     <div style="display:flex;align-items:center;gap:8px">
       <img src="assets/icon/20.png" alt="" style="width:50px">
       <h3 style="margin:0;font-family:Mitr,Prompt,sans-serif;font-size:21px;font-weight:600">กินบ่อยสุด</h3>
@@ -288,7 +318,7 @@
     <p style="margin:0;font-size:13px;color:#5A6385">กด ♥ เมนูที่ชอบ ปุ่มสุ่มจะเลือกให้บ่อยขึ้น</p>
   </div>
   <sc-if value="{{ isSec }}">
-    <div style="background:#fff;border-radius:26px;box-shadow:0 5px 0 #1A63C4;padding:16px 18px;display:grid;gap:10px;margin-bottom:14px">
+    <div style="background:#fff;border-radius:26px;box-shadow:0 5px 0 {{ thSh }};padding:16px 18px;display:grid;gap:10px;margin-bottom:14px">
       <div style="display:flex;align-items:center;gap:8px">
         <img src="assets/icon/12.png" alt="" style="width:48px">
         <h3 style="margin:0;font-family:Mitr,Prompt,sans-serif;font-size:21px;font-weight:600">เพิ่มเมนูใหม่</h3>
@@ -314,7 +344,7 @@
       </div>
       <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
         <sc-for list="{{ sec.items }}" as="it">
-          <div style="position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:3px;padding:12px 6px 10px;background:#FFF8EC;border-radius:22px;border:3px solid #fff;box-shadow:0 4px 0 #1A63C4;opacity:{{ it.opacity }}">
+          <div style="position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:3px;padding:12px 6px 10px;background:#FFF8EC;border-radius:22px;border:3px solid #fff;box-shadow:0 4px 0 {{ thSh }};opacity:{{ it.opacity }}">
             <button onClick="{{ it.onFav }}" aria-label="ชอบเมนูนี้" style="animation:{{ it.favAnim }};position:absolute;top:4px;right:6px;border:0;background:none;font-size:20px;line-height:1;color:{{ it.favColor }}">♥</button>
             <img src="{{ it.img }}" alt="" style="width:66px;height:66px;object-fit:contain">
             <div style="font-weight:700;font-size:13px;line-height:1.25">{{ it.name }}</div>
@@ -343,22 +373,25 @@
   <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:60px 20px;color:#fff;font-weight:600"><img src="assets/set1/01.png" alt="" style="width:140px;animation:chibiBob 2.4s ease-in-out infinite">กำลังโหลด…</div>
 </sc-if>
 </main>
+</sc-if>
 </div>
 
-<nav style="flex:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));background:#fff;border-radius:26px 26px 0 0;box-shadow:0 -4px 0 #1A63C4">
+<sc-if value="{{ inApp }}">
+<nav style="flex:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));background:#fff;border-radius:26px 26px 0 0;box-shadow:0 -4px 0 {{ thSh }}">
   <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="3">
     <button onClick="{{ tb.onClick }}" style="animation:{{ tb.anim }};display:flex;flex-direction:column;align-items:center;gap:1px;border:0;border-radius:20px;padding:4px 4px 6px;font-weight:700;font-size:13px;background:{{ tb.bg }};color:{{ tb.fg }}">
       <img src="{{ tb.icon }}" alt="" style="width:38px;height:38px;object-fit:contain">{{ tb.label }}
     </button>
   </sc-for>
 </nav>
+</sc-if>
 
 <sc-if value="{{ pickOpen }}">
   <div onClick="{{ closePick }}" style="position:absolute;inset:0;z-index:20;background:rgba(20,40,90,.5);display:flex;align-items:flex-end;justify-content:center">
     <div onClick="{{ stop }}" role="dialog" aria-modal="true" style="width:100%;max-height:90%;display:flex;flex-direction:column;background:#FFF8EC;border-radius:32px 32px 0 0;overflow:hidden">
-      <div style="padding:16px 18px 12px;display:grid;gap:10px;background:#2F8CF0">
+      <div style="padding:16px 18px 12px;display:grid;gap:10px;background:{{ thBg }}">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-          <h3 style="margin:0;font-family:Mitr,Prompt,sans-serif;font-size:22px;font-weight:600;color:#fff;text-shadow:0 3px 0 #1A63C4">{{ pickTitle }}</h3>
+          <h3 style="margin:0;font-family:Mitr,Prompt,sans-serif;font-size:22px;font-weight:600;color:#fff;text-shadow:0 3px 0 {{ thSh }}">{{ pickTitle }}</h3>
           <button onClick="{{ closePick }}" aria-label="ปิด" style="width:38px;height:38px;border:0;background:#fff;border-radius:50%;font-size:20px;font-weight:700">×</button>
         </div>
         <input type="search" value="{{ pickQ }}" onChange="{{ onPickQ }}" placeholder="🔍 ค้นหา เช่น กะเพรา" autocomplete="off" style="background:#fff;border:0;border-radius:999px;padding:11px 18px;font-size:16px;outline:none">
@@ -403,6 +436,12 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 const KEY = "chibi-lunch-v1";
+const THEMES = {
+  land: {bg:"#FFF4E4", sh:"#E9C9A0", dot:"#FFE3C2", outer:"#F4DDBD", meta:"#2F8CF0"},
+  boss: {bg:"#2F8CF0", sh:"#1A63C4", dot:"#4A9DF4", outer:"#1F6FD1", meta:"#2F8CF0", name:"BOSS", img:"assets/food/01.png"},
+  sec:  {bg:"#18A070", sh:"#0F7A52", dot:"#2FB884", outer:"#128A5E", meta:"#18A070", name:"STAFF", img:"assets/icon/13.png"}
+};
+const routeOf = () => { const h = (location.hash || "").replace(/^#/, "").toLowerCase(); return h==="boss" ? {screen:"app", role:"boss"} : h==="staff" ? {screen:"app", role:"sec"} : {screen:"land", role:"boss"}; };
 const FB = "https://www.gstatic.com/firebasejs/10.12.2/";
 const CLOUD = !!window.FIREBASE_CONFIG;
 const P = typeof window.FIREBASE_PREFIX === "string" ? window.FIREBASE_PREFIX : "lunch_";
@@ -440,8 +479,12 @@ const ON = {bg:"#FF6B1A", fg:"#fff", bd:"#FF6B1A", anim:POP}, OFF = {bg:"#fff", 
 
 class Component extends DCLogic {
   state = { ready:false };
-  componentDidMount(){ const go = () => { if (!window.LUNCH_MENUS) { this._t = setTimeout(go, 40); return; } this.boot(); }; go(); }
-  componentWillUnmount(){ clearTimeout(this._t); clearTimeout(this._fail); clearInterval(this._spin); (this._unsubs||[]).forEach(u => u()); }
+  componentDidMount(){
+    this._onHash = () => { const r = routeOf(); this.setState({screen:r.screen, role:r.role, suggest:null, pick:null, confirmDel:null, ...(r.screen==="app" ? {view:"day", sel:defaultSel()} : {})}, () => { this.applyTheme(); const sc = document.querySelector("[data-scroll]"); if (sc) sc.scrollTop = 0; }); };
+    window.addEventListener("hashchange", this._onHash);
+    this.applyTheme();
+    const go = () => { if (!window.LUNCH_MENUS) { this._t = setTimeout(go, 40); return; } this.boot(); }; go(); }
+  componentWillUnmount(){ window.removeEventListener("hashchange", this._onHash); clearTimeout(this._t); clearTimeout(this._fail); clearInterval(this._spin); (this._unsubs||[]).forEach(u => u()); }
   boot(){
     let saved = null, ui = {};
     try { saved = JSON.parse(localStorage.getItem(KEY)); } catch(e) {}
@@ -449,7 +492,7 @@ class Component extends DCLogic {
     const menus = saved && saved.menus ? saved.menus : JSON.parse(JSON.stringify(window.LUNCH_MENUS));
     const days = (saved && saved.days) || {};
     this.setState({ready: !CLOUD || !!saved, syncErr:"", online:false, menus, days, cutoff:(saved && saved.cutoff) || "10:30", cutoffDraft:(saved && saved.cutoff) || "10:30",
-      role: ui.role==="sec" ? "sec" : "boss", view: ["day","week","menu"].includes(ui.view) ? ui.view : "day",
+      role: routeOf().role, screen: routeOf().screen, view: ["day","week","menu"].includes(ui.view) ? ui.view : "day",
       sel: defaultSel(), pick:null, suggest:null, spin:null, drafts:{}, confirmDel:null, fName:"", fCat:"kaprao", fOpts:""});
     if (CLOUD) this.connect();
   }
@@ -478,6 +521,10 @@ class Component extends DCLogic {
   cloudSet(path, data){ if (!this.fs) return; this.fs.doc(P+path).set(clean(data)).catch(() => this.setState({syncErr:"บันทึกไม่สำเร็จ ตรวจสอบอินเทอร์เน็ตแล้วลองใหม่"})); }
   cloudDel(path){ if (!this.fs) return; this.fs.doc(P+path).delete().catch(() => this.setState({syncErr:"ลบไม่สำเร็จ ลองใหม่อีกครั้ง"})); }
   persist(patch){ this.setState(patch, () => { const s = this.state; try { localStorage.setItem(KEY, JSON.stringify({menus:s.menus, days:s.days, cutoff:s.cutoff})); } catch(e) {} }); }
+  applyTheme(){ const s = this.state || {}; const th = s.screen==="app" ? THEMES[s.role==="sec" ? "sec" : "boss"] : THEMES.land;
+    const m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute("content", th.meta);
+    document.body.style.background = th.outer; }
+  enter(role){ location.hash = role==="sec" ? "staff" : "boss"; }
   setUi(patch){ this.setState(patch, () => { try { localStorage.setItem(KEY+"-ui", JSON.stringify({role:this.state.role, view:this.state.view})); } catch(e) {} }); }
   menu(id){ return this.state.menus.find(m => m.id===id); }
   day(date){ return Object.assign(blank(date), this.state.days[date] || {}); }
@@ -532,7 +579,14 @@ class Component extends DCLogic {
 
   renderVals(){
     const s = this.state;
-    if (!s.ready) return {ready:false, loading:true, tabs:[], pickOpen:false, hasSyncErr:false, syncText:"", syncColor:"#B4BAD0"};
+    const TH = s.screen==="app" ? THEMES[s.role==="sec" ? "sec" : "boss"] : THEMES.land;
+    const land = s.screen!=="app", td = defaultSel(), tdd = s.ready ? this.day(td) : null;
+    const shell = {showLanding: land, inApp: !land, thBg: TH.bg, thSh: TH.sh, thDot: TH.dot, thOuter: TH.outer,
+      meName: TH.name || "", meImg: TH.img || "", goHome: () => { location.hash = ""; },
+      landDate: (td===todayStr() ? "วันนี้ " : "วันทำงานถัดไป ") + DAYF[parse(td).getDay()] + " " + fmtDate(td) + (tdd ? " · " + (tdd.away ? "ไม่ทานกลางวัน" : ST[tdd.status].t) : ""),
+      landCards: [["boss","BOSS","เลือกเมนูที่อยากกิน",THEMES.boss,"#D6E8FF","0s"],["sec","STAFF","เสนอเมนู · สั่งอาหาร",THEMES.sec,"#CFF3E3",".08s"]].map(([r,n,rl,th,ring,delay]) => ({
+        name:n, role:rl, img:th.img, bg:th.bg, sh:th.sh, ring, delay, hint: tdd ? this.hintFor(r==="boss", tdd) : "กำลังโหลด…", onClick: () => this.enter(r)}))};
+    if (!s.ready) return {...shell, ready:false, loading:true, tabs:[], pickOpen:false, hasSyncErr:false, syncText:"", syncColor:"#B4BAD0"};
     const boss = s.role==="boss", d = this.day(s.sel), dt = parse(s.sel), t = todayStr();
     const k = d.away ? "away" : d.status, stv = ST[k];
     const tabs = [["day","วันนี้","assets/icon/13.png"],["week","สัปดาห์","assets/icon/21.png"],["menu","เมนู","assets/icon/19.png"]].map(([v,l,i]) => {
@@ -540,7 +594,7 @@ class Component extends DCLogic {
     });
     const shift = n => () => this.setState({sel: addDays(s.sel, n), suggest:null});
     const strip = weekOf(s.sel).map(x => { const dd = this.day(x), on = x===s.sel, kk = dd.away ? "away" : dd.status;
-      return {dow: DAYS[parse(x).getDay()], num: parse(x).getDate(), isToday: x===t, dot: ST[kk].dot, bg: on ? "#FF6B1A" : "#fff", fg: on ? "#fff" : "#1E2A55", sh: on ? "#D9480F" : "#1A63C4", anim: on ? POP : "none", onClick: () => this.setState({sel:x, suggest:null})}; });
+      return {dow: DAYS[parse(x).getDay()], num: parse(x).getDate(), isToday: x===t, dot: ST[kk].dot, bg: on ? "#FF6B1A" : "#fff", fg: on ? "#fff" : "#1E2A55", sh: on ? "#D9480F" : TH.sh, anim: on ? POP : "none", onClick: () => this.setState({sel:x, suggest:null})}; });
     const hasChoice = !d.away && !!d.choice;
     const options = d.options.map((o,i) => {
       const sel = d.choice && d.choice.m===o.m && (d.choice.o||"")===(o.o||"");
@@ -595,7 +649,7 @@ class Component extends DCLogic {
         pickBack: () => this.setState({pick:{...PK, open:null}})};
     }
 
-    return {
+    return {...shell,
       ready:true, loading:false, isBoss:boss, isSec:!boss, hint: this.hintFor(boss, d), hintImg: boss && !d.away && !d.choice && !d.options.length ? "assets/cute/egg.png" : "assets/set1/01.png",
       hasSyncErr: !!s.syncErr, syncErr: s.syncErr, syncText: CLOUD ? (s.online ? "ออนไลน์" : "ออฟไลน์") : "เครื่องนี้", syncColor: CLOUD ? (s.online ? "#2FB67C" : "#FF6B6B") : "#B4BAD0",
       roleBossAnim: boss ? POP : "none", roleSecAnim: !boss ? POP : "none", roleBossBg: boss ? "#FF6B1A" : "transparent", roleBossFg: boss ? "#fff" : "#5A6385",
