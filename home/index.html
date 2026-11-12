@@ -676,7 +676,7 @@ const MEALS = {
 };
 const GROUPS = {
   bk:"อาหารเช้า", one:"จานเดียว / ตามสั่ง", spec:"ข้าวราดเฉพาะทาง", nood:"เส้น & ก๋วยเตี๋ยว", soup:"ต้ม ซุป & แกง",
-  isan:"ยำ ลาบ & ส้มตำ", kab:"กับข้าว ผัด & ทอด", nprik:"น้ำพริก & ผักจิ้ม", royal:"👑 อาหารชาววัง", sea:"อาหารทะเล & ซีฟู้ด", health:"อาหารคลีน / สุขภาพ", asia:"ญี่ปุ่น & เกาหลี", west:"อาหารตะวันตก", sweet:"ของว่าง & ของหวาน", drink:"เครื่องดื่ม"
+  isan:"ยำ ลาบ & ส้มตำ", kab:"กับข้าว ผัด & ทอด", nprik:"น้ำพริก & ผักจิ้ม", royal:"👑 อาหารชาววัง", sea:"อาหารทะเล & ซีฟู้ด", health:"🥗 อาหารสุขภาพ", asia:"ญี่ปุ่น & เกาหลี", west:"อาหารตะวันตก", sweet:"ของว่าง & ของหวาน", drink:"เครื่องดื่ม"
 };
 const CATS = {
   bkthai:{l:"อาหารเช้าแบบไทย",g:"bk",bg:"#FFF1D6"}, bkwest:{l:"อาหารเช้าแบบฝรั่ง",g:"bk",bg:"#FFF1D6"}, dimsum:{l:"ติ่มซำ & ซาลาเปา",g:"bk",bg:"#FFF1D6"},
@@ -691,12 +691,13 @@ const CATS = {
   royalsnack:{l:"ของว่างชาววัง",g:"royal",bg:"#FFF3C4"}, royalsweet:{l:"ขนมไทยชาววัง",g:"royal",bg:"#FFF3C4"},
   shrimp:{l:"กุ้ง",g:"sea",bg:"#FFE4DC"}, crab:{l:"ปู",g:"sea",bg:"#FFE0D6"}, squid:{l:"ปลาหมึก",g:"sea",bg:"#F1E6FF"}, shell:{l:"หอย",g:"sea",bg:"#E6F0FA"},
   fish:{l:"ปลาทะเล",g:"sea",bg:"#DDEFFC"}, seaset:{l:"รวมมิตรซีฟู้ด & หม้อไฟ",g:"sea",bg:"#FFE9D6"},
-  clean:{l:"อาหารคลีน",g:"health",bg:"#E5F7E4"},
+  clean:{l:"อาหารคลีน จานหลัก",g:"health",bg:"#E5F7E4"}, bowl:{l:"สลัด & โบวล์สุขภาพ",g:"health",bg:"#E5F7E4"},
+  hbreak:{l:"อาหารเช้าสุขภาพ",g:"health",bg:"#E5F7E4"}, hsnack:{l:"ของว่างสุขภาพ",g:"health",bg:"#E5F7E4"},
   jp:{l:"อาหารญี่ปุ่น",g:"asia",bg:"#FFE5E5"}, kr:{l:"อาหารเกาหลี",g:"asia",bg:"#FFE3E9"},
   pasta:{l:"พาสต้า",g:"west",bg:"#FFF0D9"}, steak:{l:"สเต็ก & จานหลัก",g:"west",bg:"#F3E4DA"}, burger:{l:"เบอร์เกอร์ & แซนด์วิช",g:"west",bg:"#FFEDD3"},
   pizza:{l:"พิซซ่า",g:"west",bg:"#FFE7D6"}, wsoup:{l:"ซุป & สลัด",g:"west",bg:"#E6F5E2"}, wsides:{l:"ทานเล่น & ของทอด",g:"west",bg:"#FFF3CC"},
   thaisweet:{l:"ขนมไทย",g:"sweet",bg:"#FDE7F0"}, thaisnack:{l:"ของว่างไทย",g:"sweet",bg:"#FFF1D6"}, bakery:{l:"เบเกอรี่ & เค้ก",g:"sweet",bg:"#F6E8DD"}, icecream:{l:"ไอศกรีม & บิงซู",g:"sweet",bg:"#E9EEFF"}, fruit:{l:"ผลไม้",g:"sweet",bg:"#E5F7E4"},
-  tea:{l:"ชา & กาแฟ",g:"drink",bg:"#F5E6D8"}, milk:{l:"นม & ช็อกโกแลต",g:"drink",bg:"#FCE8EE"}, soda:{l:"อิตาเลียนโซดา & น้ำอัดลม",g:"drink",bg:"#FFE3E3"}, herbal:{l:"น้ำสมุนไพร & ผลไม้สด",g:"drink",bg:"#E3F4FF"}
+  tea:{l:"ชา & กาแฟ",g:"drink",bg:"#F5E6D8"}, milk:{l:"นม & ช็อกโกแลต",g:"drink",bg:"#FCE8EE"}, soda:{l:"อิตาเลียนโซดา & น้ำอัดลม",g:"drink",bg:"#FFE3E3"}, herbal:{l:"น้ำสมุนไพร & ผลไม้สด",g:"drink",bg:"#E3F4FF"}, hdrink:{l:"เครื่องดื่มสุขภาพ",g:"drink",bg:"#E5F7E4"}
 };
 const ST = {
   plan:{t:"รอ BOSS เลือก",fg:"#B4284F",bg:"#FFE1E8",dot:"#FF7A93"},
@@ -711,12 +712,12 @@ const EXTRAS = ["ไม่เผ็ด","เผ็ดน้อย","หวาน
 const EMOJIS = ["🍛","🍲","🍜","🍝","🍚","🍳","🥚","🍗","🍖","🥩","🥓","🐟","🦐","🦀","🦑","🦪","🥗","🥬","🥦","🌶️","🧄","🍄","🌽","🥔","🍞","🥪","🍔","🍕","🍣","🍱","🍤","🥟","🍢","🍰","🍮","🍧","🍨","🍩","🍉","🍌","🥭","🧋","☕","🍵","🥛","🥤","🍹","🍽️"];
 const QUICK = ["ไข่ไก่","ข้าวสาร","หมูสับ","อกไก่","กุ้ง","ผักบุ้ง","คะน้า","มะนาว","พริก","กระเทียม","น้ำปลา","น้ำมันพืช","นมสด","ผลไม้"];
 const MAXO = 5, MAXP = 8;
-const ONE_DISH = ["bkthai","kaprao","rice","garlic","special","noodlesoup","noodlefry","khanomjeen","clean","royalrice"];
+const ONE_DISH = ["bkthai","kaprao","rice","garlic","special","noodlesoup","noodlefry","khanomjeen","clean","royalrice","bowl","hbreak"];
 const NOT_ONE = /^(ไข่ตุ๋น|ปาท่องโก๋|ผัดคะน้า|ผัดผักบุ้ง|ผัดผักรวม|กะหล่ำปลี|ผัดขิง|ไก่ผัดเม็ด|ผัดพริก|ผัดขี้เมา \(|ทอดกระเทียม)/;
 const REC = {
   b:{n:1, slots:[["", c => ONE_DISH.includes(c)]]},
   l:{n:1, slots:[["", c => ONE_DISH.includes(c)]]},
-  s:{n:1, slots:[["", c => ["thaisweet","thaisnack","dimsum","royalsnack","royalsweet","bakery","icecream","fruit","wsides","jp","kr","yum","somtam","grill"].includes(c)]]},
+  s:{n:1, slots:[["", c => ["thaisweet","thaisnack","dimsum","royalsnack","royalsweet","hsnack","bakery","icecream","fruit","wsides","jp","kr","yum","somtam","grill"].includes(c)]]},
   d:{n:5, slots:[["🍲 ต้ม / แกง", c => ["clearsoup","tomyum","curry","royalcurry"].includes(c)], ["🥬 ผัด", c => ["kabfry","garlic"].includes(c)],
      ["🍳 ทอด / ไข่", c => ["kabdeep","grill"].includes(c)], ["🥗 ยำ / ลาบ / น้ำพริก", c => ["yum","larb","somtam","namprik","royalyum"].includes(c)],
      ["🐟 ปลา / ซีฟู้ด", c => ["fish","shrimp","crab","squid","shell","seaset"].includes(c)]]}
@@ -726,7 +727,7 @@ const rng = seed => () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Mat
 const MEATS = ["หมูสับ","หมูชิ้น","หมูกรอบ","ไก่","เนื้อ","กุ้ง","ปลาหมึก","ปลา","รวมทะเล","เต้าหู้"];
 const ADDONS = ["ไข่ดาว","ไข่เจียว","ไข่ต้ม","พิเศษ","ไม่ใส่ผัก","เจ"];
 const splitO = o => (o||"").split("+").map(x => x.trim()).filter(Boolean);
-const SEED = 4; // เพิ่มเลขนี้ทุกครั้งที่เพิ่ม/ย้ายเมนูใน menu-data.js (ใส่ since: เลขใหม่ ให้เมนูนั้น)
+const SEED = 5; // เพิ่มเลขนี้ทุกครั้งที่เพิ่ม/ย้ายเมนูใน menu-data.js (ใส่ since: เลขใหม่ ให้เมนูนั้น)
 const mergeSeed = (menus, from) => { const list = [...menus], changed = [];
   for (const sd of window.HOME_MENUS) { if ((sd.since||1) <= from) continue; const i = list.findIndex(x => x.id===sd.id);
     const m = i>=0 ? {...list[i], name:sd.name, cat:sd.cat, kind:sd.kind, opts:sd.opts, t:sd.t, meals:sd.meals, emo:sd.emo, ord:sd.ord, since:sd.since} : clean(sd);
