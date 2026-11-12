@@ -39,6 +39,7 @@
         <div style="font-weight:800;font-size:30px;line-height:1.1;color:#FFC72C;text-shadow:0 3px 0 #0F1A3A,2px 0 0 #0F1A3A,-2px 0 0 #0F1A3A,0 -2px 0 #0F1A3A,0 9px 18px rgba(0,0,0,.4);white-space:nowrap">วันนี้กินอะไรดี</div>
         <div style="font-size:16px;font-weight:600;color:#C9D6F5;white-space:nowrap">BOSS × แม่ครัว · <span style="color:{{ syncColor }}">● {{ syncText }}</span></div>
       </div>
+      <button onClick="{{ toggleSound }}" aria-label="{{ soundLabel }}" title="{{ soundLabel }}" style="margin-left:auto;flex:none;width:46px;height:46px;border-radius:50%;border:3px solid #FFC72C;background:{{ soundBg }};font-size:22px;padding:0;box-shadow:0 3px 0 #C98F00">{{ soundIcon }}</button>
     </div>
     <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
       <button onClick="{{ setBoss }}" style="animation:{{ roleBossAnim }};display:flex;align-items:center;gap:10px;border:3px solid {{ roleBossBd }};border-radius:20px;padding:4px 12px 4px 4px;background:{{ roleBossBg }};color:{{ roleBossFg }};font-weight:800;font-size:20px;height:60px;min-width:0;box-shadow:0 4px 0 {{ roleBossBd }}"><span style="width:48px;height:48px;flex:none;border-radius:15px;background:#DCE6FF url(assets/chibi/boss/01-wave.png) 50% 4%/190% auto no-repeat;border:2px solid #fff"></span><span style="white-space:nowrap">BOSS</span></button>
@@ -526,6 +527,21 @@
 </main>
 
 <!-- ================= PICKER ================= -->
+<sc-if value="{{ hasToast }}">
+  <div role="status" aria-live="polite" style="position:absolute;left:12px;right:12px;top:calc(env(safe-area-inset-top,0px) + 10px);z-index:40;animation:pop .5s cubic-bezier(.3,1.5,.5,1);background:#FFF6D6;border:3px solid #FFC72C;border-radius:24px;box-shadow:0 10px 30px -8px rgba(15,26,58,.55);padding:12px 14px;display:grid;gap:10px">
+    <div style="display:flex;align-items:flex-start;gap:10px">
+      <span style="font-size:30px;line-height:1;animation:wig .6s ease-in-out 3">🔔</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:18px;font-weight:800;line-height:1.3;color:#1B2B5A">{{ toastText }}</div>
+        <sc-if value="{{ toastMore }}"><div style="font-size:14px;font-weight:600;color:#7A5600;margin-top:2px">{{ toastMore }}</div></sc-if>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button onClick="{{ toastView }}" style="border:0;background:#D9431C;color:#fff;border-radius:999px;padding:8px 18px;font-weight:800;font-size:16px;box-shadow:0 3px 0 #A8300F">ดูเลย</button>
+      <button onClick="{{ toastClose }}" style="border:2.5px solid #FFC72C;background:#fff;color:#7A5600;border-radius:999px;padding:6px 16px;font-weight:800;font-size:16px">รับทราบ</button>
+    </div>
+  </div>
+</sc-if>
 <sc-if value="{{ pickOpen }}">
   <div onClick="{{ closePick }}" style="position:absolute;inset:0;z-index:20;background:rgba(27,43,90,.45);display:flex;align-items:flex-end;justify-content:center">
     <div onClick="{{ stop }}" role="dialog" aria-modal="true" style="width:100%;max-height:88%;display:flex;flex-direction:column;background:#F5F8FF;border-radius:32px 32px 0 0;box-shadow:0 -10px 40px -10px rgba(27,43,90,.4);overflow:hidden">
@@ -761,8 +777,9 @@ const currentMeal = c => { const n = nowMin(); for (const k of MK) if (n < toMin
 
 class Component extends DCLogic {
   state = { ready:false };
-  componentDidMount(){ const go = () => { if (!window.HOME_MENUS) { this._t = setTimeout(go, 40); return; } this.boot(); }; go(); }
-  componentWillUnmount(){ clearTimeout(this._t); clearTimeout(this._fail); clearInterval(this._spin); (this._unsubs||[]).forEach(u => u()); }
+  componentDidMount(){ this._unlock = () => this.unlockAudio(); window.addEventListener("pointerdown", this._unlock, {once:true}); const go = () => { if (!window.HOME_MENUS) { this._t = setTimeout(go, 40); return; } this.boot(); }; go(); }
+  unlockAudio(){ if (this._unlocked) return; this._unlocked = true; try { const ctx = this._ac || (this._ac = new (window.AudioContext || window.webkitAudioContext)()); ctx.resume(); const b = ctx.createBuffer(1, 1, 22050), src = ctx.createBufferSource(); src.buffer = b; src.connect(ctx.destination); src.start(0); } catch(e) {} }
+  componentWillUnmount(){ window.removeEventListener("pointerdown", this._unlock); clearTimeout(this._t); clearTimeout(this._fail); clearInterval(this._spin); (this._unsubs||[]).forEach(u => u()); }
   boot(){
     let saved = null, ui = {};
     try { saved = JSON.parse(localStorage.getItem(KEY)); } catch(e) {}
@@ -771,7 +788,7 @@ class Component extends DCLogic {
     if (saved && saved.menus && (saved.seed||1) < dataVer()) menus = mergeSeed(menus, saved.seed||1).list;
     const cfg = Object.assign(defCfg(), (saved && saved.cfg) || {});
     this.setState({ready: !CLOUD || !!saved, syncErr:"", online:false, menus, days:(saved && saved.days) || {}, cfg, cfgDraft:clean(cfg), shop:(saved && saved.shop) || [],
-      role: ui.role==="cook" ? "cook" : "boss", view: ["day","week","menu","shop"].includes(ui.view) ? ui.view : "day",
+      role: ui.role==="cook" ? "cook" : "boss", sound: ui.sound !== false, toasts: [], view: ["day","week","menu","shop"].includes(ui.view) ? ui.view : "day",
       sel: todayStr(), meal: currentMeal(cfg), pick:null, suggest:null, spin:null, drafts:{}, confirmDel:null,
       fName:"", fCat:"kabfry", fOpts:"", fEmo:"", fMeals:"ld", fEdit:null, fErr:"", mq:"", mg:"", shopDraft:""}, () => { if (saved && (saved.seed||1) < dataVer()) this.persist({}); });
     if (CLOUD) this.connect();
@@ -796,7 +813,9 @@ class Component extends DCLogic {
             const b = fs.batch(); mergeSeed(cur, from).changed.forEach(m => b.set(fs.collection(P+"menus").doc(m.id), clean(m))); b.set(fs.doc(P+"settings/main"), {seed:dataVer()}, {merge:true}); return b.commit(); }).catch(() => {}); }
           gotM = true; this.persist({menus: cur.sort((a,b) => (a.ord??999)-(b.ord??999))}); done();
         }, fail),
-        fs.collection(P+"days").onSnapshot(snap => { const days = {}; snap.docs.forEach(d => { days[d.id] = d.data(); }); gotD = true; this.persist({days}); done(); }, fail),
+        fs.collection(P+"days").onSnapshot(snap => { const days = {}; snap.docs.forEach(d => { days[d.id] = d.data(); });
+          if (this._daysLoaded) this.notify(this.diffAlerts(this.state.days, days)); this._daysLoaded = true;
+          gotD = true; this.persist({days}); done(); }, fail),
         fs.doc(P+"settings/main").onSnapshot(d => { if (d.exists) { const cfg = Object.assign(defCfg(), d.data()); cfg.cut = Object.assign(defCfg().cut, cfg.cut||{}); this.persist({cfg, cfgDraft:clean(cfg)}); } }, () => {}),
         fs.doc(P+"settings/shop").onSnapshot(d => { if (d.exists) this.persist({shop: d.data().items || []}); }, () => {})
       ];
@@ -805,7 +824,59 @@ class Component extends DCLogic {
   cloudSet(path, data, merge){ if (!this.fs) return; this.fs.doc(P+path).set(clean(data), merge ? {merge:true} : undefined).catch(() => this.setState({syncErr:"บันทึกขึ้นระบบไม่สำเร็จ ตรวจสอบอินเทอร์เน็ตแล้วลองใหม่"})); }
   cloudDel(path){ if (!this.fs) return; this.fs.doc(P+path).delete().catch(() => this.setState({syncErr:"ลบไม่สำเร็จ ลองใหม่อีกครั้ง"})); }
   persist(patch){ this.setState(patch, () => { const s = this.state; try { localStorage.setItem(KEY, JSON.stringify({seed:dataVer(), menus:s.menus, days:s.days, cfg:s.cfg, shop:s.shop})); } catch(e) {} }); }
-  setUi(patch){ this.setState(patch, () => { try { localStorage.setItem(KEY+"-ui", JSON.stringify({role:this.state.role, view:this.state.view})); } catch(e) {} }); }
+  diffAlerts(prevDays, days){
+    const me = this.state.role, t = todayStr(), out = [];
+    for (const [date, d] of Object.entries(days)) {
+      if (date < t) continue;
+      for (const mk of MK) {
+        const cur = d.meals && d.meals[mk]; if (!cur || !cur.by || cur.by===me) continue;
+        const prevRaw = prevDays[date] && prevDays[date].meals && prevDays[date].meals[mk];
+        if (prevRaw && (prevRaw.at||0) >= (cur.at||0)) continue;
+        const prev = Object.assign(blankMeal(), prevRaw || {}), c = Object.assign(blankMeal(), cur);
+        const when = MEALS[mk].full + " (" + (date===t ? "วันนี้" : date===addDays(t,1) ? "พรุ่งนี้" : DAYF[parse(date).getDay()] + " " + fmtDate(date)) + ")";
+        const added = (a, b) => a.filter(x => !b.some(y => this.same(x, y)));
+        const push = text => out.push({date, mk, text});
+        if (c.by==="boss") {
+          const np = added(c.picks, prev.picks);
+          if (np.length) push("BOSS เลือก" + when + ": " + np.map(p => this.label(p)).join(", "));
+          else if (c.picks.length !== prev.picks.length) push("BOSS แก้ไขเมนู" + when);
+          if (c.drink && (!prev.drink || !this.same(c.drink, prev.drink))) push("BOSS ขอเครื่องดื่ม" + when + ": " + this.label(c.drink));
+          if (c.changeReq && !prev.changeReq) push("BOSS ขอเปลี่ยนตัวเลือก" + when);
+          if (c.away && c.away !== prev.away) push("BOSS แจ้ง " + AWAY[c.away] + " · " + when);
+          if (!c.away && prev.away) push("BOSS ทาน" + when + " ที่บ้านตามปกติ");
+          if ((c.people||0) !== (prev.people||0) && c.people) push("BOSS เปลี่ยนเป็น " + c.people + " ที่ · " + when);
+          if (c.bossNote && c.bossNote !== prev.bossNote) push("BOSS ฝากบอก (" + MEALS[mk].full + "): " + c.bossNote);
+        } else {
+          const no = added(c.options, prev.options);
+          if (no.length) push("แม่ครัวเสนอ" + when + ": " + no.map(p => this.label(p)).join(", "));
+          if (c.status !== prev.status && c.status==="cooking") push("แม่ครัวกำลังทำ" + when);
+          if (c.status !== prev.status && c.status==="ready") push(when + " พร้อมทานแล้ว! 🍽️");
+          if (c.cookNote && c.cookNote !== prev.cookNote) push("แม่ครัวฝากบอก (" + MEALS[mk].full + "): " + c.cookNote);
+        }
+      }
+    }
+    return out;
+  }
+  notify(list){
+    if (!list.length) return;
+    const toasts = [...(this.state.toasts || []), ...list].slice(-20);
+    this.setState({toasts});
+    try { navigator.vibrate && navigator.vibrate([200, 100, 200]); } catch(e) {}
+    try { navigator.setAppBadge && navigator.setAppBadge(toasts.length); } catch(e) {}
+    document.title = "(" + toasts.length + ") วันนี้กินอะไรดี";
+    if (this.state.sound !== false) this.ding();
+  }
+  ding(){
+    try {
+      const ctx = this._ac || (this._ac = new (window.AudioContext || window.webkitAudioContext)());
+      if (ctx.state === "suspended") ctx.resume();
+      [[880, 0], [1320, .18]].forEach(([f, t0]) => { const o = ctx.createOscillator(), g = ctx.createGain(); o.type = "sine"; o.frequency.value = f;
+        g.gain.setValueAtTime(.0001, ctx.currentTime + t0); g.gain.exponentialRampToValueAtTime(.35, ctx.currentTime + t0 + .02); g.gain.exponentialRampToValueAtTime(.0001, ctx.currentTime + t0 + .35);
+        o.connect(g).connect(ctx.destination); o.start(ctx.currentTime + t0); o.stop(ctx.currentTime + t0 + .4); });
+    } catch(e) {}
+  }
+  clearToasts(){ this.setState({toasts: []}); document.title = "วันนี้กินอะไรดี"; try { navigator.clearAppBadge && navigator.clearAppBadge(); } catch(e) {} }
+  setUi(patch){ this.setState(patch, () => { try { localStorage.setItem(KEY+"-ui", JSON.stringify({role:this.state.role, view:this.state.view, sound:this.state.sound})); } catch(e) {} }); }
 
   menu(id){ return this.state.menus.find(m => m.id===id); }
   meal(date, mk, days){ const d = (days || this.state.days)[date]; return Object.assign(blankMeal(), (d && d.meals && d.meals[mk]) || {}); }
@@ -821,8 +892,8 @@ class Component extends DCLogic {
   catOf(sel){ const m = sel && this.menu(sel.m); return m && CATS[m.cat] ? CATS[m.cat].l : ""; }
   picksText(m){ return m.picks.map(p => this.label(p)).join(" · "); }
   saveMeal(date, mk, patch){
-    const body = {...this.meal(date, mk), ...patch}; const cur = this.state.days[date] || {};
     const now = Date.now();
+    const body = {...this.meal(date, mk), ...patch, by: this.state.role, at: now}; const cur = this.state.days[date] || {};
     this.persist({days: {...this.state.days, [date]: {...cur, date, meals: {...(cur.meals||{}), [mk]: body}, updatedAt: now}}});
     this.cloudSet("days/"+date, {date, meals:{[mk]: body}, updatedAt: now}, true);
   }
@@ -1075,6 +1146,12 @@ class Component extends DCLogic {
       hasSyncErr: !!s.syncErr, syncErr: s.syncErr, syncText: CLOUD ? (s.online ? "ออนไลน์" : "ออฟไลน์") : "เครื่องนี้", syncColor: CLOUD ? (s.online ? "#5BE39F" : "#FF8FA8") : "#C9D6F5",
       roleBossAnim: boss ? POP : "none", roleCookAnim: !boss ? POP : "none", roleBossBg: boss ? "#FFC72C" : "#fff", roleBossFg: "#1B2B5A",
       roleCookBg: !boss ? "#FFC72C" : "#fff", roleCookFg: "#1B2B5A",
+      soundIcon: s.sound !== false ? "🔔" : "🔕", soundLabel: s.sound !== false ? "เสียงเตือน: เปิด (แตะเพื่อปิด)" : "เสียงเตือน: ปิด (แตะเพื่อเปิด)", soundBg: s.sound !== false ? "#FFC72C" : "#C9D6F5",
+      toggleSound: () => { const on = s.sound === false; this.setUi({sound: on}); if (on) { this.unlockAudio(); this.ding(); } },
+      hasToast: !!(s.toasts && s.toasts.length), toastText: s.toasts && s.toasts.length ? s.toasts[s.toasts.length-1].text : "",
+      toastMore: s.toasts && s.toasts.length > 1 ? "และอีก " + (s.toasts.length-1) + " รายการ: " + s.toasts.slice(0,-1).slice(-2).map(x => x.text).join(" · ") : "",
+      toastView: () => { const last = s.toasts[s.toasts.length-1]; this.clearToasts(); this.setState({sel:last.date, meal:last.mk, suggest:null}, () => this.setUi({view:"day"})); },
+      toastClose: () => this.clearToasts(),
       setBoss: () => this.setUi({role:"boss", suggest:null}), setCook: () => this.setUi({role:"cook", suggest:null}),
       tabs, isDay: s.view==="day", isWeek: s.view==="week", isMenu: s.view==="menu", isShop: s.view==="shop",
       strip, prevWeek: shift(-7), nextWeek: shift(7), mealTabs, daySummary,
