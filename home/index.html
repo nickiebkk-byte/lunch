@@ -147,29 +147,38 @@
               <div style="font-size:17px;font-weight:700;color:#1D4E89">🍽️ {{ peopleText }}</div>
             </div>
             <sc-if value="{{ hasPicks }}">
-              <div style="padding:14px;border-radius:26px;background:#FFF6D6;border:3px solid #FFD966;display:grid;gap:10px">
+              <div style="padding:8px;border-radius:24px;background:#FFF6D6;border:3px solid #FFD966;display:grid;gap:8px">
                 <sc-if value="{{ hasHouseRows }}">
                   <div style="display:grid;gap:6px">
                     <sc-for list="{{ houseRows }}" as="hr"><div style="background:{{ hr.houseBg }};color:{{ hr.houseFg }};border-radius:14px;padding:6px 12px;font-size:16px;line-height:1.35"><b>{{ hr.houseText }}</b> <span style="color:#1B2B5A">· {{ hr.list }}</span></div></sc-for>
                   </div>
                 </sc-if>
-                <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+                <div style="display:grid;grid-template-columns:minmax(0,1fr);gap:8px">
                   <sc-for list="{{ picks }}" as="pk">
-                    <div style="position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;padding:12px 8px;background:#fff;border-radius:20px">
-                      <span style="animation:bob 1.8s ease-in-out infinite;width:70px;height:70px;border-radius:50%;background:{{ pk.bgc }};display:grid;place-items:center;font-size:40px">{{ pk.emo }}</span>
-                      <div style="font-size:19px;font-weight:700;line-height:1.25">{{ pk.label }}</div>
-                      <div style="font-size:14px;font-weight:800;color:{{ pk.houseFg }};background:{{ pk.houseBg }};border-radius:999px;padding:1px 10px">{{ pk.houseText }}</div>
-                      <sc-if value="{{ pk.hasWho }}"><div style="font-size:15px;font-weight:800;color:#2456D6;background:#DCE6FF;border-radius:999px;padding:1px 10px">👤 {{ pk.whoText }}</div></sc-if>
-                      <sc-if value="{{ pk.showWhoChips }}">
-                        <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;margin-top:2px">
-                          <sc-for list="{{ pk.whoChips }}" as="wc"><button onClick="{{ wc.onClick }}" style="border:2px solid {{ wc.bd }};background:{{ wc.bg }};color:{{ wc.fg }};border-radius:999px;padding:1px 9px;font-size:14px;font-weight:700">{{ wc.t }}</button></sc-for>
+                    <div style="display:flex;align-items:center;gap:8px;padding:7px 7px 7px 7px;background:#fff;border-radius:18px;min-width:0">
+                      <span style="flex:none;width:44px;height:44px;border-radius:50%;background:{{ pk.bgc }};display:grid;place-items:center;font-size:26px">{{ pk.emo }}</span>
+                      <div style="flex:1;min-width:0;display:grid;gap:3px">
+                        <div style="font-size:18px;font-weight:700;line-height:1.25">{{ pk.label }}</div>
+                        <div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center">
+                          <span style="font-size:13px;font-weight:800;color:{{ pk.houseFg }};background:{{ pk.houseBg }};border-radius:999px;padding:1px 9px">{{ pk.houseText }}</span>
+                          <sc-if value="{{ pk.hasWho }}"><span style="font-size:13px;font-weight:800;color:#2456D6;background:#DCE6FF;border-radius:999px;padding:1px 9px">👤 {{ pk.whoText }}</span></sc-if>
+                        </div>
+                        <sc-if value="{{ pk.showWhoChips }}">
+                          <div style="display:flex;flex-wrap:wrap;gap:4px">
+                            <sc-for list="{{ pk.whoChips }}" as="wc"><button onClick="{{ wc.onClick }}" style="border:2px solid {{ wc.bd }};background:{{ wc.bg }};color:{{ wc.fg }};border-radius:999px;padding:1px 9px;font-size:14px;font-weight:700">{{ wc.t }}</button></sc-for>
+                          </div>
+                        </sc-if>
+                      </div>
+                      <sc-if value="{{ isBoss }}">
+                        <div style="flex:none;display:flex;gap:5px">
+                          <button onClick="{{ pk.edit }}" aria-label="เปลี่ยน / เพิ่ม" title="เปลี่ยน / เพิ่ม" style="width:36px;height:36px;border-radius:50%;border:2.5px solid #FFD966;background:#FFF6D6;font-size:17px;padding:0">🥩</button>
+                          <button onClick="{{ pk.remove }}" aria-label="ไม่เอาแล้ว" title="ไม่เอาแล้ว" style="width:36px;height:36px;border-radius:50%;border:2.5px solid #FFB8C8;background:#FFE1E8;color:#B4284F;font-size:17px;font-weight:800;padding:0">✕</button>
                         </div>
                       </sc-if>
-                      <sc-if value="{{ isBoss }}"><button onClick="{{ pk.edit }}" style="margin-top:4px;border:2.5px solid #FFD966;background:#FFF6D6;color:#7A5600;border-radius:999px;padding:4px 12px;font-size:15px;font-weight:800">🥩 เปลี่ยน / เพิ่ม</button>
-                        <button onClick="{{ pk.remove }}" style="border:2.5px solid #FFB8C8;background:#FFE1E8;color:#B4284F;border-radius:999px;padding:4px 12px;font-size:15px;font-weight:800">✕ ไม่เอาแล้ว</button></sc-if>
                     </div>
                   </sc-for>
                 </div>
+                <sc-if value="{{ isBoss }}"><div style="font-size:14px;color:#4D5F8A;text-align:right;margin-top:-2px">🥩 เปลี่ยน / เพิ่ม · ✕ ไม่เอาแล้ว</div></sc-if>
                 <sc-if value="{{ hasPickSub }}"><div style="font-size:17px;color:#4D5F8A;text-align:center">{{ pickSub }}</div></sc-if>
                 <sc-if value="{{ hasDrink }}">
                   <div style="display:flex;align-items:center;gap:8px;justify-self:center;background:#fff;border-radius:999px;padding:4px 14px 4px 4px;max-width:100%">
