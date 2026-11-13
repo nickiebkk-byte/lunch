@@ -552,29 +552,31 @@
         <span style="font-size:22px;font-weight:800;color:#1D4E89;background:#DCE6FF;border-radius:12px;padding:3px 12px">{{ sec.label }}</span>
         <span style="font-size:16px;color:#4D5F8A">{{ sec.count }} รายการ</span>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+      <div style="display:grid;grid-template-columns:minmax(0,1fr);gap:10px">
         <sc-for list="{{ sec.items }}" as="it">
-          <div style="position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;padding:14px 10px;background:#fff;border-radius:24px;border:3px solid #B9CCF0;box-shadow:0 5px 0 #B9CCF0,0 15px 20px -10px rgba(27,43,90,.28);opacity:{{ it.opacity }}">
-            <button onClick="{{ it.onFav }}" aria-label="ชอบเมนูนี้" style="animation:{{ it.favAnim }};position:absolute;top:8px;right:10px;border:0;background:none;font-size:28px;line-height:1;color:{{ it.favColor }}">♥</button>
-            <span style="width:72px;height:72px;border-radius:50%;background:{{ it.bgc }};display:grid;place-items:center;font-size:40px">{{ it.emo }}</span>
-            <div style="font-weight:700;font-size:18px;line-height:1.25">{{ it.name }}</div>
-            <sc-if value="{{ it.hasOpts }}"><div style="font-size:15px;color:#4D5F8A">{{ it.opts }}</div></sc-if>
-            <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;margin-top:2px">
-              <sc-for list="{{ it.mealTags }}" as="mtg"><button onClick="{{ mtg.onClick }}" disabled="{{ isBoss }}" style="border:1.5px solid {{ mtg.bd }};background:{{ mtg.bg }};color:{{ mtg.fg }};border-radius:999px;padding:0 6px;font-size:14px;font-weight:600;cursor:{{ mtg.cursor }}">{{ mtg.t }}</button></sc-for>
-            </div>
-            <div style="font-size:15px;font-weight:600;color:#2456D6;background:#DCE6FF;border-radius:999px;padding:1px 10px;margin-top:2px">{{ it.count }} ครั้ง</div>
-            <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:6px">
-              <sc-if value="{{ it.notConfirming }}"><button onClick="{{ it.onEdit }}" style="border:2px solid #FFD966;background:#FFF6D6;color:#7A5600;border-radius:999px;padding:3px 10px;font-size:15px;font-weight:700">✏️ แก้ไข</button></sc-if>
-              <sc-if value="{{ isCook }}">
-                <sc-if value="{{ it.confirming }}">
-                  <button onClick="{{ it.onDel }}" style="border:2px solid #FFB8C8;background:#FFE1E8;color:#B4284F;border-radius:999px;padding:3px 10px;font-size:15px;font-weight:700">ยืนยันลบ</button>
-                  <button onClick="{{ cancelDel }}" style="border:2px solid #B9CCF0;background:#fff;border-radius:999px;padding:3px 10px;font-size:15px">ยกเลิก</button>
+          <div style="position:relative;display:flex;align-items:flex-start;gap:10px;padding:10px 12px 10px 10px;background:#fff;border-radius:22px;border:3px solid #B9CCF0;box-shadow:0 4px 0 #B9CCF0,0 12px 18px -10px rgba(27,43,90,.22);opacity:{{ it.opacity }};min-width:0">
+            <button onClick="{{ it.onFav }}" aria-label="ชอบเมนูนี้" style="animation:{{ it.favAnim }};position:absolute;top:6px;right:8px;border:0;background:none;font-size:26px;line-height:1;color:{{ it.favColor }};padding:2px">♥</button>
+            <span style="flex:none;width:56px;height:56px;border-radius:50%;background:{{ it.bgc }};display:grid;place-items:center;font-size:32px">{{ it.emo }}</span>
+            <div style="flex:1;min-width:0;display:grid;gap:3px">
+              <div style="font-weight:700;font-size:18px;line-height:1.25;padding-right:28px">{{ it.name }}</div>
+              <sc-if value="{{ it.hasOpts }}"><div style="font-size:14px;color:#4D5F8A;line-height:1.3">{{ it.opts }}</div></sc-if>
+              <div style="display:flex;flex-wrap:wrap;align-items:center;gap:4px">
+                <sc-for list="{{ it.mealTags }}" as="mtg"><button onClick="{{ mtg.onClick }}" disabled="{{ isBoss }}" style="border:1.5px solid {{ mtg.bd }};background:{{ mtg.bg }};color:{{ mtg.fg }};border-radius:999px;padding:0 6px;font-size:13px;font-weight:600;cursor:{{ mtg.cursor }}">{{ mtg.t }}</button></sc-for>
+                <span style="font-size:13px;font-weight:700;color:#2456D6;background:#DCE6FF;border-radius:999px;padding:0 8px">{{ it.count }} ครั้ง</span>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:2px">
+                <sc-if value="{{ it.notConfirming }}"><button onClick="{{ it.onEdit }}" style="border:2px solid #FFD966;background:#FFF6D6;color:#7A5600;border-radius:999px;padding:2px 10px;font-size:14px;font-weight:700">✏️ แก้ไข</button></sc-if>
+                <sc-if value="{{ isCook }}">
+                  <sc-if value="{{ it.confirming }}">
+                    <button onClick="{{ it.onDel }}" style="border:2px solid #FFB8C8;background:#FFE1E8;color:#B4284F;border-radius:999px;padding:2px 10px;font-size:14px;font-weight:700">ยืนยันลบ</button>
+                    <button onClick="{{ cancelDel }}" style="border:2px solid #B9CCF0;background:#fff;border-radius:999px;padding:2px 10px;font-size:14px">ยกเลิก</button>
+                  </sc-if>
+                  <sc-if value="{{ it.notConfirming }}">
+                    <button onClick="{{ it.onHide }}" style="border:2px solid #B9CCF0;background:#fff;border-radius:999px;padding:2px 10px;font-size:14px;color:#4D5F8A">{{ it.hideText }}</button>
+                    <button onClick="{{ it.onAskDel }}" style="border:2px solid #B9CCF0;background:#fff;border-radius:999px;padding:2px 10px;font-size:14px;color:#4D5F8A">ลบ</button>
+                  </sc-if>
                 </sc-if>
-                <sc-if value="{{ it.notConfirming }}">
-                  <button onClick="{{ it.onHide }}" style="border:2px solid #B9CCF0;background:#fff;border-radius:999px;padding:3px 10px;font-size:15px;color:#4D5F8A">{{ it.hideText }}</button>
-                  <button onClick="{{ it.onAskDel }}" style="border:2px solid #B9CCF0;background:#fff;border-radius:999px;padding:3px 10px;font-size:15px;color:#4D5F8A">ลบ</button>
-                </sc-if>
-              </sc-if>
+              </div>
             </div>
           </div>
         </sc-for>
