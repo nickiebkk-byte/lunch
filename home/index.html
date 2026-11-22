@@ -135,6 +135,43 @@ html{-webkit-text-size-adjust:100%}
   </sc-if>
 
   <div style="display:grid;grid-template-columns:minmax(0,1fr);gap:18px">
+    <sc-if value="{{ isCook }}">
+      <section style="display:grid;gap:12px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap"><h2 style="margin:0;font-size:28px;font-weight:800;color:#1B2B5A">📋 รายการจาก BOSS</h2><span style="font-size:17px;font-weight:700;color:#4D5F8A">{{ ckDayFull }}</span></div>
+        <sc-for list="{{ ckMeals }}" as="cm" hint-placeholder-count="4">
+          <div style="background:{{ cm.bg }};border:3px solid {{ cm.bd }};border-radius:26px;padding:12px 12px 14px;display:grid;gap:8px;box-shadow:0 5px 0 {{ cm.bd }};min-width:0">
+            <div style="display:flex;align-items:center;gap:8px;min-width:0">
+              <img src="{{ cm.img }}" alt="" style="width:42px;height:42px;object-fit:contain;flex:none">
+              <div style="flex:1;min-width:0"><div style="font-size:21px;font-weight:800;color:#1B2B5A;line-height:1.15">{{ cm.name }}</div><div style="font-size:14px;font-weight:700;color:#3D4A6B">{{ cm.meta }}</div></div>
+              <span style="flex:none;font-size:14px;font-weight:800;color:{{ cm.stFg }};background:{{ cm.stBg }};border-radius:999px;padding:3px 10px;white-space:nowrap">{{ cm.stText }}</span>
+            </div>
+            <sc-if value="{{ cm.hasHouses }}"><div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ cm.houses }}" as="ch"><span style="font-size:14px;font-weight:800;color:{{ ch.houseFg }};background:{{ ch.houseBg }};border-radius:999px;padding:2px 10px">{{ ch.houseText }}</span></sc-for></div></sc-if>
+            <sc-if value="{{ cm.hasFoods }}">
+              <div style="display:grid;gap:5px">
+                <sc-for list="{{ cm.foods }}" as="cf">
+                  <div style="display:flex;align-items:center;gap:8px;background:#fff;border-radius:14px;padding:5px 8px;min-width:0">
+                    <span style="flex:none;width:34px;height:34px;border-radius:50%;background:{{ cf.bgc }};display:grid;place-items:center;font-size:20px">{{ cf.emo }}</span>
+                    <div style="flex:1;min-width:0;font-size:17px;font-weight:700;line-height:1.25">{{ cf.name }}<sc-if value="{{ cf.hasSub }}"><span style="font-size:13px;font-weight:600;color:#4D5F8A"> · {{ cf.sub }}</span></sc-if></div>
+                    <sc-if value="{{ cm.multiHouse }}"><span style="flex:none;font-size:12px;font-weight:800;color:{{ cf.houseFg }};background:{{ cf.houseBg }};border-radius:999px;padding:1px 8px">{{ cf.houseText }}</span></sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ cm.hasExtra }}"><div style="font-size:16px;color:#1B2B5A">{{ cm.extra }}</div></sc-if>
+            <sc-if value="{{ cm.hasNote }}"><div style="font-size:17px;background:#fff;border-left:5px solid #6C63D9;border-radius:12px;padding:7px 10px;color:#1B2B5A">💬 {{ cm.note }}</div></sc-if>
+            <sc-if value="{{ cm.empty }}"><div style="font-size:16px;color:#4D5F8A">{{ cm.emptyText }}</div></sc-if>
+            <sc-if value="{{ cm.canAck }}"><button onClick="{{ cm.ack }}" style="border:3px solid #0F5E2C;background:linear-gradient(135deg,#22C55E,#15803D);color:#fff;border-radius:20px;padding:11px 10px;font-weight:800;font-size:20px;box-shadow:0 4px 0 #0F5E2C,0 10px 18px -8px rgba(21,128,61,.5)">✅ รับทราบ พร้อมดำเนินการ</button></sc-if>
+            <sc-if value="{{ cm.showSteps }}">
+              <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+                <span style="font-size:14px;font-weight:700;color:#15803D">{{ cm.ackInfo }}</span>
+                <span style="flex:1"></span>
+                <sc-for list="{{ cm.steps }}" as="cs"><button onClick="{{ cs.onClick }}" style="border:2px solid {{ cs.bd }};background:{{ cs.bg }};color:{{ cs.fg }};border-radius:999px;padding:5px 12px;font-size:15px;font-weight:800">{{ cs.t }}</button></sc-for>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </section>
+    </sc-if>
     <article style="min-width:0;background:#fff;border-radius:30px;border:3px solid #B9CCF0;box-shadow:0 8px 0 #B9CCF0,0 24px 32px -16px rgba(27,43,90,.28);overflow:hidden">
       <div style="position:relative;padding:16px 0 0 18px;display:grid;grid-template-columns:minmax(0,1fr) 132px;align-items:end;background:radial-gradient(circle at 82% 78%,#FFC72C 0 62px,transparent 63px),radial-gradient(circle at 82% 78%,rgba(255,199,44,.28) 0 96px,transparent 97px),radial-gradient(circle at 82% 78%,rgba(255,255,255,.08) 0 132px,transparent 133px),radial-gradient(rgba(255,255,255,.09) 2px,transparent 2.6px) 0 0/22px 22px,linear-gradient(160deg,#2C4FA8,#1B2B5A 70%);border-bottom:4px solid #FFC72C">
         <div style="min-width:0;display:grid;gap:6px;padding-bottom:16px">
@@ -150,36 +187,10 @@ html{-webkit-text-size-adjust:100%}
       </div>
 
       <div style="padding:18px 16px 22px;display:grid;grid-template-columns:minmax(0,1fr);gap:22px">
-        <sc-if value="{{ isCook }}">
-          <section style="position:relative;overflow:hidden;border-radius:28px;padding:16px 14px 18px;display:grid;grid-template-columns:minmax(0,1fr);gap:10px;background:#FFE27A;box-shadow:0 6px 0 #B07D0040">
-            <span aria-hidden="true" style="position:absolute;top:-14px;right:10px;font-size:104px;font-weight:900;font-style:italic;line-height:1;color:#B07D00;opacity:.3;pointer-events:none">1</span>
-            <div style="position:relative;padding-right:56px"><h3 style="margin:0;font-size:24px;font-weight:800;color:#1B2B5A;line-height:1.15">วัน · มื้อ · เวลา · บ้าน</h3><div style="font-size:14px;color:#3D4A6B;font-weight:600">{{ ckWho }}</div></div>
-            <div style="display:flex;flex-wrap:wrap;gap:6px">
-              <span style="display:inline-flex;align-items:center;gap:4px;background:#fff;border-radius:999px;padding:4px 12px;font-size:16px;font-weight:700;color:#1B2B5A">📅 {{ ckDay }}</span><span style="display:inline-flex;align-items:center;gap:4px;background:#fff;border-radius:999px;padding:4px 12px;font-size:16px;font-weight:700;color:#1B2B5A">🍽️ {{ mealFull }}</span><span style="display:inline-flex;align-items:center;gap:4px;background:#fff;border-radius:999px;padding:4px 12px;font-size:16px;font-weight:700;color:#1B2B5A">⏰ {{ serveText }} น.</span><span style="display:inline-flex;align-items:center;gap:4px;background:#fff;border-radius:999px;padding:4px 12px;font-size:16px;font-weight:700;color:#1B2B5A">👥 {{ ckPeople }} ที่</span>
-              <sc-for list="{{ ckHouses }}" as="ch"><span style="display:inline-flex;align-items:center;gap:4px;background:#fff;border-radius:999px;padding:4px 12px;font-size:16px;font-weight:700;color:#1B2B5A;color:{{ ch.houseFg }};background:{{ ch.houseBg }}">{{ ch.houseText }}</span></sc-for>
-            </div>
-            <sc-if value="{{ isAway }}"><div style="font-size:18px;font-weight:800;color:#8A4B00">🚪 BOSS แจ้ง: {{ awayText }} · ไม่ต้องทำมื้อนี้</div></sc-if>
-          </section>
-        </sc-if>
         <sc-if value="{{ isCook }}"><sc-if value="{{ notAway }}">
-          <section style="position:relative;overflow:hidden;border-radius:28px;padding:16px 14px 18px;display:grid;grid-template-columns:minmax(0,1fr);gap:10px;background:#FFD9BF;box-shadow:0 6px 0 #E8501E40">
-            <span aria-hidden="true" style="position:absolute;top:-14px;right:10px;font-size:104px;font-weight:900;font-style:italic;line-height:1;color:#E8501E;opacity:.3;pointer-events:none">2</span>
-            <div style="position:relative;padding-right:56px"><h3 style="margin:0;font-size:24px;font-weight:800;color:#1B2B5A;line-height:1.15">รายการอาหาร</h3><div style="font-size:14px;color:#3D4A6B;font-weight:600">{{ ckFoodSub }}</div></div>
-            <sc-if value="{{ hasPicks }}">
-              <div style="display:grid;gap:6px">
-                <sc-for list="{{ ckFoods }}" as="cf">
-                  <div style="display:flex;align-items:center;gap:10px;background:#fff;border-radius:16px;padding:7px 10px;min-width:0">
-                    <span style="flex:none;width:40px;height:40px;border-radius:50%;background:{{ cf.bgc }};display:grid;place-items:center;font-size:24px">{{ cf.emo }}</span>
-                    <div style="flex:1;min-width:0"><div style="font-size:18px;font-weight:700;line-height:1.25">{{ cf.name }}</div><div style="font-size:13px;color:#4D5F8A">{{ cf.sub }}</div></div>
-                    <span style="flex:none;font-size:13px;font-weight:800;color:{{ cf.houseFg }};background:{{ cf.houseBg }};border-radius:999px;padding:2px 9px">{{ cf.houseText }}</span>
-                  </div>
-                </sc-for>
-              </div>
-            </sc-if>
-            <sc-if value="{{ noPicks }}"><div style="font-size:17px;color:#4D5F8A;background:#fff;border-radius:16px;padding:10px 12px">ยังไม่มีรายการจาก BOSS · เสนอเมนูได้ที่ด้านล่าง</div></sc-if>
-            <sc-if value="{{ hasDrink }}"><div style="font-size:17px">🥤 เครื่องดื่ม: <b>{{ drinkLabel }}</b></div></sc-if>
-            <sc-if value="{{ hasPickSub }}"><div style="font-size:17px">🌶️ รสชาติ: <b>{{ pickSub }}</b></div></sc-if>
-            <div style="font-size:19px;font-weight:800;color:#1B2B5A;margin-top:6px">🍳 เสนอเมนูให้ BOSS</div>
+          <section style="display:grid;grid-template-columns:minmax(0,1fr);gap:12px">
+            <div style="font-size:24px;font-weight:800;color:#1B2B5A">🍳 เสนอเมนู / เมนูแนะนำ · {{ mealFull }}</div>
+            <div style="font-size:15px;color:#4D5F8A;margin:-6px 0 4px">เลือกมื้อจากแถบด้านบน แล้วเสนอเมนูให้ BOSS</div>
           <section>
             <div style="padding:14px 14px 16px;border-radius:26px;background:linear-gradient(160deg,#EAF1FF,#DCE6FF);border:3px solid #9DB6EC;display:grid;gap:12px">
               <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px">
@@ -293,29 +304,6 @@ html{-webkit-text-size-adjust:100%}
               </div>
             </sc-if>
           </section>
-          </section>
-          <section style="position:relative;overflow:hidden;border-radius:28px;padding:16px 14px 18px;display:grid;grid-template-columns:minmax(0,1fr);gap:10px;background:#E3E1FF;box-shadow:0 6px 0 #6C63D940">
-            <span aria-hidden="true" style="position:absolute;top:-14px;right:10px;font-size:104px;font-weight:900;font-style:italic;line-height:1;color:#6C63D9;opacity:.3;pointer-events:none">3</span>
-            <div style="position:relative;padding-right:56px"><h3 style="margin:0;font-size:24px;font-weight:800;color:#1B2B5A;line-height:1.15">ข้อความจาก BOSS</h3></div>
-            <div style="font-size:19px;background:#fff;border-radius:16px;padding:10px 12px;color:{{ ckNoteFg }}">{{ ckNote }}</div>
-            <div style="font-size:17px;font-weight:800;color:#1B2B5A;margin-top:4px">💬 ตอบกลับ / ฝากบอก BOSS</div>
-        <textarea value="{{ noteDraft }}" onChange="{{ onNote }}" placeholder="{{ notePlaceholder }}" style="width:100%;box-sizing:border-box;min-height:84px;resize:vertical;background:#F5F8FF;border:2px solid #B9CCF0;border-radius:20px;padding:12px 16px;font-size:18px;outline:none" style-focus="border-color:#1E3A8A"></textarea>
-  <button onClick="{{ saveNote }}" style="border:0;background:#FFC72C;color:#1B2B5A;border-radius:999px;padding:10px 20px;font-weight:700;box-shadow:0 4px 0 #C98F00">บันทึกข้อความ</button>
-          </section>
-          <section style="position:relative;overflow:hidden;border-radius:28px;padding:16px 14px 18px;display:grid;grid-template-columns:minmax(0,1fr);gap:10px;background:#CFF5DD;box-shadow:0 6px 0 #15803D40">
-            <span aria-hidden="true" style="position:absolute;top:-14px;right:10px;font-size:104px;font-weight:900;font-style:italic;line-height:1;color:#15803D;opacity:.3;pointer-events:none">4</span>
-            <div style="position:relative;padding-right:56px"><h3 style="margin:0;font-size:24px;font-weight:800;color:#1B2B5A;line-height:1.15">รับทราบ & สถานะ</h3><div style="font-size:14px;color:#3D4A6B;font-weight:600">{{ ckStatusText }}</div></div>
-            <button onClick="{{ ackDo }}" disabled="{{ ackDisabled }}" style="border:3px solid {{ ackBd }};background:{{ ackBg }};color:{{ ackFg }};border-radius:22px;padding:14px 12px;font-weight:800;font-size:22px;box-shadow:0 5px 0 {{ ackBd }}{{ ackGlow }}">{{ ackText }}</button>
-            <div style="text-align:center;font-size:15px;font-weight:700;color:#3D4A6B">{{ ackNote }}</div>
-          <div>
-            <div style="font-size:17px;font-weight:800;color:#1B2B5A;margin-bottom:8px">อัปเดตสถานะในครัว</div>
-            <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px">
-              <sc-for list="{{ steps }}" as="s" hint-placeholder-count="5">
-                <button onClick="{{ s.onClick }}" disabled="{{ isBoss }}" style="animation:{{ s.anim }};border:3px solid {{ s.bd }};background:{{ s.bg }};color:{{ s.fg }};border-radius:16px;padding:9px 2px;font-weight:800;font-size:15px;white-space:nowrap;min-width:0;font-size:13.5px;cursor:{{ stepCursor }}">{{ s.t }}</button>
-              </sc-for>
-            </div>
-            <sc-if value="{{ isBoss }}"><p style="margin:8px 0 0;font-size:16px;color:#4D5F8A">แม่ครัวเป็นคนอัปเดตสถานะ</p></sc-if>
-          </div>
           </section>
         </sc-if></sc-if>
         <sc-if value="{{ isBoss }}">
@@ -593,6 +581,7 @@ html{-webkit-text-size-adjust:100%}
         <p style="margin:0;font-size:16px;color:#4D5F8A">แม่ครัวเป็นคนอัปเดตสถานะ · {{ bossStatusNote }}</p>
       </div>
     </sc-if>
+    <sc-if value="{{ isBoss }}">
     <div style="background:#fff;border-radius:30px;border:3px solid #B9CCF0;box-shadow:0 6px 0 #B9CCF0,0 18px 24px -12px rgba(27,43,90,.28);padding:18px 20px;display:grid;gap:8px">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin:-6px 0 0"><h3 style="margin:0;font-size:26px;font-weight:800">สรุปทั้งวัน</h3><img src="assets/chibi/chef/daily-calendar.png" alt="" style="width:76px;height:76px;flex:none;object-fit:contain;margin:-6px -6px -6px 0"></div>
         <sc-for list="{{ daySummary }}" as="ds" hint-placeholder-count="4">
@@ -604,6 +593,7 @@ html{-webkit-text-size-adjust:100%}
           </button>
         </sc-for>
       </div>
+    </sc-if>
 
   </div>
 </sc-if>
@@ -1850,6 +1840,23 @@ class Component extends DCLogic {
           ackBg: canAck ? "linear-gradient(135deg,#22C55E,#15803D)" : acked ? "#fff" : "#EEF2FA", ackFg: canAck ? "#fff" : acked ? "#15803D" : "#9AA8C7",
           ackBd: canAck ? "#0F5E2C" : acked ? "#86EFAC" : "#C9D6F5", ackGlow: canAck ? ",0 12px 22px -8px rgba(21,128,61,.5)" : "",
           ackNote: canAck ? "กดเพื่อแจ้ง BOSS ว่าได้รับรายการแล้ว" : acked ? (at ? "รับทราบเวลา " + at + " น. · " : "") + "อัปเดตสถานะต่อได้ที่ \"สถานะในครัว\" ด้านล่าง" : "รอ BOSS ส่งรายการอาหาร"}; })(),
+      ...(() => { if (boss) return {};
+        return {ckDayFull: DAYF[dt.getDay()] + " " + fmtDate(s.sel) + (s.sel===t ? " · วันนี้" : ""),
+          ckMeals: MK.map(q => { const mm = this.pub(this.meal(s.sel, q)), k = mm.away ? "away" : mm.status, stv = ST[k];
+            const hs = MKH(mm.picks.map(p => this.hOf(p, mm))), has = mm.picks.length > 0 && !mm.away;
+            const acked = ["ack","cooking","ready"].includes(mm.status), at = mm.ackAt ? new Date(mm.ackAt).toTimeString().slice(0,5) : "";
+            const ex = [mm.drink ? "🥤 " + this.label(mm.drink) : "", mm.x && mm.x.length ? "🌶️ " + mm.x.join(" · ") : ""].filter(Boolean).join("   ");
+            const step = (v, t) => { const on = mm.status===v; return {t, bg: on ? "#FFC72C" : "#fff", fg: "#1B2B5A", bd: on ? "#C98F00" : "#B9CCF0", onClick: () => this.saveMeal(s.sel, q, {status: v})}; };
+            return {img: MEALS[q].img, name: MEALS[q].full, meta: "⏰ " + this.serveOf(s.sel, q) + " น. · 👥 " + this.peopleOf(mm) + " ที่" + (has && mm.bw && BOSSES[mm.bw] ? " · สั่งโดย " + BOSSES[mm.bw].n : ""),
+              stText: mm.away ? AWAY[mm.away] : stv.t, stFg: stv.fg, stBg: stv.bg,
+              bg: has ? (acked ? "#E9FBEF" : "#FFF6D6") : "#F5F8FF", bd: has ? (acked ? "#86EFAC" : "#FFD966") : "#DCE6FF",
+              houses: hs.map(h => this.houseTag(h)), hasHouses: has && hs.length > 0, multiHouse: hs.length > 1,
+              foods: has ? [...mm.picks].sort((a,b) => (this.hOf(a,mm)==="lek") - (this.hOf(b,mm)==="lek")).map(p => ({...this.houseTag(this.hOf(p, mm)), name: this.pickName(p), emo: this.emo(p), bgc: this.bgc(p), sub: (p.who||[]).length ? "👤 " + p.who.join(", ") : "", hasSub: !!(p.who||[]).length})) : [],
+              hasFoods: has, extra: ex, hasExtra: has && !!ex, note: mm.bossNote || "", hasNote: !!mm.bossNote && !mm.away,
+              empty: !has, emptyText: mm.away ? "🚪 BOSS แจ้ง " + AWAY[mm.away] + " · ไม่ต้องทำมื้อนี้" : "ยังไม่มีรายการจาก BOSS" + (mm.options.length ? " · เสนอไว้ " + mm.options.length + " เมนู" : ""),
+              canAck: has && mm.status==="chosen", ack: () => this.saveMeal(s.sel, q, {status: "ack", ackAt: Date.now()}),
+              showSteps: has && acked, ackInfo: "✓ รับทราบแล้ว" + (at ? " " + at + " น." : ""),
+              steps: [step("cooking","🔥 กำลังทำ"), step("ready","🍽️ พร้อมทาน")]}; })}; })(),
       bossStatusNote: m.away ? AWAY[m.away] : ST[m.status].t + (m.ackAt && m.status!=="chosen" && m.status!=="plan" ? " (รับทราบ " + new Date(m.ackAt).toTimeString().slice(0,5) + " น.)" : ""),
       hasOtherNote: !!otherNote && !(m.changeReq && !boss), hasOtherNoteCook: !boss && !!otherNote && !m.changeReq,
       barPos: boss ? "relative" : "sticky", barMargin: boss ? "0 0 16px" : "-16px -16px 16px", barPad: boss ? "12px 10px 14px" : "10px 16px 10px",
