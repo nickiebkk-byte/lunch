@@ -189,33 +189,9 @@ html{-webkit-text-size-adjust:100%}
       <div style="padding:18px 16px 22px;display:grid;grid-template-columns:minmax(0,1fr);gap:22px">
         <sc-if value="{{ isCook }}"><sc-if value="{{ notAway }}">
           <section style="display:grid;grid-template-columns:minmax(0,1fr);gap:12px">
-            <div style="font-size:24px;font-weight:800;color:#1B2B5A">🍳 เสนอเมนู / เมนูแนะนำ · {{ mealFull }}</div>
+            <div style="font-size:24px;font-weight:800;color:#1B2B5A">🍳 แม่ครัวเสนอเมนู · {{ mealFull }}</div>
             <div style="font-size:15px;color:#4D5F8A;margin:-6px 0 4px">เลือกมื้อจากแถบด้านบน แล้วเสนอเมนูให้ BOSS</div>
           <section>
-            <div style="padding:14px 14px 16px;border-radius:26px;background:linear-gradient(160deg,#EAF1FF,#DCE6FF);border:3px solid #9DB6EC;display:grid;gap:12px">
-              <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px">
-                <div style="min-width:0">
-                  <h3 style="margin:0;font-size:24px;font-weight:800;color:#1B2B5A">✨ เมนูแนะนำ{{ mealFull }}</h3>
-                  <div style="font-size:16px;font-weight:600;color:#4D5F8A">{{ recHint }}</div>
-                </div>
-                <button onClick="{{ recReroll }}" style="flex:none;border:3px solid #9DB6EC;background:#fff;color:#2456D6;border-radius:999px;padding:6px 14px;font-weight:800;font-size:16px;box-shadow:0 3px 0 #9DB6EC">🔄 แนะนำชุดใหม่</button>
-              </div>
-              <div class="rs" style="display:grid;grid-template-columns:minmax(0,1fr);gap:8px">
-                <sc-for list="{{ recItems }}" as="rc" hint-placeholder-count="1">
-                  <button onClick="{{ rc.onClick }}" style="animation:{{ rc.anim }};display:flex;align-items:center;gap:12px;text-align:left;border:3px solid {{ rc.bd }};background:{{ rc.bg }};border-radius:22px;padding:8px 12px 8px 8px;min-width:0;box-shadow:0 3px 0 {{ rc.bd }}">
-                    <span style="width:{{ rc.size }};height:{{ rc.size }};flex:none;border-radius:50%;background:{{ rc.bgc }};display:grid;place-items:center;font-size:{{ rc.font }}">{{ rc.emo }}</span>
-                    <span style="flex:1;min-width:0;display:grid;gap:1px">
-                      <sc-if value="{{ rc.slot }}"><span style="justify-self:start;font-size:13px;font-weight:800;color:#2456D6;background:#DCE6FF;border-radius:999px;padding:0 9px">{{ rc.slot }}</span></sc-if>
-                      <span style="font-size:{{ rc.nameSize }};font-weight:800;line-height:1.25;color:#1B2B5A">{{ rc.label }}</span>
-                      <span style="font-size:14px;color:#4D5F8A">{{ rc.cat }} · <b style="color:{{ rc.actColor }}">{{ rc.act }}</b></span>
-                    </span>
-                  </button>
-                </sc-for>
-              </div>
-              <div style="display:flex;flex-wrap:wrap;gap:8px">
-                <button onClick="{{ recUseAll }}" style="border:0;background:#D9431C;color:#fff;border-radius:999px;padding:11px 20px;font-weight:800;font-size:17px;box-shadow:0 4px 0 #A8300F">{{ recAllText }}</button>
-              </div>
-            </div>
           </section>
           <section>
             <sc-if value="{{ isBoss }}">
