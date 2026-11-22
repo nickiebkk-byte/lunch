@@ -105,12 +105,8 @@ html{-webkit-text-size-adjust:100%}
 
 <!-- ================= DAY ================= -->
 <sc-if value="{{ isDay }}" hint-placeholder-val="{{ true }}">
+  <sc-if value="{{ isCook }}">
   <div data-sticky="daymeal" style="position:{{ barPos }};top:0;z-index:6;margin:{{ barMargin }};padding:{{ barPad }};background:{{ barBg }};backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:{{ barBorder }};border-bottom:3px solid {{ barLine }};border-radius:{{ barRad }};box-shadow:{{ barShadow }}">
-  <sc-if value="{{ isBoss }}"><div style="margin-bottom:10px">  <div style="display:flex;align-items:center;gap:10px">
-    <span style="flex:none;width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#FF8A3D,#E8501E);color:#fff;font-weight:800;font-size:21px;display:grid;place-items:center;box-shadow:0 3px 0 #B53A10">1</span>
-    <div style="min-width:0"><h3 style="margin:0;font-size:23px;font-weight:800;color:#1B2B5A;line-height:1.15">เลือกวัน · มื้อ · เวลา · บ้าน</h3></div>
-  </div>
-  </div></sc-if>
   <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
     <button onClick="{{ prevWeek }}" aria-label="สัปดาห์ก่อน" style="flex:none;width:26px;height:56px;border-radius:12px;border:2px solid #B9CCF0;background:#fff;font-size:24px;font-weight:700;color:#4D5F8A;padding:0">‹</button>
     <div style="flex:1;min-width:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px">
@@ -135,36 +131,8 @@ html{-webkit-text-size-adjust:100%}
       </button>
     </sc-for>
   </div>
-  <sc-if value="{{ isBoss }}">
-    <div style="display:grid;gap:10px;margin-top:12px">
-              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0;flex-wrap:nowrap">
-                <div style="display:flex;align-items:center;gap:6px;flex:none">
-                  <span style="font-size:16px;font-weight:700;white-space:nowrap">👥 ที่</span>
-                  <button onClick="{{ peopleDown }}" aria-label="ลด" style="width:32px;height:32px;border-radius:50%;border:2px solid #B9CCF0;background:#fff;font-size:20px;font-weight:700;padding:0">−</button>
-                  <b style="font-size:21px;min-width:20px;text-align:center">{{ people }}</b>
-                  <button onClick="{{ peopleUp }}" aria-label="เพิ่ม" style="width:32px;height:32px;border-radius:50%;border:2px solid #B9CCF0;background:#fff;font-size:20px;font-weight:700;padding:0">+</button>
-                </div>
-                <div style="display:flex;align-items:center;gap:6px;min-width:0">
-                  <span style="font-size:16px;font-weight:700;white-space:nowrap">⏰ เสิร์ฟ</span>
-                  <input type="time" value="{{ serveText }}" onChange="{{ onServe }}" aria-label="เวลาเสิร์ฟ" style="width:138px;min-width:0;background:#FFF6D6;border:2.5px solid #FFC72C;border-radius:12px;padding:4px 6px;font-size:17px;font-weight:700;color:#1B2B5A">
-                </div>
-              </div>
-              <sc-if value="{{ serveCustom }}"><div style="text-align:right;margin-top:4px"><button onClick="{{ serveReset }}" style="border:0;background:none;padding:0;font-size:14px;font-weight:700;color:#2456D6;text-decoration:underline">กลับไปใช้เวลาปกติ ({{ serveDefault }})</button></div></sc-if>
-              <div style="display:flex;align-items:center;gap:8px;margin:0;flex-wrap:wrap">
-                <span style="font-size:17px;font-weight:800;color:#1B2B5A">🏠 เสิร์ฟบ้าน</span>
-                <sc-for list="{{ houseBtns }}" as="hb" hint-placeholder-count="2">
-                  <button onClick="{{ hb.onClick }}" style="animation:{{ hb.anim }};flex:1;min-width:0;border:3px solid {{ hb.bd }};background:{{ hb.bg }};color:{{ hb.fg }};border-radius:999px;padding:7px 10px;font-weight:800;font-size:17px;box-shadow:0 3px 0 {{ hb.bd }};white-space:nowrap">{{ hb.t }}</button>
-                </sc-for>
-              </div>
-      <div style="display:grid;grid-template-columns:auto repeat(3,minmax(0,1fr));gap:6px;align-items:center">
-        <span style="font-size:15px;font-weight:800;color:#1B2B5A">🚪 ทานไหม</span>
-        <sc-for list="{{ awayChips }}" as="a" hint-placeholder-count="3">
-          <button onClick="{{ a.onClick }}" style="animation:{{ a.anim }};border:2px solid {{ a.bd }};background:{{ a.bg }};color:{{ a.fg }};border-radius:14px;padding:6px 2px;font-size:14px;font-weight:700;white-space:nowrap;min-width:0">{{ a.t }}</button>
-        </sc-for>
-      </div>
-    </div>
-  </sc-if>
   </div>
+  </sc-if>
 
   <div style="display:grid;grid-template-columns:minmax(0,1fr);gap:18px">
     <article style="min-width:0;background:#fff;border-radius:30px;border:3px solid #B9CCF0;box-shadow:0 8px 0 #B9CCF0,0 24px 32px -16px rgba(27,43,90,.28);overflow:hidden">
@@ -182,6 +150,64 @@ html{-webkit-text-size-adjust:100%}
       </div>
 
       <div style="padding:18px 16px 22px;display:grid;grid-template-columns:minmax(0,1fr);gap:22px">
+        <sc-if value="{{ isBoss }}">
+          <section style="position:relative;overflow:hidden;border-radius:28px;padding:16px 12px 18px;display:grid;grid-template-columns:minmax(0,1fr);gap:14px;background:#FFE27A;box-shadow:0 6px 0 #C98F0040">
+  <span aria-hidden="true" style="position:absolute;top:-14px;right:10px;font-size:104px;font-weight:900;font-style:italic;line-height:1;color:#B07D00;opacity:.35;pointer-events:none">1</span>
+  <div style="position:relative;padding-right:56px"><h3 style="margin:0;font-size:26px;font-weight:800;color:#1B2B5A;line-height:1.15">เลือกวัน · มื้อ · เวลา · บ้าน</h3></div>
+  
+  <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+    <button onClick="{{ prevWeek }}" aria-label="สัปดาห์ก่อน" style="flex:none;width:26px;height:56px;border-radius:12px;border:2px solid #B9CCF0;background:#fff;font-size:24px;font-weight:700;color:#4D5F8A;padding:0">‹</button>
+    <div style="flex:1;min-width:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px">
+      <sc-for list="{{ strip }}" as="c" hint-placeholder-count="7">
+        <button onClick="{{ c.onClick }}" style="animation:{{ c.anim }};position:relative;border:3px solid {{ c.bd }};background:{{ c.bg }};border-radius:14px;padding:7px 0;line-height:1.15;box-shadow:0 3px 0 {{ c.bd }};transform:translateY({{ c.lift }});min-width:0">
+          <span style="position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:{{ c.dot }}"></span>
+          <div style="font-weight:800;font-size:17px;color:{{ c.dowColor }}">{{ c.dow }}</div>
+          <div style="font-size:16px;color:#4D5F8A">{{ c.num }}</div>
+          <sc-if value="{{ c.isToday }}"><div style="font-size:13px;font-weight:700;color:#2456D6">วันนี้</div></sc-if>
+        </button>
+      </sc-for>
+    </div>
+    <button onClick="{{ nextWeek }}" aria-label="สัปดาห์หน้า" style="flex:none;width:26px;height:56px;border-radius:12px;border:2px solid #B9CCF0;background:#fff;font-size:24px;font-weight:700;color:#4D5F8A;padding:0">›</button>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;background:#fff;border:3px solid #B9CCF0;border-radius:22px;padding:4px">
+    <sc-for list="{{ mealTabs }}" as="mt" hint-placeholder-count="4">
+      <button onClick="{{ mt.onClick }}" style="animation:{{ mt.anim }};position:relative;border:0;border-radius:17px;padding:6px 2px;background:{{ mt.bg }};color:{{ mt.fg }};display:grid;justify-items:center;gap:0;min-width:0">
+        <img src="{{ mt.img }}" alt="" style="width:34px;height:34px;object-fit:contain;display:block;margin:0 auto">
+        <span style="font-weight:700;font-size:17px;white-space:nowrap">{{ mt.l }}</span>
+        <span style="position:absolute;top:6px;right:8px;width:8px;height:8px;border-radius:50%;background:{{ mt.dot }}"></span>
+      </button>
+    </sc-for>
+  </div>
+    <div style="display:grid;gap:10px;margin-top:12px">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px 10px;margin-top:0;flex-wrap:wrap">
+                <div style="display:flex;align-items:center;gap:6px;flex:none">
+                  <span style="font-size:16px;font-weight:700;white-space:nowrap">👥 ที่</span>
+                  <button onClick="{{ peopleDown }}" aria-label="ลด" style="width:32px;height:32px;border-radius:50%;border:2px solid #B9CCF0;background:#fff;font-size:20px;font-weight:700;padding:0">−</button>
+                  <b style="font-size:21px;min-width:20px;text-align:center">{{ people }}</b>
+                  <button onClick="{{ peopleUp }}" aria-label="เพิ่ม" style="width:32px;height:32px;border-radius:50%;border:2px solid #B9CCF0;background:#fff;font-size:20px;font-weight:700;padding:0">+</button>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;min-width:0">
+                  <span style="font-size:16px;font-weight:700;white-space:nowrap">⏰ เสิร์ฟ</span>
+                  <input type="time" value="{{ serveText }}" onChange="{{ onServe }}" aria-label="เวลาเสิร์ฟ" style="width:150px;min-width:0;background:#FFF6D6;border:2.5px solid #FFC72C;border-radius:12px;padding:4px 6px;font-size:17px;font-weight:700;color:#1B2B5A">
+                </div>
+              </div>
+              <sc-if value="{{ serveCustom }}"><div style="text-align:right;margin-top:4px"><button onClick="{{ serveReset }}" style="border:0;background:none;padding:0;font-size:14px;font-weight:700;color:#2456D6;text-decoration:underline">กลับไปใช้เวลาปกติ ({{ serveDefault }})</button></div></sc-if>
+              <div style="display:flex;align-items:center;gap:8px;margin:0;flex-wrap:wrap">
+                <span style="font-size:16px;font-weight:800;color:#1B2B5A;white-space:nowrap">🏠 บ้าน</span>
+                <sc-for list="{{ houseBtns }}" as="hb" hint-placeholder-count="2">
+                  <button onClick="{{ hb.onClick }}" style="animation:{{ hb.anim }};flex:1;min-width:0;border:3px solid {{ hb.bd }};background:{{ hb.bg }};color:{{ hb.fg }};border-radius:999px;padding:7px 6px;font-weight:800;font-size:16px;box-shadow:0 3px 0 {{ hb.bd }};white-space:nowrap">{{ hb.t }}</button>
+                </sc-for>
+              </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;align-items:center">
+        <span style="grid-column:1/-1;font-size:15px;font-weight:800;color:#1B2B5A">🚪 มื้อนี้ทานที่บ้านไหม (กดอีกครั้งเพื่อยกเลิก)</span>
+        <sc-for list="{{ awayChips }}" as="a" hint-placeholder-count="3">
+          <button onClick="{{ a.onClick }}" style="animation:{{ a.anim }};border:2px solid {{ a.bd }};background:{{ a.bg }};color:{{ a.fg }};border-radius:14px;padding:6px 2px;font-size:14px;font-weight:700;white-space:nowrap;min-width:0">{{ a.t }}</button>
+        </sc-for>
+      </div>
+    </div>
+          </section>
+        </sc-if>
         <sc-if value="{{ isAway }}">
           <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:24px;text-align:center;border:3px dashed #B9CCF0;border-radius:26px">
             <span style="font-size:56px">{{ awayEmo }}</span>
@@ -380,11 +406,9 @@ html{-webkit-text-size-adjust:100%}
           </section>
         </sc-if>
         <sc-if value="{{ isBoss }}">
-          <section style="border:3px solid #B9CCF0;border-radius:26px;padding:14px 12px 16px;display:grid;gap:14px;background:#FBFCFF;box-shadow:0 5px 0 #DCE6FF">
-              <div style="display:flex;align-items:center;gap:10px">
-                <span style="flex:none;width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#FF8A3D,#E8501E);color:#fff;font-weight:800;font-size:21px;display:grid;place-items:center;box-shadow:0 3px 0 #B53A10">2</span>
-                <div style="min-width:0"><h3 style="margin:0;font-size:23px;font-weight:800;color:#1B2B5A;line-height:1.15">เลือกอาหาร</h3><div style="font-size:14px;color:#4D5F8A">เลือกได้หลายอย่าง · สุ่ม · เมนูแนะนำ · ที่แม่ครัวเสนอ</div></div>
-              </div>
+          <section style="position:relative;overflow:hidden;border-radius:28px;padding:16px 12px 18px;display:grid;grid-template-columns:minmax(0,1fr);gap:14px;background:#FFD9BF;box-shadow:0 6px 0 #E8501E40">
+              <span aria-hidden="true" style="position:absolute;top:-14px;right:10px;font-size:104px;font-weight:900;font-style:italic;line-height:1;color:#E8501E;opacity:.3;pointer-events:none">2</span>
+              <div style="position:relative;padding-right:56px"><h3 style="margin:0;font-size:26px;font-weight:800;color:#1B2B5A;line-height:1.15">เลือกอาหาร</h3><div style="font-size:14px;color:#3D4A6B;font-weight:600">เลือกได้หลายอย่าง · สุ่ม · เมนูแนะนำ · ที่แม่ครัวเสนอ</div></div>
             <div>
             <sc-if value="{{ isBoss }}">
               <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:0">
@@ -507,22 +531,18 @@ html{-webkit-text-size-adjust:100%}
               </div>
             </div>
           </section>
-          <section style="border:3px solid #B9CCF0;border-radius:26px;padding:14px 12px 16px;display:grid;gap:14px;background:#FBFCFF;box-shadow:0 5px 0 #DCE6FF">
-              <div style="display:flex;align-items:center;gap:10px">
-                <span style="flex:none;width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#FF8A3D,#E8501E);color:#fff;font-weight:800;font-size:21px;display:grid;place-items:center;box-shadow:0 3px 0 #B53A10">3</span>
-                <div style="min-width:0"><h3 style="margin:0;font-size:23px;font-weight:800;color:#1B2B5A;line-height:1.15">ข้อความถึงแม่ครัว</h3><div style="font-size:14px;color:#4D5F8A">ส่งไปพร้อมรายการอาหาร</div></div>
-              </div>
+          <section style="position:relative;overflow:hidden;border-radius:28px;padding:16px 12px 18px;display:grid;grid-template-columns:minmax(0,1fr);gap:14px;background:#E3E1FF;box-shadow:0 6px 0 #6C63D940">
+              <span aria-hidden="true" style="position:absolute;top:-14px;right:10px;font-size:104px;font-weight:900;font-style:italic;line-height:1;color:#6C63D9;opacity:.3;pointer-events:none">3</span>
+              <div style="position:relative;padding-right:56px"><h3 style="margin:0;font-size:26px;font-weight:800;color:#1B2B5A;line-height:1.15">ข้อความถึงแม่ครัว</h3><div style="font-size:14px;color:#3D4A6B;font-weight:600">ส่งไปพร้อมรายการอาหาร</div></div>
             <sc-if value="{{ hasOtherNote }}">
               <div style="padding:10px 14px;border-radius:18px;background:#E6E7FF;border:2px solid #C9CBFF"><div style="font-size:15px;font-weight:700;color:#4B4FC9">{{ otherNoteTitle }}</div><div style="font-size:18px">{{ otherNote }}</div></div>
             </sc-if>
             <textarea value="{{ noteDraft }}" onChange="{{ onNote }}" placeholder="{{ notePlaceholder }}" style="width:100%;box-sizing:border-box;min-height:84px;resize:vertical;background:#F5F8FF;border:2px solid #B9CCF0;border-radius:18px;padding:10px 12px;font:inherit;font-size:18px;color:#1B2B5A"></textarea>
             <button onClick="{{ changeReq }}" style="justify-self:start;border:2px solid #FFB8C8;background:#FFE1E8;color:#B4284F;border-radius:999px;padding:6px 14px;font-weight:700;font-size:15px">🔄 ขอให้แม่ครัวเสนอตัวเลือกใหม่</button>
           </section>
-          <section style="border:3px solid #B9CCF0;border-radius:26px;padding:14px 12px 16px;display:grid;gap:14px;background:#FBFCFF;box-shadow:0 5px 0 #DCE6FF">
-              <div style="display:flex;align-items:center;gap:10px">
-                <span style="flex:none;width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#FF8A3D,#E8501E);color:#fff;font-weight:800;font-size:21px;display:grid;place-items:center;box-shadow:0 3px 0 #B53A10">4</span>
-                <div style="min-width:0"><h3 style="margin:0;font-size:23px;font-weight:800;color:#1B2B5A;line-height:1.15">สรุปรายการ & ส่ง</h3><div style="font-size:14px;color:#4D5F8A">{{ sumMeta }}</div></div>
-              </div>
+          <section style="position:relative;overflow:hidden;border-radius:28px;padding:16px 12px 18px;display:grid;grid-template-columns:minmax(0,1fr);gap:14px;background:#CFF5DD;box-shadow:0 6px 0 #15803D40">
+              <span aria-hidden="true" style="position:absolute;top:-14px;right:10px;font-size:104px;font-weight:900;font-style:italic;line-height:1;color:#15803D;opacity:.3;pointer-events:none">4</span>
+              <div style="position:relative;padding-right:56px"><h3 style="margin:0;font-size:26px;font-weight:800;color:#1B2B5A;line-height:1.15">สรุปรายการ & ส่ง</h3><div style="font-size:14px;color:#3D4A6B;font-weight:600">{{ sumMeta }}</div></div>
             <div>
             <sc-if value="{{ hasPicks }}">
               <div style="padding:8px;border-radius:24px;background:#FFF6D6;border:3px solid #FFD966;display:grid;gap:8px">
