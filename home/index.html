@@ -1208,6 +1208,8 @@ const mondayOf = s => { const d = parse(s); d.setDate(d.getDate()-((d.getDay()+6
 const weekOf = s => { const m = mondayOf(s); return [0,1,2,3,4,5,6].map(i => addDays(m,i)); };
 const todayStr = () => ymd(new Date());
 const fmtDate = s => { const d = parse(s); return d.getDate()+" "+MON[d.getMonth()]; };
+const NOT_MEAL_CATS = ["thaisweet","bakery","icecream","fruit","thaisnack","royalsnack","royalsweet","hsnack","chsnack","wsides","sweet","snack"];
+const NOT_MEAL_RE = /เต้าฮวย|โยเกิร์ต|แพนเค้ก|วาฟเฟิล|^ข้าวโอ๊ต$|โอเวอร์ไนท์|ปาท่องโก๋|ขนมปังปิ้ง|ขนม(?!จีน|ปังโฮลวีต|ปังชุบไข่)|เค้ก|ไอศกรีม|ผลไม้|บัวลอย|น้ำเต้าหู้|สมูทตี้|ถั่วอบ|เมี่ยงคำ/;
 const DRAFT_KEYS = ["picks","drink","x","serve","people","bossNote"];
 const blankMeal = () => ({options:[], picks:[], drink:null, x:[], bossNote:"", cookNote:"", changeReq:false, status:"plan", away:"", people:0, serve:""});
 const defCfg = () => ({cut:{b:MEALS.b.cut, l:MEALS.l.cut, s:MEALS.s.cut, d:MEALS.d.cut}, serve:{b:MEALS.b.serve, l:MEALS.l.serve, s:MEALS.s.serve, d:MEALS.d.serve}, people:2});
@@ -1399,7 +1401,13 @@ class Component extends DCLogic {
   saveMenu(id, patch){ const cur = this.menu(id); if (!cur) return; const m = {...cur, ...patch}; this.persist({menus: this.state.menus.map(x => x.id===id ? m : x)}); this.cloudSet("menus/"+id, m); }
   saveShop(items){ this.persist({shop: items}); this.cloudSet("settings/shop", {items}); }
   recent(date, mk, n){ const out = new Set(); for (let i=1;i<=n;i++) for (const s of [addDays(date,-i), addDays(date,i)]) this.meal(s, mk).picks.forEach(p => out.add(p.m)); return out; }
-  pool(mk){ return this.state.menus.filter(m => m.kind==="food" && !m.hidden && (m.meals||"ld").includes(mk)); }
+  // สุ่ม / เติมอัตโนมัติ: เฉพาะอาหารจริง ไม่เอาขนม ของหวาน ผลไม้ เครื่องดื่ม ของทานเล่น
+  isMealFood(m){ return m.kind==="food" && !NOT_MEAL_CATS.includes(m.cat) && !NOT_MEAL_RE.test(m.name || ""); }
+  pool(mk){
+    const real = this.state.menus.filter(m => !m.hidden && this.isMealFood(m));
+    const p = real.filter(m => (m.meals||"ld").includes(mk));
+    return p.length ? p : real.filter(m => (m.meals||"ld").includes("l"));
+  }
   randomFood(mk, avoid){
     const pool = this.pool(mk).filter(m => !avoid.has(m.id)); if (!pool.length) return null;
     const w = pool.flatMap(m => m.fav ? [m,m,m] : [m]); const m = w[Math.floor(Math.random()*w.length)];
