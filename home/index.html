@@ -260,6 +260,12 @@ html{-webkit-text-size-adjust:100%}
 
           <section>
             <sc-if value="{{ isBoss }}">
+              <div style="display:flex;align-items:center;gap:8px;margin:0 0 12px;flex-wrap:wrap">
+                <span style="font-size:17px;font-weight:800;color:#1B2B5A">🏠 เสิร์ฟบ้าน</span>
+                <sc-for list="{{ houseBtns }}" as="hb" hint-placeholder-count="2">
+                  <button onClick="{{ hb.onClick }}" style="animation:{{ hb.anim }};flex:1;min-width:0;border:3px solid {{ hb.bd }};background:{{ hb.bg }};color:{{ hb.fg }};border-radius:999px;padding:7px 10px;font-weight:800;font-size:17px;box-shadow:0 3px 0 {{ hb.bd }};white-space:nowrap">{{ hb.t }}</button>
+                </sc-for>
+              </div>
               <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:0">
                 <sc-for list="{{ actBtns }}" as="ab" hint-placeholder-count="4">
                   <button onClick="{{ ab.onClick }}" style="animation:{{ ab.anim }};display:flex;align-items:center;justify-content:center;gap:6px;min-width:0;border:3px solid {{ ab.bd }};background:{{ ab.bg }};color:{{ ab.fg }};border-radius:18px;padding:10px 6px;font-weight:800;font-size:17px;white-space:nowrap;box-shadow:0 4px 0 {{ ab.bd }}"><span style="font-size:20px;line-height:1">{{ ab.icon }}</span>{{ ab.t }}</button>
@@ -1013,7 +1019,7 @@ class Component extends DCLogic {
     if (saved && saved.menus && (saved.seed||1) < dataVer()) menus = mergeSeed(menus, saved.seed||1).list;
     const cfg = Object.assign(defCfg(), (saved && saved.cfg) || {});
     this.setState({ready: !CLOUD || !!saved, syncErr:"", online:false, menus, days:(saved && saved.days) || {}, cfg, cfgDraft:clean(cfg), shop:(saved && saved.shop) || [],
-      role: ui.role==="cook" ? "cook" : "boss", bossId: ui.bossId==="lek" ? "lek" : "ek", landing: true, sound: ui.sound !== false, toasts: [], orderer: ui.orderer || "", view: ["day","week","menu","shop"].includes(ui.view) ? ui.view : "day",
+      role: ui.role==="cook" ? "cook" : "boss", bossId: ui.bossId==="lek" ? "lek" : "ek", serveH: {ek: (ui.serveH||{}).ek==="lek" ? "lek" : "ek", lek: (ui.serveH||{}).lek==="lek" ? "lek" : "ek"}, landing: true, sound: ui.sound !== false, toasts: [], orderer: ui.orderer || "", view: ["day","week","menu","shop"].includes(ui.view) ? ui.view : "day",
       sel: todayStr(), meal: currentMeal(cfg), pick:null, suggest:null, spin:null, drafts:{}, confirmDel:null,
       fName:"", fCat:"kabfry", fOpts:"", fEmo:"", fMeals:"ld", fEdit:null, fErr:"", mq:"", mg:"", shopDraft:""}, () => { if (saved && (saved.seed||1) < dataVer()) this.persist({}); });
     if (CLOUD) this.connect();
@@ -1070,8 +1076,8 @@ class Component extends DCLogic {
         if (c.by==="boss") { const BN = c.bw && BOSSES[c.bw] ? BOSSES[c.bw].n : "BOSS";
           const np = added(c.picks, prev.picks);
           const np2 = c.picks.filter(x => !prev.picks.some(y => this.same(x, y) && this.hOf(x, c)===this.hOf(y, prev)));
-          if (np2.length) MKH(np2.map(p => this.hOf(p, c))).forEach(h => push(BOSSES[h].n + " สั่ง" + when + " → เสิร์ฟ " + BOSSES[h].house + ": " + np2.filter(p => this.hOf(p, c)===h).map(p => this.pickName(p)).join(", ")));
-          else if (np.length || c.picks.length !== prev.picks.length) push(BN+" แก้ไขเมนู" + when + (BOSSES[c.bw] ? " (" + BOSSES[c.bw].house + ")" : ""));
+          if (np2.length) MKH(np2.map(p => this.hOf(p, c))).forEach(h => push(BN + " สั่ง" + when + " → เสิร์ฟ " + BOSSES[h].house + ": " + np2.filter(p => this.hOf(p, c)===h).map(p => this.pickName(p)).join(", ")));
+          else if (np.length || c.picks.length !== prev.picks.length) push(BN+" แก้ไขเมนู" + when);
           else if (c.picks.some(x => { const o = prev.picks.find(y => this.same(x, y)); return o && (o.who||[]).join() !== (x.who||[]).join(); })) push(BN+" ระบุชื่อคนทาน" + when + ": " + c.picks.filter(x => (x.who||[]).length).map(p => this.pickName(p)).join(", "));
           const gone = added(prev.options, c.options); if (gone.length) push(BN+" ไม่เอา" + when + ": " + gone.map(p => this.label(p)).join(", "));
           if (c.drink && (!prev.drink || !this.same(c.drink, prev.drink))) push(BN+" ขอเครื่องดื่ม" + when + ": " + this.label(c.drink));
@@ -1110,7 +1116,7 @@ class Component extends DCLogic {
     } catch(e) {}
   }
   clearToasts(){ this.setState({toasts: []}); document.title = "วันนี้กินอะไรดี"; try { navigator.clearAppBadge && navigator.clearAppBadge(); } catch(e) {} }
-  setUi(patch){ this.setState(patch, () => { try { localStorage.setItem(KEY+"-ui", JSON.stringify({role:this.state.role, bossId:this.state.bossId, view:this.state.view, sound:this.state.sound, orderer:this.state.orderer||""})); } catch(e) {} }); }
+  setUi(patch){ this.setState(patch, () => { try { localStorage.setItem(KEY+"-ui", JSON.stringify({role:this.state.role, bossId:this.state.bossId, serveH:this.state.serveH, view:this.state.view, sound:this.state.sound, orderer:this.state.orderer||""})); } catch(e) {} }); }
 
   menu(id){ return this.state.menus.find(m => m.id===id); }
   meal(date, mk, days){ const d = (days || this.state.days)[date]; return Object.assign(blankMeal(), (d && d.meals && d.meals[mk]) || {}); }
@@ -1247,8 +1253,8 @@ class Component extends DCLogic {
   openPick(mode){ this.setState({pick:{mode, kind: mode==="drink" ? "drink" : "food", q:"", cat: mode==="drink" ? "" : "meal", open:null}}); }
   same(a, b){ return a.m===b.m && (a.o||"")===(b.o||""); }
   // บ้านที่ต้องเสิร์ฟของจานนี้ (ek = แสนศุข, lek = แสนรักษ์) — จานเก่าที่ยังไม่มีป้าย ใช้คนสั่งล่าสุดของมื้อ
-  hOf(p, m){ return p.h && BOSSES[p.h] ? p.h : (m && m.bw && BOSSES[m.bw] ? m.bw : "ek"); }
-  myH(){ return this.state.role==="boss" ? this.state.bossId : ""; }
+  hOf(p, m){ return p.h && BOSSES[p.h] ? p.h : "ek"; }
+  myH(){ return this.state.role==="boss" ? ((this.state.serveH||{})[this.state.bossId] || "ek") : ""; }
   mine(p, sel, m, h){ return this.same(p, sel) && (!h || this.hOf(p, m)===h); }
   orderer(){ const o = this.state.orderer; return o && (this.state.cfg.names || []).includes(o) ? o : ""; }
   // เพิ่มจานให้ "คนที่กำลังสั่ง" (แถบ 👤 ใครสั่ง ด้านบน) ถ้าจานนี้มีอยู่แล้ว จะเติมชื่อคนสั่งเข้าไป
@@ -1494,7 +1500,7 @@ class Component extends DCLogic {
           ntRows: [row("cook", "👩‍🍳 แม่ครัว", "รับเตือนเมื่อ BOSS สั่ง / แก้ / ไม่เอาเมนู", "#FFF1E4"), row("boss", "😎 BOSS เอก & BOSS เล็ก", "รับเตือนเมื่อแม่ครัวเสนอเมนู / อาหารพร้อม", "#EAF1FF")]}; })(),
       hasUndo: !!s.undo, undoText: s.undo ? s.undo.text : "",
       undoDo: () => { const u = s.undo; if (!u) return; clearTimeout(this._undoT); this.setState({undo: null}); this.saveMeal(u.date, u.mk, u.keep); },
-      pickedTitle: pickHouses.length > 1 ? "เมนูที่สั่ง · เสิร์ฟ 2 บ้าน" : pickHouses.length ? BOSSES[pickHouses[0]].n + " สั่ง · เสิร์ฟ " + BOSSES[pickHouses[0]].house : "เมนูที่ BOSS เลือก",
+      pickedTitle: pickHouses.length > 1 ? "เมนูที่สั่ง · เสิร์ฟ 2 บ้าน" : pickHouses.length ? (m.bw && BOSSES[m.bw] ? BOSSES[m.bw].n : "BOSS") + " สั่ง · เสิร์ฟ " + BOSSES[pickHouses[0]].house : "เมนูที่ BOSS เลือก",
       houseRows, hasHouseRows: pickHouses.length > 1,
       ...(() => { const T = !boss ? {hdr:"linear-gradient(180deg,#F47B20,#FF9F43)", line:"#C2560A", title:"#fff", shadow:"#9A3F00", sub:"#FFF1D6", page:"#FFF3E6", dot:"#FFD9B3"}
           : s.bossId==="lek" ? {hdr:"linear-gradient(180deg,#FFC72C,#FFDA5C)", line:"#C98F00", title:"#fff", shadow:"#8A6200", sub:"#5A4300", page:"#FFF9E0", dot:"#FBE7A1"}
@@ -1503,10 +1509,12 @@ class Component extends DCLogic {
       showLanding: !!s.landing, inApp: !s.landing, goHome: () => this.setState({landing:true, pick:null}),
       meName: boss ? BOSSES[s.bossId].n : "แม่ครัว", meImg: boss ? bImg(s.bossId, "wave") : "assets/chibi/chef/soup-pot.png",
       landCards: [
-        {name:"BOSS เอก", house:"บ้านแสนศุข", badge:"😎 สั่งอาหาร", img: bImg("ek","wave"), bg:"linear-gradient(135deg,#2C4FA8,#4A74DA)", bd:"#1B2B5A", ring:"#DCE6FF", fg:"#fff", tag:"#2456D6", onClick: () => this.setUi({role:"boss", bossId:"ek", landing:false, suggest:null})},
-        {name:"BOSS เล็ก", house:"บ้านแสนรักษ์", badge:"🙏 สั่งอาหาร", img: bImg("lek","wave"), bg:"linear-gradient(135deg,#FFC72C,#FFE38A)", bd:"#C98F00", ring:"#FFF1C2", fg:"#1B2B5A", tag:"#8A6200", onClick: () => this.setUi({role:"boss", bossId:"lek", landing:false, suggest:null})},
+        {name:"BOSS เอก", house:"เสิร์ฟ " + BOSSES[(s.serveH||{}).ek||"ek"].house, badge:"😎 สั่งอาหาร", img: bImg("ek","wave"), bg:"linear-gradient(135deg,#2C4FA8,#4A74DA)", bd:"#1B2B5A", ring:"#DCE6FF", fg:"#fff", tag:"#2456D6", onClick: () => this.setUi({role:"boss", bossId:"ek", landing:false, suggest:null})},
+        {name:"BOSS เล็ก", house:"เสิร์ฟ " + BOSSES[(s.serveH||{}).lek||"ek"].house, badge:"🙏 สั่งอาหาร", img: bImg("lek","wave"), bg:"linear-gradient(135deg,#FFC72C,#FFE38A)", bd:"#C98F00", ring:"#FFF1C2", fg:"#1B2B5A", tag:"#8A6200", onClick: () => this.setUi({role:"boss", bossId:"lek", landing:false, suggest:null})},
         {name:"แม่ครัว", house:"ดูแล 2 บ้าน", badge:"🍳 ทำอาหาร", img:"assets/chibi/chef/soup-pot.png", bg:"linear-gradient(135deg,#F47B20,#FFA95E)", bd:"#C2560A", ring:"#FFE2C8", fg:"#fff", tag:"#C2560A", onClick: () => this.setUi({role:"cook", landing:false, suggest:null})}],
-      houseText: boss ? "เสิร์ฟ " + BX.house : "แสนศุข · แสนรักษ์",
+      houseBtns: ["ek","lek"].map(h => { const on = this.myH()===h; return {t: (on ? "✓ " : "") + BOSSES[h].house.replace("บ้าน",""), onClick: () => this.setUi({serveH: {...(s.serveH||{}), [s.bossId]: h}}),
+        bg: on ? (h==="lek" ? "#FFE1EC" : "#DCE6FF") : "#fff", fg: h==="lek" ? "#B0185A" : "#2456D6", bd: on ? (h==="lek" ? "#B0185A" : "#2456D6") : "#B9CCF0", anim: on ? POP : "none"}; }),
+      houseText: boss ? "เสิร์ฟ " + BOSSES[this.myH()].house : "แสนศุข · แสนรักษ์",
       roleBtns: [roleBtn(boss && s.bossId==="ek", bImg("ek","wave"), "50% 0/150% auto", "BOSS", "เอก", () => this.setUi({role:"boss", bossId:"ek", suggest:null})),
         roleBtn(boss && s.bossId==="lek", bImg("lek","wave"), "50% 0/150% auto", "BOSS", "เล็ก", () => this.setUi({role:"boss", bossId:"lek", suggest:null})),
         roleBtn(!boss, "assets/chibi/chef/soup-pot.png", "50% 34%/210% auto", "2 บ้าน", "แม่ครัว", () => this.setUi({role:"cook", suggest:null}))],
