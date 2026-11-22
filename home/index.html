@@ -266,9 +266,9 @@ html{-webkit-text-size-adjust:100%}
                   <button onClick="{{ hb.onClick }}" style="animation:{{ hb.anim }};flex:1;min-width:0;border:3px solid {{ hb.bd }};background:{{ hb.bg }};color:{{ hb.fg }};border-radius:999px;padding:7px 10px;font-weight:800;font-size:17px;box-shadow:0 3px 0 {{ hb.bd }};white-space:nowrap">{{ hb.t }}</button>
                 </sc-for>
               </div>
-              <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:0">
+              <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:0">
                 <sc-for list="{{ actBtns }}" as="ab" hint-placeholder-count="4">
-                  <button onClick="{{ ab.onClick }}" style="animation:{{ ab.anim }};display:flex;align-items:center;justify-content:center;gap:6px;min-width:0;border:3px solid {{ ab.bd }};background:{{ ab.bg }};color:{{ ab.fg }};border-radius:18px;padding:10px 6px;font-weight:800;font-size:17px;white-space:nowrap;box-shadow:0 4px 0 {{ ab.bd }}"><span style="font-size:20px;line-height:1">{{ ab.icon }}</span>{{ ab.t }}</button>
+                  <button onClick="{{ ab.onClick }}" style="grid-column:{{ ab.col }};animation:{{ ab.anim }};display:flex;flex-direction:{{ ab.dir }};align-items:center;justify-content:center;gap:{{ ab.gap }};min-width:0;border:3px solid {{ ab.bd }};background:{{ ab.bg }};color:{{ ab.fg }};border-radius:{{ ab.rad }};padding:{{ ab.pad }};font-weight:800;font-size:{{ ab.fs }};line-height:1.15;text-align:center;box-shadow:0 5px 0 {{ ab.bd }}{{ ab.glow }}"><span style="font-size:{{ ab.ifs }};line-height:1">{{ ab.icon }}</span>{{ ab.t }}</button>
                 </sc-for>
               </div>
             </sc-if>
@@ -1582,11 +1582,14 @@ class Component extends DCLogic {
       actBtns: (() => { const Pk = s.pick, open = (mode, fav) => !!Pk && Pk.mode===mode && ((Pk.cat==="fav") === fav) && !Pk.edit;
         const sty = (row, on) => on ? {bg:"#FFC72C", fg:"#1B2B5A", bd:"#C98F00", anim:POP} : row===1 ? {bg:"#1E3A8A", fg:"#fff", bd:"#0F1A3A", anim:"none"} : {bg:"#CFE6FF", fg:"#1B2B5A", bd:"#6FA8E8", anim:"none"};
         const nFav = s.menus.filter(x => x.fav && !x.hidden && x.kind==="food").length;
+        const small = {col:"auto", dir:"column", gap:"4px", rad:"18px", pad:"9px 4px 8px", fs:"15px", ifs:"22px", glow:""};
+        const mainOn = open("choice", false);
         return [
-          {icon:"📋", t:"เลือกอาหาร", ...sty(1, open("choice", false)), onClick: () => this.openPick("choice")},
-          {icon:"🥤", t: m.drink ? "เครื่องดื่ม ✓" : "เครื่องดื่ม", ...sty(1, open("drink", false) || !!m.drink), onClick: () => this.openPick("drink")},
-          {icon:"🎲", t:"สุ่มเลือกอาหาร", ...sty(2, !!s.spin || (!!s.suggest && s.suggest.date===s.sel && s.suggest.mk===mk)), onClick: () => this.doRandom()},
-          {icon:"♥", t:"เมนูที่ชอบ" + (nFav ? " (" + nFav + ")" : ""), ...sty(2, open("choice", true)), onClick: () => this.setState({pick:{mode:"choice", kind:"food", q:"", cat:"fav", open:null}})}
+          {icon:"🍽️", t:"เลือกอาหาร", col:"1 / -1", dir:"row", gap:"10px", rad:"24px", pad:"16px 12px", fs:"24px", ifs:"30px", glow:",0 12px 22px -8px rgba(232,80,30,.55)",
+            ...(mainOn ? {bg:"#FFC72C", fg:"#1B2B5A", bd:"#C98F00", anim:POP} : {bg:"linear-gradient(135deg,#FF8A3D,#E8501E)", fg:"#fff", bd:"#B53A10", anim:"none"}), onClick: () => this.openPick("choice")},
+          {...small, icon:"🥤", t: m.drink ? "เครื่องดื่ม ✓" : "เครื่องดื่ม", ...sty(1, open("drink", false) || !!m.drink), onClick: () => this.openPick("drink")},
+          {...small, icon:"🎲", t:"สุ่มเลือกอาหาร", ...sty(2, !!s.spin || (!!s.suggest && s.suggest.date===s.sel && s.suggest.mk===mk)), onClick: () => this.doRandom()},
+          {...small, icon:"♥", t:"เมนูที่ชอบ" + (nFav ? " (" + nFav + ")" : ""), ...sty(2, open("choice", true)), onClick: () => this.setState({pick:{mode:"choice", kind:"food", q:"", cat:"fav", open:null}})}
         ]; })(), openFav: () => this.setState({pick:{mode:"choice", kind:"food", q:"", cat:"fav", open:null}}),
       favBtnText: "♥ เมนูที่ชอบ" + ((n => n ? " (" + n + ")" : "")(s.menus.filter(x => x.fav && !x.hidden && x.kind==="food").length)), openDrink: () => this.openPick("drink"), drinkBtnText: m.drink ? "🥤 เปลี่ยน" : "🥤 เครื่องดื่ม",
       doRandom: () => this.doRandom(), openOption: () => !full && this.openPick("option"), optsFull: full, fullOpacity: full ? .45 : 1,
