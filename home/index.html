@@ -734,6 +734,7 @@ html{-webkit-text-size-adjust:100%}
                 <span style="font-size:13px;font-weight:700;color:#2456D6;background:#DCE6FF;border-radius:999px;padding:0 8px">{{ it.count }} ครั้ง</span>
               </div>
               <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:2px">
+                <button onClick="{{ it.onPlan }}" style="border:2px solid #B53A10;background:linear-gradient(135deg,#FF8A3D,#E8501E);color:#fff;border-radius:999px;padding:2px 12px;font-size:14px;font-weight:800">📅 {{ planVerb }}</button>
                 <sc-if value="{{ it.notConfirming }}"><button onClick="{{ it.onEdit }}" style="border:2px solid #FFD966;background:#FFF6D6;color:#7A5600;border-radius:999px;padding:2px 10px;font-size:14px;font-weight:700">✏️ แก้ไข</button></sc-if>
                 <sc-if value="{{ isCook }}">
                   <sc-if value="{{ it.confirming }}">
@@ -908,6 +909,42 @@ html{-webkit-text-size-adjust:100%}
 </main>
 </sc-if>
 
+<!-- ================= PLAN POPUP ================= -->
+<sc-if value="{{ planOpen }}">
+  <div onClick="{{ planClose }}" style="position:absolute;inset:0;z-index:22;background:rgba(27,43,90,.45);display:flex;align-items:flex-end;justify-content:center">
+    <div onClick="{{ stop }}" role="dialog" aria-modal="true" style="width:100%;max-width:620px;max-height:90%;overflow:auto;background:#F5F8FF;border-radius:32px 32px 0 0;box-shadow:0 -10px 40px -10px rgba(27,43,90,.4);padding:16px 16px calc(18px + env(safe-area-inset-bottom,0px));display:grid;gap:14px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="flex:none;width:58px;height:58px;border-radius:50%;background:{{ planBgc }};display:grid;place-items:center;font-size:34px">{{ planEmo }}</span>
+        <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700;color:#4D5F8A">{{ planHint }}</div><div style="font-size:24px;font-weight:800;color:#1B2B5A;line-height:1.2">{{ planName }}</div></div>
+        <button onClick="{{ planClose }}" style="flex:none;border:2px solid #B9CCF0;background:#fff;border-radius:999px;padding:6px 14px;font-weight:700">ปิด</button>
+      </div>
+      <sc-if value="{{ planHasOpts }}">
+        <div style="display:grid;gap:6px"><div style="font-size:17px;font-weight:800">🥩 เลือกแบบ</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ planOpts }}" as="po"><button onClick="{{ po.onClick }}" style="border:2.5px solid {{ po.bd }};background:{{ po.bg }};color:#1B2B5A;border-radius:999px;padding:5px 14px;font-size:16px;font-weight:700">{{ po.t }}</button></sc-for></div>
+        </div>
+      </sc-if>
+      <div style="display:grid;gap:6px">
+        <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:17px;font-weight:800">📅 เลือกวัน (ได้หลายวัน)</span><span style="font-size:15px;font-weight:700;color:#4D5F8A">{{ planWeekText }}</span></div>
+        <div style="display:grid;grid-template-columns:30px repeat(7,minmax(0,1fr)) 30px;gap:4px;align-items:center">
+          <button onClick="{{ planPrev }}" aria-label="สัปดาห์ก่อน" style="border:2px solid #B9CCF0;background:#fff;border-radius:12px;height:52px;padding:0;font-weight:800">‹</button>
+          <sc-for list="{{ planDays }}" as="pd"><button onClick="{{ pd.onClick }}" disabled="{{ pd.past }}" style="border:2.5px solid {{ pd.bd }};background:{{ pd.bg }};color:#1B2B5A;border-radius:14px;height:52px;padding:0;display:grid;place-items:center;line-height:1.05;opacity:{{ pd.op }};min-width:0"><span style="font-size:13px;font-weight:800">{{ pd.dow }}</span><span style="font-size:17px;font-weight:700">{{ pd.d }}</span></button></sc-for>
+          <button onClick="{{ planNext }}" aria-label="สัปดาห์ถัดไป" style="border:2px solid #B9CCF0;background:#fff;border-radius:12px;height:52px;padding:0;font-weight:800">›</button>
+        </div>
+      </div>
+      <div style="font-size:14px;font-weight:700;color:#4D5F8A;margin-top:-8px">วันที่เลือก: {{ planDaysList }}</div>
+      <div style="display:grid;gap:6px"><div style="font-size:17px;font-weight:800">🍽️ เลือกมื้อ (ได้หลายมื้อ)</div>
+        <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px"><sc-for list="{{ planMeals }}" as="pm"><button onClick="{{ pm.onClick }}" style="border:2.5px solid {{ pm.bd }};background:{{ pm.bg }};color:#1B2B5A;border-radius:16px;padding:4px 2px 6px;display:grid;place-items:center;font-weight:800;font-size:15px;min-width:0"><img src="{{ pm.img }}" alt="" style="width:36px;height:36px;object-fit:contain">{{ pm.t }}</button></sc-for></div>
+      </div>
+      <sc-if value="{{ isBoss }}">
+        <div style="display:flex;align-items:center;gap:8px"><span style="font-size:17px;font-weight:800;white-space:nowrap">🏠 บ้าน</span>
+          <sc-for list="{{ planHouses }}" as="ph"><button onClick="{{ ph.onClick }}" style="flex:1;min-width:0;border:2.5px solid {{ ph.bd }};background:{{ ph.bg }};color:{{ ph.fg }};border-radius:999px;padding:6px;font-weight:800;font-size:16px">{{ ph.t }}</button></sc-for>
+        </div>
+      </sc-if>
+      <button onClick="{{ planGo }}" disabled="{{ planDisabled }}" style="border:3px solid {{ planBd }};background:{{ planBg }};color:{{ planFg }};border-radius:22px;padding:13px 10px;font-weight:800;font-size:21px;box-shadow:0 5px 0 {{ planBd }}">{{ planGoText }}</button>
+      <div style="text-align:center;font-size:14px;color:#4D5F8A;margin-top:-6px">{{ planFoot }}</div>
+    </div>
+  </div>
+</sc-if>
 <!-- ================= PICKER ================= -->
 <sc-if value="{{ hasToast }}">
   <div role="status" aria-live="polite" style="position:absolute;left:12px;right:12px;top:calc(env(safe-area-inset-top,0px) + 10px);z-index:40;animation:pop .5s cubic-bezier(.3,1.5,.5,1);background:#FFF6D6;border:3px solid #FFC72C;border-radius:24px;box-shadow:0 10px 30px -8px rgba(15,26,58,.55);padding:12px 14px;display:grid;gap:10px">
@@ -1635,7 +1672,7 @@ class Component extends DCLogic {
           mealTags: m.kind==="drink" ? [] : MK.map(q => { const on = (m.meals||"ld").includes(q); return {t: MEALS[q].tag, bg: on ? "#FFC72C" : "#fff", fg: on ? "#1B2B5A" : "#8E9CC0", bd: on ? "#C98F00" : "#D3DEF4", cursor: boss ? "default" : "pointer",
             onClick: () => { const cur = m.meals||"ld"; const nx = MK.filter(z => z===q ? !on : cur.includes(z)).join(""); this.saveMenu(m.id, {meals: nx || cur}); }}; }),
           count: byMenu.get(m.id)||0, favAnim: m.fav ? POP : "none", favColor: m.fav ? "#E8476B" : "#B9CCF0", opacity: m.hidden ? .5 : 1,
-          onFav: () => this.saveMenu(m.id, {fav: !m.fav}), onEdit: () => this.editMenu(m), onHide: () => this.saveMenu(m.id, {hidden: !m.hidden}), hideText: m.hidden ? "แสดง" : "ซ่อน",
+          onFav: () => this.saveMenu(m.id, {fav: !m.fav}), onEdit: () => this.editMenu(m), onPlan: () => this.setState({plan: {id: m.id, o: "", days: [s.sel], meals: [(m.meals||"ld").includes(s.meal) ? s.meal : ((m.meals||"ld")[0] || "l")], wk: s.sel, h: this.myH() || "ek"}}), onHide: () => this.saveMenu(m.id, {hidden: !m.hidden}), hideText: m.hidden ? "แสดง" : "ซ่อน",
           confirming: s.confirmDel===m.id, notConfirming: s.confirmDel!==m.id, onAskDel: () => this.setState({confirmDel:m.id}),
           onDel: () => { this.persist({confirmDel:null, menus: s.menus.filter(x => x.id!==m.id)}); this.cloudDel("menus/"+m.id); }}))};
     }).filter(Boolean);
@@ -1857,6 +1894,27 @@ class Component extends DCLogic {
               canAck: has && mm.status==="chosen", ack: () => this.saveMeal(s.sel, q, {status: "ack", ackAt: Date.now()}),
               showSteps: has && acked, ackInfo: "✓ รับทราบแล้ว" + (at ? " " + at + " น." : ""),
               steps: [step("cooking","🔥 กำลังทำ"), step("ready","🍽️ พร้อมทาน")]}; })}; })(),
+      ...(() => { const P = s.plan, menu = P && this.menu(P.id); if (!P || !menu) return {planOpen: false, planVerb: boss ? "สั่งลงมื้อ" : "เสนอลงมื้อ"};
+        const set = v => this.setState({plan: {...P, ...v}}), tog = (arr, v) => arr.includes(v) ? arr.filter(x => x!==v) : [...arr, v];
+        const wkd = weekOf(P.wk), td = todayStr(), n = P.days.length * P.meals.length;
+        const go = () => { const sel = {m: menu.id, o: P.o || ""}; let cnt = 0, full = 0;
+          if (boss && P.h !== this.myH()) this.setUi({serveH: {...(s.serveH||{}), [s.bossId]: P.h}});
+          const hh = boss ? P.h : "";
+          for (const d of P.days) for (const q of P.meals) { const mm = this.meal(d, q);
+            if (boss) { const sv = this.myH; this.myH = () => hh; const picks = this.mergePicks(mm.picks, [sel], mm); this.myH = sv;
+              this.saveMeal(d, q, {picks, away: "", status: ["plan","ack"].includes(mm.status) ? "chosen" : mm.status, __send: true}); cnt++; }
+            else { if (mm.options.some(y => this.same(y, sel))) { cnt++; continue; } if (mm.options.length >= MAXO) { full++; continue; } this.saveMeal(d, q, {options: [...mm.options, sel]}); cnt++; } }
+          this.setState({plan: null, toast: null}); this.notify([{date: P.days[0], mk: P.meals[0], text: (boss ? "สั่ง " : "เสนอ ") + this.label(sel) + " ลง " + cnt + " มื้อแล้ว ✓" + (full ? " (" + full + " มื้อตัวเลือกเต็ม)" : "")}]); };
+        return {planOpen: true, planName: menu.name, planEmo: menu.emo || "🍽️", planBgc: "#FFF1E4", planHint: boss ? "สั่งเมนูนี้ลงวันและมื้อที่เลือก" : "เสนอเมนูนี้ให้ BOSS ในวันและมื้อที่เลือก",
+          planHasOpts: !!(menu.opts && menu.opts.length), planOpts: [["", "ไม่ระบุ"], ...(menu.opts||[]).map(o => [o, o])].map(([v, t]) => ({t, onClick: () => set({o: v}), bg: (P.o||"")===v ? "#FFC72C" : "#fff", bd: (P.o||"")===v ? "#C98F00" : "#B9CCF0"})),
+          planWeekText: fmtDate(wkd[0]) + " – " + fmtDate(wkd[6]) + " · เลือก " + P.days.length + " วัน", planDaysList: P.days.map(fmtDate).join(", "), planPrev: () => set({wk: addDays(P.wk, -7)}), planNext: () => set({wk: addDays(P.wk, 7)}),
+          planDays: wkd.map(x => { const on = P.days.includes(x), past = x < td; return {dow: DAYS[parse(x).getDay()], d: parse(x).getDate(), past, op: past ? .4 : 1, bg: on ? "#FFC72C" : x===td ? "#FFF6D6" : "#fff", bd: on ? "#C98F00" : "#B9CCF0", onClick: () => set({days: tog(P.days, x).sort()})}; }),
+          planMeals: MK.map(q => { const on = P.meals.includes(q); return {t: MEALS[q].l, img: MEALS[q].img, bg: on ? "#FFC72C" : "#fff", bd: on ? "#C98F00" : "#B9CCF0", onClick: () => set({meals: MK.filter(x => x===q ? !on : P.meals.includes(x))})}; }),
+          planHouses: ["ek","lek"].map(h => ({t: (P.h===h ? "✓ " : "") + BOSSES[h].house.replace("บ้าน",""), onClick: () => set({h}), bg: P.h===h ? (h==="lek" ? "#FFE1EC" : "#DCE6FF") : "#fff", fg: h==="lek" ? "#B0185A" : "#2456D6", bd: P.h===h ? (h==="lek" ? "#B0185A" : "#2456D6") : "#B9CCF0"})),
+          planGo: n ? go : () => {}, planDisabled: !n, planGoText: n ? (boss ? "📨 สั่งลง " : "+ เสนอลง ") + n + " มื้อ" : "เลือกวันและมื้อก่อน",
+          planBg: n ? "linear-gradient(135deg,#22C55E,#15803D)" : "#EEF2FA", planFg: n ? "#fff" : "#9AA8C7", planBd: n ? "#0F5E2C" : "#C9D6F5",
+          planFoot: boss ? "ส่งถึงแม่ครัวทันที · ขึ้นในหน้ารายวันและสัปดาห์" : "BOSS จะเห็นเป็นตัวเลือกในมื้อนั้น",
+          planClose: () => this.setState({plan: null}), planVerb: boss ? "สั่งลงมื้อ" : "เสนอลงมื้อ"}; })(),
       bossStatusNote: m.away ? AWAY[m.away] : ST[m.status].t + (m.ackAt && m.status!=="chosen" && m.status!=="plan" ? " (รับทราบ " + new Date(m.ackAt).toTimeString().slice(0,5) + " น.)" : ""),
       hasOtherNote: !!otherNote && !(m.changeReq && !boss), hasOtherNoteCook: !boss && !!otherNote && !m.changeReq,
       barPos: boss ? "relative" : "sticky", barMargin: boss ? "0 0 16px" : "-16px -16px 16px", barPad: boss ? "12px 10px 14px" : "10px 16px 10px",
