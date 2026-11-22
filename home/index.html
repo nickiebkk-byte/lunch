@@ -150,6 +150,48 @@ html{-webkit-text-size-adjust:100%}
       </div>
 
       <div style="padding:18px 16px 22px;display:grid;grid-template-columns:minmax(0,1fr);gap:22px">
+        <sc-if value="{{ isCook }}">
+          <section style="position:relative;overflow:hidden;border-radius:28px;padding:16px 14px 18px;display:grid;grid-template-columns:minmax(0,1fr);gap:10px;background:#FFE27A;box-shadow:0 6px 0 #B07D0040">
+            <span aria-hidden="true" style="position:absolute;top:-14px;right:10px;font-size:104px;font-weight:900;font-style:italic;line-height:1;color:#B07D00;opacity:.3;pointer-events:none">1</span>
+            <div style="position:relative;padding-right:56px"><h3 style="margin:0;font-size:24px;font-weight:800;color:#1B2B5A;line-height:1.15">วัน · มื้อ · เวลา · บ้าน</h3><div style="font-size:14px;color:#3D4A6B;font-weight:600">{{ ckWho }}</div></div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              <span style="display:inline-flex;align-items:center;gap:4px;background:#fff;border-radius:999px;padding:4px 12px;font-size:16px;font-weight:700;color:#1B2B5A">📅 {{ ckDay }}</span><span style="display:inline-flex;align-items:center;gap:4px;background:#fff;border-radius:999px;padding:4px 12px;font-size:16px;font-weight:700;color:#1B2B5A">🍽️ {{ mealFull }}</span><span style="display:inline-flex;align-items:center;gap:4px;background:#fff;border-radius:999px;padding:4px 12px;font-size:16px;font-weight:700;color:#1B2B5A">⏰ {{ serveText }} น.</span><span style="display:inline-flex;align-items:center;gap:4px;background:#fff;border-radius:999px;padding:4px 12px;font-size:16px;font-weight:700;color:#1B2B5A">👥 {{ ckPeople }} ที่</span>
+              <sc-for list="{{ ckHouses }}" as="ch"><span style="display:inline-flex;align-items:center;gap:4px;background:#fff;border-radius:999px;padding:4px 12px;font-size:16px;font-weight:700;color:#1B2B5A;color:{{ ch.houseFg }};background:{{ ch.houseBg }}">{{ ch.houseText }}</span></sc-for>
+            </div>
+            <sc-if value="{{ isAway }}"><div style="font-size:18px;font-weight:800;color:#8A4B00">🚪 BOSS แจ้ง: {{ awayText }} · ไม่ต้องทำมื้อนี้</div></sc-if>
+          </section>
+        </sc-if>
+        <sc-if value="{{ isCook }}"><sc-if value="{{ notAway }}">
+          <section style="position:relative;overflow:hidden;border-radius:28px;padding:16px 14px 18px;display:grid;grid-template-columns:minmax(0,1fr);gap:10px;background:#FFD9BF;box-shadow:0 6px 0 #E8501E40">
+            <span aria-hidden="true" style="position:absolute;top:-14px;right:10px;font-size:104px;font-weight:900;font-style:italic;line-height:1;color:#E8501E;opacity:.3;pointer-events:none">2</span>
+            <div style="position:relative;padding-right:56px"><h3 style="margin:0;font-size:24px;font-weight:800;color:#1B2B5A;line-height:1.15">รายการอาหาร</h3><div style="font-size:14px;color:#3D4A6B;font-weight:600">{{ ckFoodSub }}</div></div>
+            <sc-if value="{{ hasPicks }}">
+              <div style="display:grid;gap:6px">
+                <sc-for list="{{ ckFoods }}" as="cf">
+                  <div style="display:flex;align-items:center;gap:10px;background:#fff;border-radius:16px;padding:7px 10px;min-width:0">
+                    <span style="flex:none;width:40px;height:40px;border-radius:50%;background:{{ cf.bgc }};display:grid;place-items:center;font-size:24px">{{ cf.emo }}</span>
+                    <div style="flex:1;min-width:0"><div style="font-size:18px;font-weight:700;line-height:1.25">{{ cf.name }}</div><div style="font-size:13px;color:#4D5F8A">{{ cf.sub }}</div></div>
+                    <span style="flex:none;font-size:13px;font-weight:800;color:{{ cf.houseFg }};background:{{ cf.houseBg }};border-radius:999px;padding:2px 9px">{{ cf.houseText }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ noPicks }}"><div style="font-size:17px;color:#4D5F8A;background:#fff;border-radius:16px;padding:10px 12px">ยังไม่มีรายการจาก BOSS · เสนอเมนูได้ที่ด้านล่าง</div></sc-if>
+            <sc-if value="{{ hasDrink }}"><div style="font-size:17px">🥤 เครื่องดื่ม: <b>{{ drinkLabel }}</b></div></sc-if>
+            <sc-if value="{{ hasPickSub }}"><div style="font-size:17px">🌶️ รสชาติ: <b>{{ pickSub }}</b></div></sc-if>
+          </section>
+          <section style="position:relative;overflow:hidden;border-radius:28px;padding:16px 14px 18px;display:grid;grid-template-columns:minmax(0,1fr);gap:10px;background:#E3E1FF;box-shadow:0 6px 0 #6C63D940">
+            <span aria-hidden="true" style="position:absolute;top:-14px;right:10px;font-size:104px;font-weight:900;font-style:italic;line-height:1;color:#6C63D9;opacity:.3;pointer-events:none">3</span>
+            <div style="position:relative;padding-right:56px"><h3 style="margin:0;font-size:24px;font-weight:800;color:#1B2B5A;line-height:1.15">ข้อความจาก BOSS</h3></div>
+            <div style="font-size:19px;background:#fff;border-radius:16px;padding:10px 12px;color:{{ ckNoteFg }}">{{ ckNote }}</div>
+          </section>
+          <section style="position:relative;overflow:hidden;border-radius:28px;padding:16px 14px 18px;display:grid;grid-template-columns:minmax(0,1fr);gap:10px;background:#CFF5DD;box-shadow:0 6px 0 #15803D40">
+            <span aria-hidden="true" style="position:absolute;top:-14px;right:10px;font-size:104px;font-weight:900;font-style:italic;line-height:1;color:#15803D;opacity:.3;pointer-events:none">4</span>
+            <div style="position:relative;padding-right:56px"><h3 style="margin:0;font-size:24px;font-weight:800;color:#1B2B5A;line-height:1.15">รับทราบ & สถานะ</h3><div style="font-size:14px;color:#3D4A6B;font-weight:600">{{ ckStatusText }}</div></div>
+            <button onClick="{{ ackDo }}" disabled="{{ ackDisabled }}" style="border:3px solid {{ ackBd }};background:{{ ackBg }};color:{{ ackFg }};border-radius:22px;padding:14px 12px;font-weight:800;font-size:22px;box-shadow:0 5px 0 {{ ackBd }}{{ ackGlow }}">{{ ackText }}</button>
+            <div style="text-align:center;font-size:15px;font-weight:700;color:#3D4A6B">{{ ackNote }}</div>
+          </section>
+        </sc-if></sc-if>
         <sc-if value="{{ isBoss }}">
           <section style="position:relative;overflow:hidden;border-radius:28px;padding:16px 12px 18px;display:grid;grid-template-columns:minmax(0,1fr);gap:14px;background:#FFE27A;box-shadow:0 6px 0 #C98F0040">
   <span aria-hidden="true" style="position:absolute;top:-14px;right:10px;font-size:104px;font-weight:900;font-style:italic;line-height:1;color:#B07D00;opacity:.35;pointer-events:none">1</span>
@@ -218,79 +260,6 @@ html{-webkit-text-size-adjust:100%}
 
         <sc-if value="{{ notAway }}" hint-placeholder-val="{{ true }}">
         <sc-if value="{{ isCook }}">
-          <section>
-            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:10px">
-              <div style="font-size:18px;font-weight:800;color:#1B2B5A">{{ pickedTitle }}</div>
-              <div style="font-size:17px;font-weight:700;color:#1D4E89">🍽️ {{ peopleText }}</div>
-            </div>
-            <sc-if value="{{ hasPicks }}">
-              <div style="padding:8px;border-radius:24px;background:#FFF6D6;border:3px solid #FFD966;display:grid;gap:8px">
-                <sc-if value="{{ hasHouseRows }}">
-                  <div style="display:grid;gap:6px">
-                    <sc-for list="{{ houseRows }}" as="hr"><div style="background:{{ hr.houseBg }};color:{{ hr.houseFg }};border-radius:14px;padding:6px 12px;font-size:16px;line-height:1.35"><b>{{ hr.houseText }}</b> <span style="color:#1B2B5A">· {{ hr.list }}</span></div></sc-for>
-                  </div>
-                </sc-if>
-                <div class="rs" style="display:grid;grid-template-columns:minmax(0,1fr);gap:8px">
-                  <sc-for list="{{ picks }}" as="pk">
-                    <div style="display:flex;align-items:center;gap:8px;padding:7px 7px 7px 7px;background:#fff;border-radius:18px;min-width:0">
-                      <span style="flex:none;width:44px;height:44px;border-radius:50%;background:{{ pk.bgc }};display:grid;place-items:center;font-size:26px">{{ pk.emo }}</span>
-                      <div style="flex:1;min-width:0;display:grid;gap:3px">
-                        <div style="font-size:18px;font-weight:700;line-height:1.25">{{ pk.label }}</div>
-                        <div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center">
-                          <span style="font-size:13px;font-weight:800;color:{{ pk.houseFg }};background:{{ pk.houseBg }};border-radius:999px;padding:1px 9px">{{ pk.houseText }}</span>
-                          <sc-if value="{{ pk.hasWho }}"><span style="font-size:13px;font-weight:800;color:#2456D6;background:#DCE6FF;border-radius:999px;padding:1px 9px">👤 {{ pk.whoText }}</span></sc-if>
-                        </div>
-                        <sc-if value="{{ pk.showWhoChips }}">
-                          <div style="display:flex;flex-wrap:wrap;gap:4px">
-                            <sc-for list="{{ pk.whoChips }}" as="wc"><button onClick="{{ wc.onClick }}" style="border:2px solid {{ wc.bd }};background:{{ wc.bg }};color:{{ wc.fg }};border-radius:999px;padding:1px 9px;font-size:14px;font-weight:700">{{ wc.t }}</button></sc-for>
-                          </div>
-                        </sc-if>
-                      </div>
-                      <sc-if value="{{ isBoss }}">
-                        <div style="flex:none;display:flex;gap:5px">
-                          <button onClick="{{ pk.edit }}" aria-label="เปลี่ยน / เพิ่ม" title="เปลี่ยน / เพิ่ม" style="width:36px;height:36px;border-radius:50%;border:2.5px solid #FFD966;background:#FFF6D6;font-size:17px;padding:0">🥩</button>
-                          <button onClick="{{ pk.remove }}" aria-label="ไม่เอาแล้ว" title="ไม่เอาแล้ว" style="width:36px;height:36px;border-radius:50%;border:2.5px solid #FFB8C8;background:#FFE1E8;color:#B4284F;font-size:17px;font-weight:800;padding:0">✕</button>
-                        </div>
-                      </sc-if>
-                    </div>
-                  </sc-for>
-                </div>
-                <sc-if value="{{ isBoss }}"><div style="font-size:14px;color:#4D5F8A;text-align:right;margin-top:-2px">🥩 เปลี่ยน / เพิ่ม · ✕ ไม่เอาแล้ว</div></sc-if>
-                <sc-if value="{{ hasPickSub }}"><div style="font-size:17px;color:#4D5F8A;text-align:center">{{ pickSub }}</div></sc-if>
-                <sc-if value="{{ hasDrink }}">
-                  <div style="display:flex;align-items:center;gap:8px;justify-self:center;background:#fff;border-radius:999px;padding:4px 14px 4px 4px;max-width:100%">
-                    <span style="width:34px;height:34px;border-radius:50%;background:#DDF0FF;display:grid;place-items:center;font-size:24px">{{ drinkEmo }}</span><span style="font-size:18px">เครื่องดื่ม <b>{{ drinkLabel }}</b></span>
-                  </div>
-                </sc-if>
-              </div>
-            </sc-if>
-            <sc-if value="{{ noPicks }}" hint-placeholder-val="{{ true }}">
-              <div style="display:flex;align-items:center;gap:12px;padding:16px 18px;border:3px dashed #B9CCF0;border-radius:24px;color:#4D5F8A;font-size:18px">
-                <img src="{{ thinkImg }}" alt="" style="width:76px;height:76px;flex:none;object-fit:contain">{{ emptyChoiceText }}
-              </div>
-              <sc-if value="{{ hasDrink }}"><div style="margin-top:8px;font-size:18px;color:#4D5F8A">เครื่องดื่ม: <b style="color:#1B2B5A">{{ drinkLabel }}</b></div></sc-if>
-            </sc-if>
-            <sc-if value="{{ isBoss }}">
-              <div data-row="extras" style="display:flex;flex-wrap:nowrap;justify-content:space-between;gap:2px;margin-top:12px;overflow-x:auto;padding-bottom:2px">
-                <sc-for list="{{ extras }}" as="x" hint-placeholder-count="6">
-                  <button onClick="{{ x.onClick }}" style="animation:{{ x.anim }};flex:none;white-space:nowrap;border:2px solid {{ x.bd }};background:{{ x.bg }};color:{{ x.fg }};border-radius:999px;padding:3px 4px;font-size:12.5px;font-weight:700;letter-spacing:-.3px">{{ x.t }}</button>
-                </sc-for>
-              </div>
-              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;flex-wrap:nowrap">
-                <div style="display:flex;align-items:center;gap:6px;flex:none">
-                  <span style="font-size:16px;font-weight:700;white-space:nowrap">👥 ที่</span>
-                  <button onClick="{{ peopleDown }}" aria-label="ลด" style="width:32px;height:32px;border-radius:50%;border:2px solid #B9CCF0;background:#fff;font-size:20px;font-weight:700;padding:0">−</button>
-                  <b style="font-size:21px;min-width:20px;text-align:center">{{ people }}</b>
-                  <button onClick="{{ peopleUp }}" aria-label="เพิ่ม" style="width:32px;height:32px;border-radius:50%;border:2px solid #B9CCF0;background:#fff;font-size:20px;font-weight:700;padding:0">+</button>
-                </div>
-                <div style="display:flex;align-items:center;gap:6px;min-width:0">
-                  <span style="font-size:16px;font-weight:700;white-space:nowrap">⏰ เสิร์ฟ</span>
-                  <input type="time" value="{{ serveText }}" onChange="{{ onServe }}" aria-label="เวลาเสิร์ฟ" style="width:112px;min-width:0;background:#FFF6D6;border:2.5px solid #FFC72C;border-radius:12px;padding:4px 6px;font-size:17px;font-weight:700;color:#1B2B5A">
-                </div>
-              </div>
-              <sc-if value="{{ serveCustom }}"><div style="text-align:right;margin-top:4px"><button onClick="{{ serveReset }}" style="border:0;background:none;padding:0;font-size:14px;font-weight:700;color:#2456D6;text-decoration:underline">กลับไปใช้เวลาปกติ ({{ serveDefault }})</button></div></sc-if>
-            </sc-if>
-          </section>
           <section>
             <div style="padding:14px 14px 16px;border-radius:26px;background:linear-gradient(160deg,#EAF1FF,#DCE6FF);border:3px solid #9DB6EC;display:grid;gap:12px">
               <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px">
@@ -601,9 +570,9 @@ html{-webkit-text-size-adjust:100%}
         </sc-if>
           <section>
             <h3 style="margin:0 0 12px;font-size:26px;font-weight:800">สถานะในครัว</h3>
-            <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px">
-              <sc-for list="{{ steps }}" as="s" hint-placeholder-count="4">
-                <button onClick="{{ s.onClick }}" disabled="{{ isBoss }}" style="animation:{{ s.anim }};border:3px solid {{ s.bd }};background:{{ s.bg }};color:{{ s.fg }};border-radius:16px;padding:9px 2px;font-weight:800;font-size:15px;white-space:nowrap;min-width:0;cursor:{{ stepCursor }}">{{ s.t }}</button>
+            <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px">
+              <sc-for list="{{ steps }}" as="s" hint-placeholder-count="5">
+                <button onClick="{{ s.onClick }}" disabled="{{ isBoss }}" style="animation:{{ s.anim }};border:3px solid {{ s.bd }};background:{{ s.bg }};color:{{ s.fg }};border-radius:16px;padding:9px 2px;font-weight:800;font-size:15px;white-space:nowrap;min-width:0;font-size:13.5px;cursor:{{ stepCursor }}">{{ s.t }}</button>
               </sc-for>
             </div>
             <sc-if value="{{ isBoss }}"><p style="margin:8px 0 0;font-size:16px;color:#4D5F8A">แม่ครัวเป็นคนอัปเดตสถานะ</p></sc-if>
@@ -1173,6 +1142,7 @@ const CATS = {
 const ST = {
   plan:{t:"รอ BOSS เลือก",fg:"#B4284F",bg:"#FFE1E8",dot:"#FF7A93"},
   chosen:{t:"เลือกแล้ว รอทำ",fg:"#1D4E89",bg:"#DDF0FF",dot:"#3A9BE0"},
+  ack:{t:"รับทราบ พร้อมดำเนินการ",fg:"#4B4FC9",bg:"#E3E1FF",dot:"#6C63D9"},
   cooking:{t:"กำลังทำ",fg:"#8A4B00",bg:"#FFEFD2",dot:"#F2A23C"},
   ready:{t:"พร้อมทาน",fg:"#136B43",bg:"#D9F5E6",dot:"#2FB67C"},
   away:{fg:"#6E5E54",bg:"#EFE6DD",dot:"#BFAFA3"}
@@ -1181,7 +1151,7 @@ const AWAY = {skip:"ไม่ทานมื้อนี้", out:"ทานข�
 const AWAY_E = {skip:"🙅", out:"🚗", order:"🛵"};
 const EXTRAS = ["ไม่เผ็ด","เผ็ดน้อย","หวานน้อย","มันน้อย","ข้าวกล้อง","ทำเผื่อมื้อถัดไป"];
 const EXTRA_SHORT = {"เผ็ดน้อย":"เผ็ดนิด","หวานน้อย":"หวานนิด","มันน้อย":"มันนิด","ทำเผื่อมื้อถัดไป":"ทำเผื่อ"};
-const STEP_SHORT = {plan:"รอเลือก", chosen:"รอทำ", cooking:"กำลังทำ", ready:"พร้อมทาน"};
+const STEP_SHORT = {plan:"รอเลือก", chosen:"รอทำ", ack:"รับทราบ", cooking:"กำลังทำ", ready:"พร้อมทาน"};
 const AWAY_SHORT = {skip:"ไม่ทาน", out:"นอกบ้าน", order:"สั่งมา"};
 const EMOJIS = ["🍛","🍲","🍜","🍝","🍚","🍳","🥚","🍗","🍖","🥩","🥓","🐟","🦐","🦀","🦑","🦪","🥗","🥬","🥦","🌶️","🧄","🍄","🌽","🥔","🍞","🥪","🍔","🍕","🍣","🍱","🍤","🥟","🍢","🍰","🍮","🍧","🍨","🍩","🍉","🍌","🥭","🧋","☕","🍵","🥛","🥤","🍹","🍽️"];
 const QUICK = ["ไข่ไก่","ข้าวสาร","หมูสับ","อกไก่","กุ้ง","ผักบุ้ง","คะน้า","มะนาว","พริก","กระเทียม","น้ำปลา","น้ำมันพืช","นมสด","ผลไม้"];
@@ -1260,7 +1230,7 @@ class Component extends DCLogic {
     if (saved && saved.menus && (saved.seed||1) < dataVer()) menus = mergeSeed(menus, saved.seed||1).list;
     const cfg = Object.assign(defCfg(), (saved && saved.cfg) || {});
     this.setState({ready: !CLOUD || !!saved, syncErr:"", online:false, menus, days:(saved && saved.days) || {}, cfg, cfgDraft:clean(cfg), shop:(saved && saved.shop) || [],
-      role: ui.role==="cook" ? "cook" : "boss", bossId: ui.bossId==="lek" ? "lek" : "ek", serveH: {ek: (ui.serveH||{}).ek==="lek" ? "lek" : "ek", lek: (ui.serveH||{}).lek==="lek" ? "lek" : "ek"}, landing: true, sound: ui.sound !== false, toasts: [], orderer: ui.orderer || "", view: ["day","week","menu","shop"].includes(ui.view) ? ui.view : "day",
+      role: ui.role==="cook" ? "cook" : "boss", bossId: ui.bossId==="lek" ? "lek" : "ek", serveH: {ek: (ui.serveH||{}).ek==="lek" ? "lek" : "ek", lek: (ui.serveH||{}).lek==="lek" ? "lek" : "ek"}, landing: true, sound: ui.sound !== false, toasts: [], orderer: ui.orderer || "", view: "day",
       sel: todayStr(), meal: currentMeal(cfg), pick:null, suggest:null, spin:null, drafts:{}, confirmDel:null,
       fName:"", fCat:"kabfry", fOpts:"", fEmo:"", fMeals:"ld", fEdit:null, fErr:"", mq:"", mg:"", shopDraft:""}, () => { if (saved && (saved.seed||1) < dataVer()) this.persist({}); });
     if (CLOUD) this.connect();
@@ -1331,6 +1301,7 @@ class Component extends DCLogic {
         } else {
           const no = added(c.options, prev.options);
           if (no.length) push("แม่ครัวเสนอ" + when + ": " + no.map(p => this.label(p)).join(", "));
+          if (c.status !== prev.status && c.status==="ack") push("แม่ครัวรับทราบ" + when + " · พร้อมดำเนินการ ✅");
           if (c.status !== prev.status && c.status==="cooking") push("แม่ครัวกำลังทำ" + when);
           if (c.status !== prev.status && c.status==="ready") push(when + " พร้อมทานแล้ว! 🍽️");
           if (c.cookNote && c.cookNote !== prev.cookNote) push("แม่ครัวฝากบอก (" + MEALS[mk].full + "): " + c.cookNote);
@@ -1854,7 +1825,21 @@ class Component extends DCLogic {
       showCutoffHint: boss && !m.picks.length && m.options.length>0 && !this.pastCutoff(s.sel, mk),
       showLateMsg: !boss && !m.picks.length && m.options.length>0 && this.pastCutoff(s.sel, mk), useFirst: () => this.addPick(m.options[0]),
       stepCursor: boss ? "default" : "pointer",
-      steps: ["plan","chosen","cooking","ready"].map(v => ({t:STEP_SHORT[v], bg: m.status===v ? "#FFC72C" : "#fff", fg: m.status===v ? "#1B2B5A" : ST[v].fg, bd: m.status===v ? "#C98F00" : "#B9CCF0", anim: m.status===v ? POP : "none", onClick: () => !boss && this.saveMeal(s.sel, mk, {status:v})})),
+      steps: ["plan","chosen","ack","cooking","ready"].map(v => ({t:STEP_SHORT[v], bg: m.status===v ? "#FFC72C" : "#fff", fg: m.status===v ? "#1B2B5A" : ST[v].fg, bd: m.status===v ? "#C98F00" : "#B9CCF0", anim: m.status===v ? POP : "none", onClick: () => !boss && this.saveMeal(s.sel, mk, {status:v})})),
+      ...(() => { if (boss) return {};
+        const hs = MKH(m.picks.map(p => this.hOf(p, m))), at = m.ackAt ? new Date(m.ackAt).toTimeString().slice(0,5) : "";
+        const canAck = m.picks.length > 0 && m.status==="chosen", acked = ["ack","cooking","ready"].includes(m.status);
+        return {ckWho: m.bw && BOSSES[m.bw] && m.picks.length ? "สั่งโดย " + BOSSES[m.bw].n : "", ckDay: DAYF[dt.getDay()] + " " + fmtDate(s.sel), ckPeople: this.peopleOf(m),
+          ckHouses: (hs.length ? hs : []).map(h => this.houseTag(h)),
+          ckFoodSub: m.picks.length ? m.picks.length + " รายการ" : "",
+          ckFoods: [...m.picks].sort((a,b) => (this.hOf(a,m)==="lek") - (this.hOf(b,m)==="lek")).map(p => ({...this.houseTag(this.hOf(p, m)), name: this.pickName(p), emo: this.emo(p), bgc: this.bgc(p), sub: (p.who||[]).length ? "👤 " + p.who.join(", ") : ""})),
+          ckNote: m.bossNote ? m.bossNote : "— ไม่มีข้อความ —", ckNoteFg: m.bossNote ? "#1B2B5A" : "#9AA8C7",
+          ckStatusText: "สถานะตอนนี้: " + (m.away ? AWAY[m.away] : ST[m.status].t),
+          ackDo: canAck ? () => this.saveMeal(s.sel, mk, {status:"ack", ackAt: Date.now()}) : () => {}, ackDisabled: !canAck,
+          ackText: acked ? "✓ รับทราบแล้ว" : "✅ รับทราบ พร้อมดำเนินการ",
+          ackBg: canAck ? "linear-gradient(135deg,#22C55E,#15803D)" : acked ? "#fff" : "#EEF2FA", ackFg: canAck ? "#fff" : acked ? "#15803D" : "#9AA8C7",
+          ackBd: canAck ? "#0F5E2C" : acked ? "#86EFAC" : "#C9D6F5", ackGlow: canAck ? ",0 12px 22px -8px rgba(21,128,61,.5)" : "",
+          ackNote: canAck ? "กดเพื่อแจ้ง BOSS ว่าได้รับรายการแล้ว" : acked ? (at ? "รับทราบเวลา " + at + " น. · " : "") + "อัปเดตสถานะต่อได้ที่ \"สถานะในครัว\" ด้านล่าง" : "รอ BOSS ส่งรายการอาหาร"}; })(),
       hasOtherNote: !!otherNote && !(m.changeReq && !boss), hasOtherNoteCook: !boss && !!otherNote && !m.changeReq,
       barPos: boss ? "relative" : "sticky", barMargin: boss ? "0 0 16px" : "-16px -16px 16px", barPad: boss ? "12px 10px 14px" : "10px 16px 10px",
       barBg: boss ? "#FBFCFF" : "rgba(255,243,230,.95)", barBorder: boss ? "3px solid #B9CCF0" : "0", barLine: boss ? "#B9CCF0" : "#FFC72C",
@@ -1863,7 +1848,7 @@ class Component extends DCLogic {
         const draft = m.sent===false || ((noteDraft||"").trim() !== (m.bossNote||"").trim()), hasItems = m.picks.length || !!m.drink || !!(noteDraft||"").trim();
         const sentT = m.sentAt ? new Date(m.sentAt).toTimeString().slice(0,5) : "";
         const doSend = () => { const v = (noteDraft||"").trim(); const dr = {...s.drafts}; delete dr[draftKey]; this.setState({drafts: dr});
-          this.saveMeal(s.sel, mk, {bossNote: v, changeReq: false, status: m.picks.length ? (m.status==="plan" ? "chosen" : m.status) : m.status, __send: true}); };
+          this.saveMeal(s.sel, mk, {bossNote: v, changeReq: false, status: m.picks.length ? (["plan","ack"].includes(m.status) ? "chosen" : m.status) : m.status, __send: true}); };
         const can = draft && hasItems;
         return {sumMeta: DAYF[dt.getDay()] + " " + fmtDate(s.sel) + " · " + M.full + " · ⏰ " + this.serveOf(s.sel, mk) + " น. · 🏠 " + BOSSES[this.myH()].house + " · 👥 " + this.peopleOf(m) + " ที่",
           hasSumNote: !!(noteDraft||"").trim(), sumNote: (noteDraft||"").trim(),
