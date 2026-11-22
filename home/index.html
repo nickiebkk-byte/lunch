@@ -582,6 +582,17 @@ html{-webkit-text-size-adjust:100%}
         </sc-if>
       </div>
     </article>
+    <sc-if value="{{ isBoss }}">
+      <div style="background:#fff;border-radius:30px;border:3px solid #B9CCF0;box-shadow:0 6px 0 #B9CCF0,0 18px 24px -12px rgba(27,43,90,.28);padding:18px 16px;display:grid;gap:10px">
+        <h3 style="margin:0;font-size:26px;font-weight:800">🍳 สถานะในครัว · {{ mealFull }}</h3>
+        <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px">
+          <sc-for list="{{ steps }}" as="s" hint-placeholder-count="5">
+            <button disabled style="animation:{{ s.anim }};border:3px solid {{ s.bd }};background:{{ s.bg }};color:{{ s.fg }};border-radius:16px;padding:10px 2px;font-weight:800;font-size:13.5px;white-space:nowrap;min-width:0;cursor:default">{{ s.t }}</button>
+          </sc-for>
+        </div>
+        <p style="margin:0;font-size:16px;color:#4D5F8A">แม่ครัวเป็นคนอัปเดตสถานะ · {{ bossStatusNote }}</p>
+      </div>
+    </sc-if>
     <div style="background:#fff;border-radius:30px;border:3px solid #B9CCF0;box-shadow:0 6px 0 #B9CCF0,0 18px 24px -12px rgba(27,43,90,.28);padding:18px 20px;display:grid;gap:8px">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin:-6px 0 0"><h3 style="margin:0;font-size:26px;font-weight:800">สรุปทั้งวัน</h3><img src="assets/chibi/chef/daily-calendar.png" alt="" style="width:76px;height:76px;flex:none;object-fit:contain;margin:-6px -6px -6px 0"></div>
         <sc-for list="{{ daySummary }}" as="ds" hint-placeholder-count="4">
@@ -1839,6 +1850,7 @@ class Component extends DCLogic {
           ackBg: canAck ? "linear-gradient(135deg,#22C55E,#15803D)" : acked ? "#fff" : "#EEF2FA", ackFg: canAck ? "#fff" : acked ? "#15803D" : "#9AA8C7",
           ackBd: canAck ? "#0F5E2C" : acked ? "#86EFAC" : "#C9D6F5", ackGlow: canAck ? ",0 12px 22px -8px rgba(21,128,61,.5)" : "",
           ackNote: canAck ? "กดเพื่อแจ้ง BOSS ว่าได้รับรายการแล้ว" : acked ? (at ? "รับทราบเวลา " + at + " น. · " : "") + "อัปเดตสถานะต่อได้ที่ \"สถานะในครัว\" ด้านล่าง" : "รอ BOSS ส่งรายการอาหาร"}; })(),
+      bossStatusNote: m.away ? AWAY[m.away] : ST[m.status].t + (m.ackAt && m.status!=="chosen" && m.status!=="plan" ? " (รับทราบ " + new Date(m.ackAt).toTimeString().slice(0,5) + " น.)" : ""),
       hasOtherNote: !!otherNote && !(m.changeReq && !boss), hasOtherNoteCook: !boss && !!otherNote && !m.changeReq,
       barPos: boss ? "relative" : "sticky", barMargin: boss ? "0 0 16px" : "-16px -16px 16px", barPad: boss ? "12px 10px 14px" : "10px 16px 10px",
       barBg: boss ? "#FBFCFF" : "rgba(255,243,230,.95)", barBorder: boss ? "3px solid #B9CCF0" : "0", barLine: boss ? "#B9CCF0" : "#FFC72C",
