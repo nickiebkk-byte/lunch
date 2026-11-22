@@ -441,6 +441,29 @@ html{-webkit-text-size-adjust:100%}
           <p style="margin:0;font-size:16px;color:#4D5F8A">ถ้า BOSS ยังไม่เลือกเกินเวลา จะมีปุ่มให้ทำตัวเลือกที่ 1</p>
         </div>
       </sc-if>
+      <div style="background:#fff;border-radius:30px;border:3px solid #B9CCF0;box-shadow:0 6px 0 #B9CCF0,0 18px 24px -12px rgba(27,43,90,.28);padding:18px 20px;display:grid;gap:10px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <h3 style="margin:0;font-size:24px;font-weight:800">📲 เตือนเข้ามือถือ</h3>
+          <button onClick="{{ ntToggle }}" style="flex:none;border:2.5px solid {{ ntBd }};background:{{ ntBg }};color:#1B2B5A;border-radius:999px;padding:6px 14px;font-weight:800;font-size:16px;box-shadow:0 3px 0 {{ ntBd }}">{{ ntOnText }}</button>
+        </div>
+        <p style="margin:0;font-size:16px;color:#4D5F8A;line-height:1.45">เด้งเตือนแม้ปิดแอปอยู่ ผ่านแอปฟรี <b>ntfy</b> · ติดตั้ง ntfy แล้วกด <b>+</b> ใส่ชื่อหัวข้อของตัวเอง (ครั้งเดียว)</p>
+        <sc-if value="{{ ntReady }}">
+          <sc-for list="{{ ntRows }}" as="nr">
+            <div style="display:grid;gap:6px;background:{{ nr.bg }};border-radius:18px;padding:10px 12px">
+              <div style="font-size:16px;font-weight:800;color:#1B2B5A">{{ nr.who }} <span style="font-weight:600;color:#4D5F8A">· {{ nr.gets }}</span></div>
+              <div style="display:flex;gap:6px;align-items:center;min-width:0">
+                <input readonly value="{{ nr.topic }}" onFocus="{{ nr.sel }}" style="flex:1;min-width:0;border:2px solid #B9CCF0;border-radius:12px;padding:6px 8px;font-size:15px;background:#fff;color:#1B2B5A;font-weight:700">
+                <button onClick="{{ nr.copy }}" style="flex:none;border:2px solid #C98F00;background:#FFC72C;color:#1B2B5A;border-radius:999px;padding:6px 12px;font-weight:800;font-size:14px">{{ nr.copyText }}</button>
+              </div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <a href="{{ nr.web }}" target="_blank" rel="noopener" style="border:2px solid #B9CCF0;background:#fff;color:#2456D6;border-radius:999px;padding:4px 12px;font-weight:700;font-size:14px;text-decoration:none">🌐 เปิดหัวข้อ</a>
+                <button onClick="{{ nr.test }}" style="border:2px solid #B9CCF0;background:#fff;color:#1B2B5A;border-radius:999px;padding:4px 12px;font-weight:700;font-size:14px">{{ nr.testText }}</button>
+              </div>
+            </div>
+          </sc-for>
+        </sc-if>
+        <sc-if value="{{ ntNotReady }}"><button onClick="{{ ntCreate }}" style="justify-self:start;border:2.5px solid #C98F00;background:#FFC72C;color:#1B2B5A;border-radius:999px;padding:8px 18px;font-weight:800;box-shadow:0 4px 0 #C98F00">✨ สร้างหัวข้อแจ้งเตือน</button></sc-if>
+      </div>
     </aside>
   </div>
 </sc-if>
@@ -979,7 +1002,7 @@ const currentMeal = c => { const n = nowMin(); for (const k of MK) if (n < toMin
 
 class Component extends DCLogic {
   state = { ready:false };
-  componentDidMount(){ this._unlock = () => this.unlockAudio(); window.addEventListener("pointerdown", this._unlock, {once:true}); const go = () => { if (!window.HOME_MENUS) { this._t = setTimeout(go, 40); return; } this.boot(); }; go(); }
+  componentDidMount(){ this.componentDidMountPush(); this._unlock = () => this.unlockAudio(); window.addEventListener("pointerdown", this._unlock, {once:true}); const go = () => { if (!window.HOME_MENUS) { this._t = setTimeout(go, 40); return; } this.boot(); }; go(); }
   unlockAudio(){ if (this._unlocked) return; this._unlocked = true; try { const ctx = this._ac || (this._ac = new (window.AudioContext || window.webkitAudioContext)()); ctx.resume(); const b = ctx.createBuffer(1, 1, 22050), src = ctx.createBufferSource(); src.buffer = b; src.connect(ctx.destination); src.start(0); } catch(e) {} }
   componentWillUnmount(){ window.removeEventListener("pointerdown", this._unlock); clearTimeout(this._t); clearTimeout(this._fail); clearInterval(this._spin); (this._unsubs||[]).forEach(u => u()); }
   boot(){
@@ -1035,9 +1058,15 @@ class Component extends DCLogic {
         const prevRaw = prevDays[date] && prevDays[date].meals && prevDays[date].meals[mk];
         if (prevRaw && (prevRaw.at||0) >= (cur.at||0)) continue;
         const prev = Object.assign(blankMeal(), prevRaw || {}), c = Object.assign(blankMeal(), cur);
-        const when = MEALS[mk].full + " (" + (date===t ? "วันนี้" : date===addDays(t,1) ? "พรุ่งนี้" : DAYF[parse(date).getDay()] + " " + fmtDate(date)) + ")";
+        this.mealMsgs(prev, c, date, mk).forEach(text => out.push({date, mk, text}));
+      }
+    }
+    return out;
+  }
+  mealMsgs(prev, c, date, mk){
+    const t = todayStr(), when = MEALS[mk].full + " (" + (date===t ? "วันนี้" : date===addDays(t,1) ? "พรุ่งนี้" : DAYF[parse(date).getDay()] + " " + fmtDate(date)) + ")";
         const added = (a, b) => a.filter(x => !b.some(y => this.same(x, y)));
-        const push = text => out.push({date, mk, text});
+        const out = [], push = text => out.push(text);
         if (c.by==="boss") { const BN = c.bw && BOSSES[c.bw] ? BOSSES[c.bw].n : "BOSS";
           const np = added(c.picks, prev.picks);
           const np2 = c.picks.filter(x => !prev.picks.some(y => this.same(x, y) && this.hOf(x, c)===this.hOf(y, prev)));
@@ -1059,10 +1088,9 @@ class Component extends DCLogic {
           if (c.status !== prev.status && c.status==="ready") push(when + " พร้อมทานแล้ว! 🍽️");
           if (c.cookNote && c.cookNote !== prev.cookNote) push("แม่ครัวฝากบอก (" + MEALS[mk].full + "): " + c.cookNote);
         }
-      }
-    }
     return out;
   }
+  componentDidMountPush(){ if (this._pushHook) return; this._pushHook = true; const f = () => { if (document.visibilityState==="hidden") this.flushPush(); }; document.addEventListener("visibilitychange", f); window.addEventListener("pagehide", () => this.flushPush()); }
   notify(list){
     if (!list.length) return;
     const toasts = [...(this.state.toasts || []), ...list].slice(-20);
@@ -1109,7 +1137,30 @@ class Component extends DCLogic {
     this.saveMeal(date, mk, patch); clearTimeout(this._undoT);
     this.setState({undo: {text, date, mk, keep}}); this._undoT = setTimeout(() => this.setState({undo: null}), 7000);
   }
+  // ── แจ้งเตือนเข้ามือถือผ่านแอป ntfy ── รวมการแก้ไขใน 8 วินาทีเป็นข้อความเดียว
+  queuePush(date, mk){
+    const nt = this.state.cfg.ntfy; if (!nt || !nt.on || !nt.cook || !nt.boss) return;
+    const q = this._pq || (this._pq = {}), k = date + "|" + mk;
+    if (!q[k]) q[k] = {date, mk, base: Object.assign(blankMeal(), this.meal(date, mk))};
+    clearTimeout(this._pt); this._pt = setTimeout(() => this.flushPush(), 8000);
+  }
+  flushPush(){
+    const q = this._pq || {}; this._pq = {}; clearTimeout(this._pt);
+    const nt = this.state.cfg.ntfy; if (!nt || !nt.on) return;
+    const byTopic = {};
+    for (const {date, mk, base} of Object.values(q)) {
+      const c = Object.assign(blankMeal(), this.meal(date, mk)); if (!c.by) continue;
+      const msgs = this.mealMsgs(base, c, date, mk); if (!msgs.length) continue;
+      const topic = c.by==="boss" ? nt.cook : nt.boss; (byTopic[topic] = byTopic[topic] || []).push(...msgs);
+    }
+    for (const [topic, msgs] of Object.entries(byTopic)) this.sendPush(topic, msgs.length > 1 ? "มีอัปเดต " + msgs.length + " รายการ" : "วันนี้กินอะไรดี", msgs.join("\n"));
+  }
+  sendPush(topic, title, message){
+    const click = location.origin + location.pathname;
+    try { fetch("https://ntfy.sh/", {method:"POST", keepalive:true, body: JSON.stringify({topic, title, message, tags:["fork_and_knife"], click})}).catch(() => {}); } catch(e) {}
+  }
   saveMeal(date, mk, patch){
+    this.queuePush(date, mk);
     const now = Date.now();
     const body = {...this.meal(date, mk), ...patch, by: this.state.role, bw: this.state.role==="boss" ? this.state.bossId : (this.meal(date, mk).bw || ""), at: now}; const cur = this.state.days[date] || {};
     this.persist({days: {...this.state.days, [date]: {...cur, date, meals: {...(cur.meals||{}), [mk]: body}, updatedAt: now}}});
@@ -1427,6 +1478,20 @@ class Component extends DCLogic {
       clearOptsYes: () => { this.setState({askClear: null}); this.removeWithUndo(s.sel, mk, {options: []}, "ล้างตัวเลือก " + m.options.length + " เมนูแล้ว"); },
       weekEdit: !!s.weekEdit, notWeekEdit: !s.weekEdit, toggleWeekEdit: () => this.setState({weekEdit: !s.weekEdit}),
       weekEditText: s.weekEdit ? "✓ เสร็จ" : "✏️ แก้ / ลบเมนู", weekEditBg: s.weekEdit ? "#FFC72C" : "#fff", weekEditFg: "#1B2B5A", weekEditBd: s.weekEdit ? "#C98F00" : "#B9CCF0",
+      ...(() => { const nt = s.cfg.ntfy || {}, ready = !!(nt.cook && nt.boss), on = ready && !!nt.on;
+        const saveNt = v => { const ntfy = {...nt, ...v}; this.persist({cfg: {...s.cfg, ntfy}}); this.cloudSet("settings/main", {ntfy}, true); };
+        const rnd = () => { const a = new Uint8Array(6); (window.crypto || {}).getRandomValues ? crypto.getRandomValues(a) : a.forEach((_, i) => a[i] = Math.random()*256); return [...a].map(x => x.toString(36).padStart(2,"0")).join("").slice(0,10); };
+        const row = (key, who, gets, bg) => { const topic = nt[key] || ""; return {who, gets, bg, topic, web: "https://ntfy.sh/" + topic,
+          sel: e => { try { e.target.select(); } catch(x) {} },
+          copyText: s.ntCopied===key ? "✓ คัดลอก" : s.ntCopied===key+"!" ? "กดค้างเพื่อคัดลอก" : "คัดลอก",
+          copy: () => { const done = v => { this.setState({ntCopied: v}); clearTimeout(this._ntc); this._ntc = setTimeout(() => this.setState({ntCopied: null}), 2500); };
+            try { navigator.clipboard.writeText(topic).then(() => done(key), () => done(key+"!")); } catch(x) { done(key+"!"); } },
+          testText: s.ntTest===key ? "✓ ส่งแล้ว" : "🔔 ส่งทดสอบ",
+          test: () => { this.sendPush(topic, "ทดสอบแจ้งเตือน", "ถ้าเห็นข้อความนี้ แปลว่าตั้งค่าสำเร็จแล้ว 🎉 (" + who + ")"); this.setState({ntTest: key}); setTimeout(() => this.setState({ntTest: null}), 3000); }}; };
+        return {ntReady: ready, ntNotReady: !ready, ntOnText: on ? "🔔 เปิดอยู่" : "🔕 ปิดอยู่", ntBg: on ? "#FFC72C" : "#EEF2FA", ntBd: on ? "#C98F00" : "#B9CCF0",
+          ntToggle: () => ready ? saveNt({on: !nt.on}) : saveNt({on: true, cook: "kinraidee-cook-" + rnd(), boss: "kinraidee-boss-" + rnd()}),
+          ntCreate: () => saveNt({on: true, cook: "kinraidee-cook-" + rnd(), boss: "kinraidee-boss-" + rnd()}),
+          ntRows: [row("cook", "👩‍🍳 แม่ครัว", "รับเตือนเมื่อ BOSS สั่ง / แก้ / ไม่เอาเมนู", "#FFF1E4"), row("boss", "😎 BOSS เอก & BOSS เล็ก", "รับเตือนเมื่อแม่ครัวเสนอเมนู / อาหารพร้อม", "#EAF1FF")]}; })(),
       hasUndo: !!s.undo, undoText: s.undo ? s.undo.text : "",
       undoDo: () => { const u = s.undo; if (!u) return; clearTimeout(this._undoT); this.setState({undo: null}); this.saveMeal(u.date, u.mk, u.keep); },
       pickedTitle: pickHouses.length > 1 ? "เมนูที่สั่ง · เสิร์ฟ 2 บ้าน" : pickHouses.length ? BOSSES[pickHouses[0]].n + " สั่ง · เสิร์ฟ " + BOSSES[pickHouses[0]].house : "เมนูที่ BOSS เลือก",
